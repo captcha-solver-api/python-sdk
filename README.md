@@ -184,6 +184,11 @@ solve through your own proxy instead of the service's IPs.
 
 ### reCAPTCHA v2
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#recaptcha-v2)</sup>
+
+Use this method to solve reCAPTCHA v2 and obtain a token for the target page.
+Choose the proxy variant when the solving session must use your own IP address.
+
 `RecaptchaV2TaskProxyless` (no proxy) / `RecaptchaV2Task` (with proxy).
 
 | Parameter | Required | Description |
@@ -196,7 +201,7 @@ solve through your own proxy instead of the service's IPs.
 | `userAgent` | no | User-Agent to solve with. Recommended to match the agent submitting the token. |
 | `cookies` | no | Session cookies to use while solving, if the page requires them. |
 
-**Response:** `gRecaptchaResponse` -- submit as `g-recaptcha-response`. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#recaptcha-v2)
+**Response:** `gRecaptchaResponse` -- submit as `g-recaptcha-response`.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -226,6 +231,11 @@ task = RecaptchaV2Task(
 
 ### reCAPTCHA v2 Enterprise
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#recaptcha-v2-enterprise)</sup>
+
+Use this method to solve the Enterprise version of reCAPTCHA v2 and obtain a
+token for a page that uses `grecaptcha.enterprise`.
+
 `RecaptchaV2EnterpriseTaskProxyless` / `RecaptchaV2EnterpriseTask`. Same fields
 as reCAPTCHA v2, plus:
 
@@ -234,7 +244,7 @@ as reCAPTCHA v2, plus:
 | `enterprisePayload` | no | Extra parameters passed to `grecaptcha.enterprise.render` on the page, e.g. `{"s": "..."}`. |
 | `apiDomain` | no | Defaults to `google.com`. |
 
-**Response:** `gRecaptchaResponse`. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#recaptcha-v2-enterprise)
+**Response:** `gRecaptchaResponse`.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -252,6 +262,11 @@ With proxy, use `RecaptchaV2EnterpriseTask` (same proxy fields as reCAPTCHA v2).
 
 ### reCAPTCHA v3
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#recaptcha-v3)</sup>
+
+Use this method to obtain a score-based reCAPTCHA v3 token for a specific site,
+action, and minimum score. This variant does not use a proxy.
+
 `RecaptchaV3TaskProxyless`. No proxy variant exists -- v3 is score-based and
 invisible, so there's no widget/session to pin to a proxy IP.
 
@@ -264,7 +279,7 @@ invisible, so there's no widget/session to pin to a proxy IP.
 | `isEnterprise` | no | `True` for reCAPTCHA v3 Enterprise. |
 | `apiDomain` | no | Non-standard domain the widget's script is served from, if any. |
 
-**Response:** `gRecaptchaResponse`. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#recaptcha-v3)
+**Response:** `gRecaptchaResponse`.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -282,6 +297,11 @@ print(result["gRecaptchaResponse"])
 
 ### Cloudflare Turnstile
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#cloudflare-turnstile)</sup>
+
+Use this method to solve a Cloudflare Turnstile widget and obtain the token
+that the target page expects in `cf-turnstile-response`.
+
 `TurnstileTaskProxyless` / `TurnstileTask`.
 
 | Parameter | Required | Description |
@@ -293,7 +313,7 @@ print(result["gRecaptchaResponse"])
 | `pagedata` | no | Value of the `chlPageData` parameter, needed for some Cloudflare challenge pages beyond the basic widget. |
 | `userAgent` | no | User-Agent to solve with -- the returned token is tied to it, submit with the same one. |
 
-**Response:** `token` -- submit as `cf-turnstile-response`. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#cloudflare-turnstile)
+**Response:** `token` -- submit as `cf-turnstile-response`.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -311,6 +331,11 @@ With proxy, use `TurnstileTask` (same proxy fields as reCAPTCHA v2).
 
 ### Image to Text
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#image-to-text)</sup>
+
+Use this method to recognize text, numbers, or simple math expressions in an
+image captcha. The image is sent directly and does not require a proxy.
+
 `ImageToTextTask`. No proxy variant -- the image is submitted directly, no
 browser session involved.
 
@@ -325,7 +350,7 @@ browser session involved.
 | `comment` | no | Free-text hint for the worker. |
 | `imgInstructions` | no | Optional supplementary instruction image, base64-encoded. |
 
-**Response:** `text` -- the recognized text/answer. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#image-to-text)
+**Response:** `text` -- the recognized text/answer.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -345,6 +370,11 @@ print(result["text"])
 ```
 
 ### GeeTest (v3 & v4)
+
+<sup>[API method description: v3](https://captcha-solver.com/en/docs/captcha-types#geetest-v3), [v4](https://captcha-solver.com/en/docs/captcha-types#geetest-v4)</sup>
+
+Use this method to solve GeeTest puzzle captchas. Select version 3 or 4 and
+pass the values collected from the target page before creating the task.
 
 `GeeTestTaskProxyless` / `GeeTestTask`. Set `version=4` for v4 (with
 `initParameters["captcha_id"]`); v3 is the default and needs `gt`/`challenge` instead.
@@ -394,6 +424,11 @@ With proxy, use `GeeTestTask` (same proxy fields as reCAPTCHA v2).
 
 ### Yandex SmartCaptcha
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#yandex-smartcaptcha)</sup>
+
+Use this method to solve the token-based Yandex SmartCaptcha and obtain a token
+for the widget on the target page. Use the coordinates method for image challenges.
+
 `YandexSmartCaptchaTaskProxyless` / `YandexSmartCaptchaTask` -- token-based
 challenge. For the image challenge instead, use `CoordinatesTask` with
 `imgType="smart_captcha"` (see [Coordinates](#coordinates-click-captcha) below).
@@ -408,7 +443,7 @@ challenge. For the image challenge instead, use `CoordinatesTask` with
 Proxy variant note: `proxyType` also accepts `"https"` for this captcha type
 only (in addition to `http`/`socks4`/`socks5`).
 
-**Response:** `token`. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#yandex-smartcaptcha)
+**Response:** `token`.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -427,6 +462,11 @@ plus the `https` option above).
 
 ### Coordinates (click captcha)
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#coordinates)</sup>
+
+Use this method to identify points that a worker should click in an image. It
+supports generic click captchas and the image version of Yandex SmartCaptcha.
+
 `CoordinatesTask`. Used both for generic "click on X" captchas and for Yandex
 SmartCaptcha's image challenge. No proxy variant -- the image is submitted directly.
 
@@ -439,7 +479,7 @@ SmartCaptcha's image challenge. No proxy variant -- the image is submitted direc
 | `maxClicks` | no | Maximum number of clicks allowed. |
 | `imgType` | no | `"smart_captcha"` to solve a Yandex SmartCaptcha image challenge instead of a generic click captcha. |
 
-**Response:** `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click, in order. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#coordinates)
+**Response:** `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click, in order.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -461,6 +501,11 @@ For the Yandex SmartCaptcha image challenge, see
 
 ### Tencent
 
+<sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#tencent)</sup>
+
+Use this method to solve Tencent Captcha and obtain the ticket and callback
+values required by the target page.
+
 `TencentTaskProxyless` / `TencentTask`.
 
 | Parameter | Required | Description |
@@ -469,7 +514,7 @@ For the Yandex SmartCaptcha image challenge, see
 | `appId` | yes | Value of the `appId` parameter found in the page source. |
 | `captchaScript` | no | URL of the Tencent captcha script, if the page uses a non-default one. |
 
-**Response:** `appid`, `ret`, `ticket`, `randstr` -- pass all four into the page's Tencent captcha callback. [Docs ↗](https://captcha-solver.com/en/docs/captcha-types#tencent)
+**Response:** `appid`, `ret`, `ticket`, `randstr` -- pass all four into the page's Tencent captcha callback.
 
 ```python
 from captcha_sdk import CaptchaClient
@@ -590,6 +635,9 @@ except NetworkError as e:
 ```
 
 ## Running the examples
+
+See the dedicated [examples documentation](examples/README.md) for the full
+sync/async example list, setup steps, expected results, and placeholder guidance.
 
 - **Image/click captchas** (`image_to_text.py`, `coordinates.py`,
   `yandex_smartcaptcha_image.py`) run end-to-end with nothing but a valid

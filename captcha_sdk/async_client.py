@@ -117,7 +117,27 @@ class AsyncCaptchaClient:
             )
 
     async def create_task(self, task: Any, language_pool: Optional[str] = None) -> int:
-        """See `captcha_sdk.client.CaptchaClient.create_task` -- same semantics, awaited."""
+        """Submit a CAPTCHA task and return its ID without waiting for a solution.
+
+        This calls the API `createTask` endpoint. Use `solve()` for the usual
+        submit-and-wait flow, or use this method when polling must be managed
+        separately, for example when checking several tasks from another process.
+        See the `createTask` and CAPTCHA type details in the
+        `https://captcha-solver.com/en/docs/captcha-types` documentation.
+
+        Args:
+            task: A task object from `captcha_sdk.tasks`.
+            language_pool: Optional worker pool selector such as `"en"` or
+                `"ru"`. Falls back to the client's configured pool.
+
+        Returns:
+            The numeric task ID to pass to `get_task_result()`.
+
+        Raises:
+            ApiError: The API rejected the task or its parameters.
+            NetworkError: The request failed at the transport level.
+            TimeoutError: The HTTP request timed out.
+        """
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
             "task": task.to_dict(),
@@ -131,7 +151,25 @@ class AsyncCaptchaClient:
         return data["taskId"]
 
     async def get_task_result(self, task_id: int) -> Dict[str, Any]:
-        """See `captcha_sdk.client.CaptchaClient.get_task_result` -- same semantics, awaited."""
+        """Fetch the current status of a previously submitted task.
+
+        This performs one asynchronous poll of `getTaskResult`; it does not
+        wait until the task is ready. Call it repeatedly until the response has
+        `status == "ready"`, or use `solve()` to handle polling automatically.
+        See `https://captcha-solver.com/en/docs/captcha-types` for the response
+        fields returned by each CAPTCHA type.
+
+        Args:
+            task_id: The ID returned by `create_task()`.
+
+        Returns:
+            The raw API response with `status`; ready responses also contain a
+            solution dictionary.
+
+        Raises:
+            ApiError: The API reports an error for the task.
+            NetworkError: The request failed at the transport level.
+        """
         payload = {
             "clientKey": self.client_key,
             "taskId": task_id,
@@ -141,7 +179,19 @@ class AsyncCaptchaClient:
         return data
 
     async def get_balance(self) -> float:
-        """See `captcha_sdk.client.CaptchaClient.get_balance` -- same semantics, awaited."""
+        """Fetch the account's current balance asynchronously.
+
+        Calls the `getBalance` endpoint. See the API documentation at
+        `https://captcha-solver.com/en/docs/captcha-types` for account and API
+        requirements.
+
+        Returns:
+            The available balance in the account's currency.
+
+        Raises:
+            ApiError: The API key is invalid or the account cannot be resolved.
+            NetworkError: The request failed at the transport level.
+        """
         payload = {"clientKey": self.client_key}
         data = await self._request("getBalance", payload)
         self._ensure_success(data)
@@ -153,7 +203,30 @@ class AsyncCaptchaClient:
         language_pool: Optional[str] = None,
         timeout: Optional[int] = None,
     ) -> Dict[str, Any]:
-        """See captcha_sdk.client.CaptchaClient.solve -- same semantics, awaited."""
+        """Submit a task and asynchronously poll until its solution is ready.
+
+        This is the main entry point for the async client. It combines
+        `create_task()` and repeated `get_task_result()` calls, waiting between
+        polls without blocking the event loop. For several concurrent solves,
+        create multiple coroutines and await them with `asyncio.gather()`.
+        See the CAPTCHA-specific request and response formats at
+        `https://captcha-solver.com/en/docs/captcha-types`.
+
+        Args:
+            task: A task object from `captcha_sdk.tasks`.
+            language_pool: Optional worker pool selector. Falls back to the
+                client's configured pool.
+            timeout: Maximum polling time for this call, in seconds. Overrides
+                the client's default timeout.
+
+        Returns:
+            The solution dictionary once the task status becomes `"ready"`.
+
+        Raises:
+            ApiError: The API rejected the task or reported a solving error.
+            TimeoutError: No solution was ready before the deadline.
+            NetworkError: A request failed at the transport level.
+        """
 
         task_id = await self.create_task(task, language_pool=language_pool)
 
