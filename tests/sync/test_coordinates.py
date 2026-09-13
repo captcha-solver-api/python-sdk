@@ -4,8 +4,8 @@ Tests for CoordinatesTask (generic click captcha + Yandex SmartCaptcha image mod
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import CoordinatesTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import CoordinatesTask
 
 
 class TestCoordinates:

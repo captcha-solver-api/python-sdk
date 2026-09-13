@@ -3,7 +3,7 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "captcha-sdk"
+name = "captcha-solver-api"
 dynamic = ["version"]
 description = "Official Python SDK for solving reCAPTCHA v2/v3, Cloudflare Turnstile, GeeTest v3/v4, Yandex SmartCaptcha, Tencent, and image/click captchas via the Captcha Solver API"
 readme = "README.md"
@@ -53,13 +53,13 @@ Documentation = "https://captcha-solver.com/en/docs/captcha-types"
 Repository = "https://github.com/captcha-solver-api/python-sdk"
 
 [tool.setuptools.packages.find]
-include = ["captcha_sdk*"]
+include = ["captcha_solver_api*"]
 
 [tool.setuptools.dynamic]
-version = {attr = "captcha_sdk._version.__version__"}
+version = {attr = "captcha_solver_api._version.__version__"}
 
 [tool.setuptools.package-data]
-captcha_sdk = ["py.typed"]
+captcha_solver_api = ["py.typed"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

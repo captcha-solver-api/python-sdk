@@ -18,8 +18,8 @@ repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__f
 sys.path.append(repo_root)
 load_dotenv(os.path.join(repo_root, '.env'))
 
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import RecaptchaV3TaskProxyless
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
 
 api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
 

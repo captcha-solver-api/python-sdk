@@ -20,8 +20,8 @@ sys.path.append(repo_root)
 load_dotenv(os.path.join(repo_root, '.env'))
 assets_dir = os.path.join(repo_root, 'examples', 'assets')
 
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import CoordinatesTask
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import CoordinatesTask
 
 api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
 

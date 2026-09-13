@@ -9,8 +9,8 @@ from unittest.mock import patch
 
 import pytest
 
-from captcha_sdk import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 
 class TestCaptchaClient:
@@ -137,13 +137,13 @@ class TestCaptchaClient:
             CaptchaClient("")
 
     def test_sdk_header(self):
-        from captcha_sdk import __version__
+        from captcha_solver_api import __version__
 
         client = CaptchaClient("test_key")
         assert client.session.headers["X-SDK"] == f"python-sdk/{__version__}"
 
     def test_timeout_error_alias(self):
-        from captcha_sdk import TimeoutError as LegacyTimeoutError
+        from captcha_solver_api import TimeoutError as LegacyTimeoutError
 
         assert LegacyTimeoutError is CaptchaTimeoutError
         assert not issubclass(CaptchaTimeoutError, builtins.TimeoutError)

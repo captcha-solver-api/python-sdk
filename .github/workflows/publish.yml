@@ -28,9 +28,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           tag_version="${GITHUB_REF_NAME#v}"
-          pkg_version="$(python -c 'import re; print(re.search(r"__version__\s*=\s*\"([^\"]+)\"", open("captcha_sdk/_version.py").read()).group(1))')"
+          pkg_version="$(python -c 'import re; print(re.search(r"__version__\s*=\s*\"([^\"]+)\"", open("captcha_solver_api/_version.py").read()).group(1))')"
           if [ "$tag_version" != "$pkg_version" ]; then
-            echo "::error::Tag v$tag_version does not match captcha_sdk/_version.py version $pkg_version"
+            echo "::error::Tag v$tag_version does not match captcha_solver_api/_version.py version $pkg_version"
             exit 1
           fi
 
@@ -54,10 +54,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/captcha-sdk/
+      url: https://pypi.org/project/captcha-solver-api/
     permissions:
       # Required for PyPI's trusted publishing (OIDC) -- no API token/secret needed.
-      # Configure this repo as a trusted publisher at https://pypi.org/manage/project/captcha-sdk/settings/publishing/
+      # Configure this repo as a trusted publisher at https://pypi.org/manage/project/captcha-solver-api/settings/publishing/
       id-token: write
     steps:
       - name: Download build artifacts

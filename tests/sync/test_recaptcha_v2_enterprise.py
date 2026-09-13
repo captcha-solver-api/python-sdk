@@ -4,8 +4,8 @@ Tests for RecaptchaV2EnterpriseTaskProxyless / RecaptchaV2EnterpriseTask.
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import RecaptchaV2EnterpriseTaskProxyless, RecaptchaV2EnterpriseTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless, RecaptchaV2EnterpriseTask
 
 
 class TestRecaptchaV2Enterprise:

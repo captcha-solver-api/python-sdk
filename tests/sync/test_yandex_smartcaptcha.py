@@ -4,8 +4,8 @@ Tests for YandexSmartCaptchaTaskProxyless / YandexSmartCaptchaTask.
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import YandexSmartCaptchaTaskProxyless, YandexSmartCaptchaTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless, YandexSmartCaptchaTask
 
 
 class TestYandexSmartCaptcha:

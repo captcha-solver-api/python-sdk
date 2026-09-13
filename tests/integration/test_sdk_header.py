@@ -3,7 +3,7 @@ The backend uses the `X-SDK` header to collect SDK usage stats. These tests
 send real HTTP requests to a local server and check the header arrives.
 """
 
-from captcha_sdk import AsyncCaptchaClient, CaptchaClient, __version__
+from captcha_solver_api import AsyncCaptchaClient, CaptchaClient, __version__
 
 EXPECTED_SDK_HEADER = f"python-sdk/{__version__}"
 

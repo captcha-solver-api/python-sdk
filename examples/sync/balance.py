@@ -15,7 +15,7 @@ repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__f
 sys.path.append(repo_root)
 load_dotenv(os.path.join(repo_root, '.env'))
 
-from captcha_sdk import CaptchaClient
+from captcha_solver_api import CaptchaClient
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS

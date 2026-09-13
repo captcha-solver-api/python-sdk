@@ -1,5 +1,5 @@
 """
-Async counterpart of captcha_sdk.client.CaptchaClient -- same endpoints
+Async counterpart of captcha_solver_api.client.CaptchaClient -- same endpoints
 (createTask / getTaskResult / getBalance), same method names/arguments,
 `await`ed. Requires httpx.
 """
@@ -131,7 +131,7 @@ class AsyncCaptchaClient:
         `https://captcha-solver.com/en/docs/captcha-types` documentation.
 
         Args:
-            task: A task object from `captcha_sdk.tasks`.
+            task: A task object from `captcha_solver_api.tasks`.
             language_pool: Optional worker pool selector such as `"en"` or
                 `"ru"`. Falls back to the client's configured pool.
 
@@ -218,7 +218,7 @@ class AsyncCaptchaClient:
         `https://captcha-solver.com/en/docs/captcha-types`.
 
         Args:
-            task: A task object from `captcha_sdk.tasks`.
+            task: A task object from `captcha_solver_api.tasks`.
             language_pool: Optional worker pool selector. Falls back to the
                 client's configured pool.
             timeout: Maximum polling time for this call, in seconds. Overrides

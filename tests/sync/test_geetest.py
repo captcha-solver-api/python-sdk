@@ -4,8 +4,8 @@ Tests for GeeTestTaskProxyless / GeeTestTask (v3 and v4).
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import GeeTestTaskProxyless, GeeTestTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import GeeTestTaskProxyless, GeeTestTask
 
 
 class TestGeeTest:

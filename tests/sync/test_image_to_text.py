@@ -4,8 +4,8 @@ Tests for ImageToTextTask.
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import ImageToTextTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import ImageToTextTask
 
 
 class TestImageToText:

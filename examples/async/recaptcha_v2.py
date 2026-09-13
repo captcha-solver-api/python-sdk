@@ -3,7 +3,7 @@ Example: Solve reCAPTCHA v2 with the async client.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
-    httpx must be installed (it's a package dependency, so `pip install captcha-sdk` covers it).
+    httpx must be installed (it's a package dependency, so `pip install captcha-solver-api` covers it).
 """
 
 import asyncio
@@ -16,8 +16,8 @@ repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__f
 sys.path.append(repo_root)
 load_dotenv(os.path.join(repo_root, '.env'))
 
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
 

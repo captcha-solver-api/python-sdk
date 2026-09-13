@@ -43,7 +43,7 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
 ## Installation
 
 ```bash
-# pip install captcha-sdk
+# pip install captcha-solver-api
 
 pip install git+https://github.com/captcha-solver-api/python-sdk.git
 ```
@@ -59,7 +59,7 @@ export CAPTCHA_API_KEY=your_api_key
 
 ```python
 import os
-from captcha_sdk import CaptchaClient
+from captcha_solver_api import CaptchaClient
 client = CaptchaClient(os.getenv("CAPTCHA_API_KEY"))
 ```
 Or just pass the key directly, without an environment variable:
@@ -73,8 +73,8 @@ client = CaptchaClient("your_api_key")
 Solve a reCAPTCHA v2 in 4 lines.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 client = CaptchaClient("your_api_key")
 task = RecaptchaV2TaskProxyless(
     websiteURL="https://example.com/login",
@@ -103,9 +103,9 @@ print(result["gRecaptchaResponse"])
 
 Every method below is available on both `CaptchaClient` (sync, `requests`-based) and
 `AsyncCaptchaClient` (async, `httpx`-based, same names, `await`ed). Full docstrings
-with the same content live in [captcha_sdk/client.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_sdk/client.py),
-[captcha_sdk/async_client.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_sdk/async_client.py), and
-[captcha_sdk/tasks.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_sdk/tasks.py) -- this section mirrors them for quick
+with the same content live in [captcha_solver_api/client.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/client.py),
+[captcha_solver_api/async_client.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/async_client.py), and
+[captcha_solver_api/tasks.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/tasks.py) -- this section mirrors them for quick
 reference without leaving the README.
 
 ### `CaptchaClient(...)`
@@ -140,7 +140,7 @@ solution -- wraps `create_task()` + `get_task_result()` so you don't poll by han
 
 | Parameter | Type | Description |
 |---|---|---|
-| `task` | task object | One of the classes from `captcha_sdk.tasks` (see [Captcha Types](#captcha-types)). |
+| `task` | task object | One of the classes from `captcha_solver_api.tasks` (see [Captcha Types](#captcha-types)). |
 | `language_pool` | `Optional[str]` | Worker pool selector, `"en"` or `"ru"`. |
 | `timeout` | `Optional[int]` | Overrides the client's default timeout for this call only, in seconds. Useful for captcha types that reliably take longer (e.g. classic reCAPTCHA v2, GeeTest, reCAPTCHA v3 with a high `minScore`). |
 
@@ -204,8 +204,8 @@ Choose the proxy variant when the solving session must use your own IP address.
 **Response:** `gRecaptchaResponse` -- submit as `g-recaptcha-response`.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 client = CaptchaClient("your_api_key")
 task = RecaptchaV2TaskProxyless(
     websiteURL="https://example.com/login",
@@ -247,8 +247,8 @@ as reCAPTCHA v2, plus:
 **Response:** `gRecaptchaResponse`.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import RecaptchaV2EnterpriseTaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless
 client = CaptchaClient("your_api_key")
 task = RecaptchaV2EnterpriseTaskProxyless(
     websiteURL="https://example.com/login",
@@ -282,8 +282,8 @@ invisible, so there's no widget/session to pin to a proxy IP.
 **Response:** `gRecaptchaResponse`.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import RecaptchaV3TaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
 client = CaptchaClient("your_api_key")
 task = RecaptchaV3TaskProxyless(
     websiteURL="https://example.com/login",
@@ -316,8 +316,8 @@ that the target page expects in `cf-turnstile-response`.
 **Response:** `token` -- submit as `cf-turnstile-response`.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import TurnstileTaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import TurnstileTaskProxyless
 client = CaptchaClient("your_api_key")
 task = TurnstileTaskProxyless(
     websiteURL="https://example.com/login",
@@ -353,8 +353,8 @@ browser session involved.
 **Response:** `text` -- the recognized text/answer.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import ImageToTextTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import ImageToTextTask
 import base64
 with open("examples/assets/captcha-digits.png", "rb") as f:
     image_base64 = base64.b64encode(f.read()).decode("utf-8")
@@ -394,8 +394,8 @@ pass the values collected from the target page before creating the task.
 Docs: [v3 ↗](https://captcha-solver.com/en/docs/captcha-types#geetest-v3), [v4 ↗](https://captcha-solver.com/en/docs/captcha-types#geetest-v4)
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import GeeTestTaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import GeeTestTaskProxyless
 client = CaptchaClient("your_api_key")
 task = GeeTestTaskProxyless(
     websiteURL="https://example.com/login",
@@ -446,8 +446,8 @@ only (in addition to `http`/`socks4`/`socks5`).
 **Response:** `token`.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import YandexSmartCaptchaTaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
 client = CaptchaClient("your_api_key")
 task = YandexSmartCaptchaTaskProxyless(
     websiteURL="https://example.com/login",
@@ -482,8 +482,8 @@ SmartCaptcha's image challenge. No proxy variant -- the image is submitted direc
 **Response:** `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click, in order.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import CoordinatesTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import CoordinatesTask
 import base64
 with open("examples/assets/fruit-click.png", "rb") as f:
     image_base64 = base64.b64encode(f.read()).decode("utf-8")
@@ -517,8 +517,8 @@ values required by the target page.
 **Response:** `appid`, `ret`, `ticket`, `randstr` -- pass all four into the page's Tencent captcha callback.
 
 ```python
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import TencentTaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import TencentTaskProxyless
 client = CaptchaClient("your_api_key")
 task = TencentTaskProxyless(
     websiteURL="https://example.com/register",
@@ -535,7 +535,7 @@ With proxy, use `TencentTask` (same proxy fields as reCAPTCHA v2).
 ### Check balance
 
 ```python
-from captcha_sdk import CaptchaClient
+from captcha_solver_api import CaptchaClient
 client = CaptchaClient("your_api_key")
 balance = client.get_balance()
 print(f"Balance: {balance}")
@@ -578,8 +578,8 @@ of each opening a new one:
 
 ```python
 import asyncio
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 async def main():
     client = AsyncCaptchaClient("your_api_key")
@@ -601,8 +601,8 @@ concurrently instead of waiting for each one in turn:
 
 ```python
 import asyncio
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless, TurnstileTaskProxyless
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless, TurnstileTaskProxyless
 
 async def solve_multiple():
     client = AsyncCaptchaClient("your_api_key")
@@ -620,7 +620,7 @@ This completes in roughly the time of the slowest single captcha, not the sum of
 ### Error handling
 
 ```python
-from captcha_sdk import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
+from captcha_solver_api import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
 client = CaptchaClient("your_api_key")
 try:
     result = client.solve(task)

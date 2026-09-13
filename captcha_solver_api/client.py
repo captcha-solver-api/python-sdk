@@ -117,7 +117,7 @@ class CaptchaClient:
         polling yourself (e.g. to check on many tasks from a different process).
 
         Args:
-            task: One of the task objects from `captcha_sdk.tasks` (e.g.
+            task: One of the task objects from `captcha_solver_api.tasks` (e.g.
                 `RecaptchaV2TaskProxyless`, `ImageToTextTask`).
             language_pool: Worker pool selector, e.g. `"en"` or `"ru"`. Falls back
                 to the client's `language_pool` (set at construction) when omitted.
@@ -197,7 +197,7 @@ class CaptchaClient:
         by hand.
 
         Args:
-            task: One of the task objects from `captcha_sdk.tasks`.
+            task: One of the task objects from `captcha_solver_api.tasks`.
             language_pool: Worker pool selector, e.g. `"en"` or `"ru"`. Falls back
                 to the client's `language_pool` (set at construction) when omitted.
             timeout: Overrides the client's default polling timeout for this call
@@ -206,7 +206,7 @@ class CaptchaClient:
 
         Returns:
             The `solution` dict once `status` is `"ready"`. Its shape depends on
-            the task type -- see the per-type docstrings in `captcha_sdk.tasks`
+            the task type -- see the per-type docstrings in `captcha_solver_api.tasks`
             or the README's method reference.
 
         Raises:

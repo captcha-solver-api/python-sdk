@@ -48,8 +48,8 @@ python -m twine check --strict dist/*
 Publishing to PyPI is done by `.github/workflows/publish.yml` using Trusted Publishing
 (OIDC), so no API token is stored in the repository.
 
-1. Bump `__version__` in `captcha_sdk/_version.py`. This is the only place:
-   `pyproject.toml`, `captcha_sdk.__version__` and the `X-SDK` request header read it from there.
+1. Bump `__version__` in `captcha_solver_api/_version.py`. This is the only place:
+   `pyproject.toml`, `captcha_solver_api.__version__` and the `X-SDK` request header read it from there.
 2. Commit and push to `main`, wait for the Tests workflow to pass.
 3. Tag and push:
 
@@ -58,7 +58,7 @@ Publishing to PyPI is done by `.github/workflows/publish.yml` using Trusted Publ
    git push origin v1.2.0
    ```
 
-4. The workflow runs tests, verifies that the tag matches `captcha_sdk/_version.py`, builds and
+4. The workflow runs tests, verifies that the tag matches `captcha_solver_api/_version.py`, builds and
    uploads to PyPI (GitHub environment `pypi`).
 
 A PyPI version cannot be re-uploaded. If a release is broken, publish a new patch version.
@@ -72,7 +72,7 @@ On https://pypi.org/manage/account/publishing/ add a trusted publisher:
 
 | Field | Value |
 |---|---|
-| PyPI Project Name | `captcha-sdk` |
+| PyPI Project Name | `captcha-solver-api` |
 | Owner | `captcha-solver-api` |
 | Repository name | `python-sdk` |
 | Workflow name | `publish.yml` |

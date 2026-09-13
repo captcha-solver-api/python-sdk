@@ -5,8 +5,8 @@ Task serialization is covered once in tests/sync/test_recaptcha_v2_enterprise.py
 
 from unittest.mock import AsyncMock, patch
 
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import RecaptchaV2EnterpriseTaskProxyless
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless
 
 
 class TestAsyncRecaptchaV2Enterprise:

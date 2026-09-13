@@ -9,8 +9,8 @@ from unittest.mock import AsyncMock, patch
 import httpx
 import pytest
 
-from captcha_sdk import AsyncCaptchaClient, ApiError, CaptchaTimeoutError, ValidationError
-from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api import AsyncCaptchaClient, ApiError, CaptchaTimeoutError, ValidationError
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 
 class TestAsyncCaptchaClient:
@@ -21,7 +21,7 @@ class TestAsyncCaptchaClient:
             AsyncCaptchaClient("")
 
     async def test_sdk_header(self):
-        from captcha_sdk import __version__
+        from captcha_solver_api import __version__
 
         async with AsyncCaptchaClient("test_key") as client:
             assert client._client.headers["X-SDK"] == f"python-sdk/{__version__}"

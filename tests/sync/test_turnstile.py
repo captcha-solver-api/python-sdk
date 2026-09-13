@@ -4,8 +4,8 @@ Tests for TurnstileTaskProxyless / TurnstileTask.
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import TurnstileTaskProxyless, TurnstileTask
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import TurnstileTaskProxyless, TurnstileTask
 
 
 class TestTurnstile:

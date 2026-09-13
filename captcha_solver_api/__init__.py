@@ -2,8 +2,8 @@
 Official Python SDK for the Captcha Solver API.
 
 Example:
-    from captcha_sdk import CaptchaClient
-    from captcha_sdk.tasks import RecaptchaV2TaskProxyless
+    from captcha_solver_api import CaptchaClient
+    from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
     client = CaptchaClient("YOUR_API_KEY")
     task = RecaptchaV2TaskProxyless(

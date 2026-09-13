@@ -4,8 +4,8 @@ Tests for RecaptchaV3TaskProxyless.
 
 from unittest.mock import patch
 
-from captcha_sdk import CaptchaClient
-from captcha_sdk.tasks import RecaptchaV3TaskProxyless
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
 
 
 class TestRecaptchaV3:

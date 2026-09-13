@@ -5,8 +5,8 @@ Task serialization is covered once in tests/sync/test_yandex_smartcaptcha.py.
 
 from unittest.mock import AsyncMock, patch
 
-from captcha_sdk import AsyncCaptchaClient
-from captcha_sdk.tasks import YandexSmartCaptchaTaskProxyless
+from captcha_solver_api import AsyncCaptchaClient
+from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
 
 
 class TestAsyncYandexSmartCaptcha:
