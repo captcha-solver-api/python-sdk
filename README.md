@@ -1,6 +1,6 @@
 # Captcha Solver Python SDK
 
-![python-examples-banner](assets/repo-banner-python.png)
+![python-sdk-banner](https://raw.githubusercontent.com/captcha-solver-api/python-sdk/main/assets/repo-banner-python.png)
 
 Official Python SDK for the Captcha Solver API. Solve reCAPTCHA v2/v3, Cloudflare Turnstile, GeeTest, Yandex SmartCaptcha, Tencent, and image/click captchas with a single method call -- sync or async.
 
@@ -103,9 +103,9 @@ print(result["gRecaptchaResponse"])
 
 Every method below is available on both `CaptchaClient` (sync, `requests`-based) and
 `AsyncCaptchaClient` (async, `httpx`-based, same names, `await`ed). Full docstrings
-with the same content live in [captcha_sdk/client.py](captcha_sdk/client.py),
-[captcha_sdk/async_client.py](captcha_sdk/async_client.py), and
-[captcha_sdk/tasks.py](captcha_sdk/tasks.py) -- this section mirrors them for quick
+with the same content live in [captcha_sdk/client.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_sdk/client.py),
+[captcha_sdk/async_client.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_sdk/async_client.py), and
+[captcha_sdk/tasks.py](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_sdk/tasks.py) -- this section mirrors them for quick
 reference without leaving the README.
 
 ### `CaptchaClient(...)`
@@ -173,8 +173,8 @@ Raises `ApiError`, `NetworkError`.
 Each section below covers one captcha type end-to-end: task parameters, the
 `solution` shape, a runnable example, and a link to the full spec. Optional
 fields left unset are omitted from the request. Every code block matches a
-runnable file under [examples/sync](examples/sync) (and its
-[examples/async](examples/async) counterpart) -- swap the placeholder
+runnable file under [examples/sync](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/sync) (and its
+[examples/async](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/async) counterpart) -- swap the placeholder
 `websiteURL`/`websiteKey`/etc. for values from your own target page before
 running. See [Running the examples](#running-the-examples) for details.
 
@@ -407,7 +407,7 @@ print(result["validate"])
 print(result["seccode"])
 ```
 `challenge` is session-specific and expires quickly, so it can't be hardcoded
-into a static example -- see [examples/sync/geetest_v3.py](examples/sync/geetest_v3.py)
+into a static example -- see [examples/sync/geetest_v3.py](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/sync/geetest_v3.py)
 for where the fetch belongs in the flow.
 
 ```python
@@ -496,8 +496,8 @@ result = client.solve(task)
 print(result["coordinates"])  # [{"x": 140, "y": 110}]
 ```
 For the Yandex SmartCaptcha image challenge, see
-[examples/sync/yandex_smartcaptcha_image.py](examples/sync/yandex_smartcaptcha_image.py)
-(or [examples/async](examples/async/yandex_smartcaptcha_image.py)).
+[examples/sync/yandex_smartcaptcha_image.py](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/sync/yandex_smartcaptcha_image.py)
+(or [examples/async](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/async/yandex_smartcaptcha_image.py)).
 
 ### Tencent
 
@@ -592,7 +592,7 @@ async def main():
 
 asyncio.run(main())
 ```
-See [examples/async](examples/async) for every captcha type in async form.
+See [examples/async](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/async) for every captcha type in async form.
 
 ### Solving multiple captchas in parallel
 
@@ -639,13 +639,13 @@ Avoid importing it by name: it shadows Python's built-in `TimeoutError`.
 
 ## Running the examples
 
-See the dedicated [examples documentation](examples/README.md) for the full
+See the dedicated [examples documentation](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/README.md) for the full
 sync/async example list, setup steps, expected results, and placeholder guidance.
 
 - **Image/click captchas** (`image_to_text.py`, `coordinates.py`,
   `yandex_smartcaptcha_image.py`) run end-to-end with nothing but a valid
   `CAPTCHA_API_KEY` -- they read sample images bundled in
-  [examples/assets](examples/assets), no target page needed.
+  [examples/assets](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/assets), no target page needed.
 - **Token captchas** (`recaptcha_v2.py`, `recaptcha_v2_enterprise.py`, `recaptcha_v3.py`,
   `turnstile.py`, `yandex_smartcaptcha.py`, `geetest_v4.py`, `tencent.py`) use
   placeholder values (`https://example.com/...`, `YOUR_WEBSITE_KEY`, `YOUR_APP_ID`,
@@ -687,4 +687,4 @@ Full API reference: https://captcha-solver.com/en/docs/captcha-types
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
+This project is licensed under the MIT License. See [LICENSE.md](https://github.com/captcha-solver-api/python-sdk/blob/main/LICENSE.md) for details.
