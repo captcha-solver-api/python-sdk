@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, patch
 import httpx
 import pytest
 
-from captcha_sdk import AsyncCaptchaClient, ApiError, TimeoutError, ValidationError
+from captcha_sdk import AsyncCaptchaClient, ApiError, CaptchaTimeoutError, ValidationError
 from captcha_sdk.tasks import RecaptchaV2TaskProxyless
 
 
@@ -77,7 +77,7 @@ class TestAsyncCaptchaClient:
                 {"errorId": 0, "status": "processing"},
             ]
 
-            with pytest.raises(TimeoutError):
+            with pytest.raises(CaptchaTimeoutError):
                 await client.solve(task)
 
     async def test_api_error(self):

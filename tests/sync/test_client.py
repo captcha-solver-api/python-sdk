@@ -4,11 +4,12 @@ not tied to any specific captcha type. See test_<captcha_type>.py in this
 directory for per-type task serialization and solve() tests.
 """
 
+import builtins
 from unittest.mock import patch
 
 import pytest
 
-from captcha_sdk import CaptchaClient, ApiError, TimeoutError, NetworkError, ValidationError
+from captcha_sdk import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
 from captcha_sdk.tasks import RecaptchaV2TaskProxyless
 
 
@@ -104,7 +105,7 @@ class TestCaptchaClient:
                 {"errorId": 0, "status": "processing"},
             ]
 
-            with pytest.raises(TimeoutError):
+            with pytest.raises(CaptchaTimeoutError):
                 client.solve(task)
 
     def test_api_error(self):
@@ -135,6 +136,12 @@ class TestCaptchaClient:
         with pytest.raises(ValidationError):
             CaptchaClient("")
 
+    def test_timeout_error_alias(self):
+        from captcha_sdk import TimeoutError as LegacyTimeoutError
+
+        assert LegacyTimeoutError is CaptchaTimeoutError
+        assert not issubclass(CaptchaTimeoutError, builtins.TimeoutError)
+
     def test_solve_timeout_override(self):
         client = CaptchaClient("test_key", timeout=120, polling_interval=0.1)
         task = RecaptchaV2TaskProxyless(websiteURL="https://example.com", websiteKey="test_key")
@@ -146,7 +153,7 @@ class TestCaptchaClient:
                 {"errorId": 0, "status": "processing"},
             ]
 
-            with pytest.raises(TimeoutError):
+            with pytest.raises(CaptchaTimeoutError):
                 client.solve(task, timeout=0.15)
 
     def test_language_pool_client_default_applied(self):

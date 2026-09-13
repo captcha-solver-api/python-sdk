@@ -116,7 +116,7 @@ Constructor.
 |---|---|---|---|
 | `client_key` | `str` | required | Your Captcha Solver API key. Raises `ValidationError` if empty. |
 | `base_url` | `str` | `https://api.captcha-solver.com` | API base URL. Override only for self-hosted/staging deployments. |
-| `timeout` | `int` | `120` | Default max seconds `solve()` waits for a solution before raising `TimeoutError`. Overridable per call. |
+| `timeout` | `int` | `120` | Default max seconds `solve()` waits for a solution before raising `CaptchaTimeoutError`. Overridable per call. |
 | `polling_interval` | `int` | `3` | Seconds between `getTaskResult` polls inside `solve()`. |
 | `language_pool` | `Optional[str]` | `None` | Default worker pool (`"en"` or `"ru"`) applied to every call that doesn't pass its own `language_pool`. |
 
@@ -146,7 +146,7 @@ solution -- wraps `create_task()` + `get_task_result()` so you don't poll by han
 
 Returns the `solution` dict once `status` is `"ready"` -- its shape depends on
 the task type (see [Captcha Types](#captcha-types)).
-Raises `ApiError`, `TimeoutError`, or `NetworkError`.
+Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 
 ### `create_task(task, language_pool=None)`
 
@@ -620,7 +620,7 @@ This completes in roughly the time of the slowest single captcha, not the sum of
 ### Error handling
 
 ```python
-from captcha_sdk import CaptchaClient, ApiError, TimeoutError, NetworkError, ValidationError
+from captcha_sdk import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
 client = CaptchaClient("your_api_key")
 try:
     result = client.solve(task)
@@ -628,11 +628,14 @@ except ValidationError as e:
     print(f"Invalid argument: {e}")
 except ApiError as e:
     print(f"API error: {e.error_code} {e.error_description}")
-except TimeoutError:
+except CaptchaTimeoutError:
     print("Task timed out")
 except NetworkError as e:
     print(f"Network error: {e}")
 ```
+
+`TimeoutError` is still exported as a deprecated alias of `CaptchaTimeoutError`.
+Avoid importing it by name: it shadows Python's built-in `TimeoutError`.
 
 ## Running the examples
 

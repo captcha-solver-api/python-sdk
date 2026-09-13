@@ -15,10 +15,15 @@ class NetworkError(CaptchaError):
     pass
 
 
-class TimeoutError(CaptchaError):
+class CaptchaTimeoutError(CaptchaError):
     """Raised when the operation exceeds the configured timeout."""
 
     pass
+
+
+# Deprecated alias kept for backward compatibility. It shadows the built-in
+# ``TimeoutError`` when imported by name, so prefer ``CaptchaTimeoutError``.
+TimeoutError = CaptchaTimeoutError
 
 
 class ApiError(CaptchaError):

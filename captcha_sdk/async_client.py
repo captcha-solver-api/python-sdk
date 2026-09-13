@@ -15,7 +15,7 @@ import httpx
 from .exceptions import (
     ApiError,
     NetworkError,
-    TimeoutError,
+    CaptchaTimeoutError,
     ValidationError,
 )
 
@@ -50,7 +50,7 @@ class AsyncCaptchaClient:
             base_url: API base URL. Override only for self-hosted or staging
                 deployments.
             timeout: Default max seconds `solve()` waits for a solution before
-                raising `TimeoutError`. Can be overridden per call.
+                raising `CaptchaTimeoutError`. Can be overridden per call.
             polling_interval: Seconds to wait between `getTaskResult` polls
                 inside `solve()`.
             language_pool: Default worker pool selector (e.g. `"en"` or `"ru"`)
@@ -98,7 +98,7 @@ class AsyncCaptchaClient:
             response = await self._client.post(url, json=payload, timeout=30)
             response.raise_for_status()
         except httpx.TimeoutException as exc:
-            raise TimeoutError("Request timed out.") from exc
+            raise CaptchaTimeoutError("Request timed out.") from exc
         except httpx.HTTPError as exc:
             raise NetworkError(str(exc)) from exc
 
@@ -136,7 +136,7 @@ class AsyncCaptchaClient:
         Raises:
             ApiError: The API rejected the task or its parameters.
             NetworkError: The request failed at the transport level.
-            TimeoutError: The HTTP request timed out.
+            CaptchaTimeoutError: The HTTP request timed out.
         """
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
@@ -224,7 +224,7 @@ class AsyncCaptchaClient:
 
         Raises:
             ApiError: The API rejected the task or reported a solving error.
-            TimeoutError: No solution was ready before the deadline.
+            CaptchaTimeoutError: No solution was ready before the deadline.
             NetworkError: A request failed at the transport level.
         """
 
@@ -240,4 +240,4 @@ class AsyncCaptchaClient:
 
             await asyncio.sleep(self.polling_interval)
 
-        raise TimeoutError("Task solving timed out.")
+        raise CaptchaTimeoutError("Task solving timed out.")

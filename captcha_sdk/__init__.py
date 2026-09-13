@@ -19,6 +19,7 @@ from .exceptions import (
     CaptchaError,
     ApiError,
     NetworkError,
+    CaptchaTimeoutError,
     TimeoutError,
     ValidationError,
 )
@@ -31,6 +32,7 @@ __all__ = [
     "CaptchaError",
     "ApiError",
     "NetworkError",
+    "CaptchaTimeoutError",
     "TimeoutError",
     "ValidationError",
 ]

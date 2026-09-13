@@ -12,7 +12,7 @@ import requests
 from .exceptions import (
     ApiError,
     NetworkError,
-    TimeoutError,
+    CaptchaTimeoutError,
     ValidationError,
 )
 
@@ -39,7 +39,7 @@ class CaptchaClient:
             base_url: API base URL. Override only for self-hosted or staging
                 deployments.
             timeout: Default max seconds `solve()` waits for a solution before
-                raising `TimeoutError`. Can be overridden per call.
+                raising `CaptchaTimeoutError`. Can be overridden per call.
             polling_interval: Seconds to wait between `getTaskResult` polls
                 inside `solve()`.
             language_pool: Default worker pool selector (e.g. `"en"` or `"ru"`)
@@ -90,7 +90,7 @@ class CaptchaClient:
             response = self.session.post(url, json=payload, timeout=30)
             response.raise_for_status()
         except requests.exceptions.Timeout as exc:
-            raise TimeoutError("Request timed out.") from exc
+            raise CaptchaTimeoutError("Request timed out.") from exc
         except requests.exceptions.RequestException as exc:
             raise NetworkError(str(exc)) from exc
 
@@ -126,7 +126,7 @@ class CaptchaClient:
         Raises:
             ApiError: The API rejected the task (bad key, bad parameters, etc).
             NetworkError: The request failed at the transport level.
-            TimeoutError: The HTTP request itself timed out (not the solve).
+            CaptchaTimeoutError: The HTTP request itself timed out (not the solve).
         """
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
@@ -209,7 +209,7 @@ class CaptchaClient:
 
         Raises:
             ApiError: The API rejected the task or reported an error while solving.
-            TimeoutError: No solution was ready before the deadline.
+            CaptchaTimeoutError: No solution was ready before the deadline.
             NetworkError: A request failed at the transport level.
         """
 
@@ -225,4 +225,4 @@ class CaptchaClient:
 
             time.sleep(self.polling_interval)
 
-        raise TimeoutError("Task solving timed out.")
+        raise CaptchaTimeoutError("Task solving timed out.")
