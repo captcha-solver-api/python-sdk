@@ -55,7 +55,7 @@ If you find any bugs or issues with the project, feel free to open an issue in t
 
 ## Code of Conduct
 
-By contributing to this project, you agree to abide by our [Code of Conduct](https://github.com/captcha-solver-api/python-examples/blob/main/CODE_OF_CONDUCT.md). Please be respectful and considerate to other contributors.
+By contributing to this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md). Please be respectful and considerate to other contributors.
 
 ## Types of Contributions
 
