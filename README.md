@@ -43,8 +43,12 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
 ## Installation
 
 ```bash
-# pip install captcha-solver-api
+pip install captcha-solver-api
+```
 
+Or install the latest version from GitHub:
+
+```bash
 pip install git+https://github.com/captcha-solver-api/python-sdk.git
 ```
 
