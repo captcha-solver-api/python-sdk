@@ -28,9 +28,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           tag_version="${GITHUB_REF_NAME#v}"
-          pkg_version="$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          pkg_version="$(python -c 'import re; print(re.search(r"__version__\s*=\s*\"([^\"]+)\"", open("captcha_sdk/_version.py").read()).group(1))')"
           if [ "$tag_version" != "$pkg_version" ]; then
-            echo "::error::Tag v$tag_version does not match pyproject.toml version $pkg_version"
+            echo "::error::Tag v$tag_version does not match captcha_sdk/_version.py version $pkg_version"
             exit 1
           fi
 

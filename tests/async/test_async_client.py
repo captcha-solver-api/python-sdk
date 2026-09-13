@@ -20,6 +20,12 @@ class TestAsyncCaptchaClient:
         with pytest.raises(ValidationError):
             AsyncCaptchaClient("")
 
+    async def test_sdk_header(self):
+        from captcha_sdk import __version__
+
+        async with AsyncCaptchaClient("test_key") as client:
+            assert client._client.headers["X-SDK"] == f"python-sdk/{__version__}"
+
     async def test_create_task(self):
         client = AsyncCaptchaClient("test_key")
         task = RecaptchaV2TaskProxyless(websiteURL="https://example.com", websiteKey="test_key")

@@ -5,7 +5,8 @@ Python SDK for the Captcha Solver API, published on PyPI as `captcha-sdk`.
 ## Project layout
 
 - `captcha_sdk/` — package: `client.py` (sync), `async_client.py` (async), `tasks.py`, `exceptions.py`
-- `tests/sync/`, `tests/async/` — pytest, HTTP is mocked
+- `tests/sync/`, `tests/async/` — unit tests, HTTP is mocked
+- `tests/integration/` — real HTTP requests to a local stub server (`api_server` fixture)
 - `examples/sync/`, `examples/async/` — runnable examples
 - `DEVELOPMENT.md` — setup, tests, release process
 
@@ -19,7 +20,8 @@ python -m build && python -m twine check --strict dist/*
 
 ## Rules
 
-- The version is defined in two places and must match: `pyproject.toml` (`version`) and `captcha_sdk/__init__.py` (`__version__`).
+- The version is defined only in `captcha_sdk/_version.py`; `pyproject.toml` reads it dynamically. Do not hardcode it elsewhere.
+- Every request sends `X-SDK: python-sdk/<version>` so the backend can collect SDK usage stats. Keep it in both clients.
 - Supported Python is 3.9+; do not use syntax or stdlib features newer than 3.9.
 
 ## Commits

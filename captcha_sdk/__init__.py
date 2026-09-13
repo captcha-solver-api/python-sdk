@@ -24,7 +24,7 @@ from .exceptions import (
     ValidationError,
 )
 
-__version__ = "1.0.0"
+from ._version import __version__
 
 __all__ = [
     "CaptchaClient",

@@ -21,10 +21,16 @@ Without `pytest-asyncio` every test in `tests/async/` fails.
 python -m pytest -q                 # all tests
 python -m pytest tests/sync -v      # sync client only
 python -m pytest tests/async -v     # async client only
+python -m pytest tests/integration  # real HTTP requests to a local stub server
 python -m pytest -k turnstile       # filter by name
 ```
 
-Tests mock HTTP calls, so no API key or network access is needed.
+No API key or internet access is needed:
+
+- `tests/sync/`, `tests/async/` — unit tests, HTTP calls are mocked.
+- `tests/integration/` — the client sends real HTTP requests to a server started on
+  `127.0.0.1` by the `api_server` fixture, which records path, headers and body.
+  Use it to check what actually goes over the wire (e.g. the `X-SDK` header).
 
 CI (`.github/workflows/tests.yml`) runs the suite on Python 3.9–3.13 for every push
 and pull request and checks that the package builds.
@@ -42,9 +48,8 @@ python -m twine check --strict dist/*
 Publishing to PyPI is done by `.github/workflows/publish.yml` using Trusted Publishing
 (OIDC), so no API token is stored in the repository.
 
-1. Bump the version in **both** places, they must match:
-   - `pyproject.toml` → `version`
-   - `captcha_sdk/__init__.py` → `__version__`
+1. Bump `__version__` in `captcha_sdk/_version.py`. This is the only place:
+   `pyproject.toml`, `captcha_sdk.__version__` and the `X-SDK` request header read it from there.
 2. Commit and push to `main`, wait for the Tests workflow to pass.
 3. Tag and push:
 
@@ -53,7 +58,7 @@ Publishing to PyPI is done by `.github/workflows/publish.yml` using Trusted Publ
    git push origin v1.2.0
    ```
 
-4. The workflow runs tests, verifies that the tag matches `pyproject.toml`, builds and
+4. The workflow runs tests, verifies that the tag matches `captcha_sdk/_version.py`, builds and
    uploads to PyPI (GitHub environment `pypi`).
 
 A PyPI version cannot be re-uploaded. If a release is broken, publish a new patch version.

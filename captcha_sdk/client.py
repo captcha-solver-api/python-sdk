@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional
 
 import requests
 
+from ._version import __version__
 from .exceptions import (
     ApiError,
     NetworkError,
@@ -64,6 +65,7 @@ class CaptchaClient:
             {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
+                "X-SDK": f"python-sdk/{__version__}",
             }
         )
 

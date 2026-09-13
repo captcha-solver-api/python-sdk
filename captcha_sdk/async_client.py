@@ -12,6 +12,7 @@ from typing import Any, Dict, Optional
 
 import httpx
 
+from ._version import __version__
 from .exceptions import (
     ApiError,
     NetworkError,
@@ -72,7 +73,11 @@ class AsyncCaptchaClient:
 
         self._client = httpx.AsyncClient(
             follow_redirects=True,
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-SDK": f"python-sdk/{__version__}",
+            },
         )
 
     async def aclose(self) -> None:

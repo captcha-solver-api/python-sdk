@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "captcha-sdk"
-version = "1.0.0"
+dynamic = ["version"]
 description = "Official Python SDK for solving reCAPTCHA v2/v3, Cloudflare Turnstile, GeeTest v3/v4, Yandex SmartCaptcha, Tencent, and image/click captchas via the Captcha Solver API"
 readme = "README.md"
 license = "MIT"
@@ -54,6 +54,9 @@ Repository = "https://github.com/captcha-solver-api/python-sdk"
 
 [tool.setuptools.packages.find]
 include = ["captcha_sdk*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "captcha_sdk._version.__version__"}
 
 [tool.setuptools.package-data]
 captcha_sdk = ["py.typed"]

@@ -136,6 +136,12 @@ class TestCaptchaClient:
         with pytest.raises(ValidationError):
             CaptchaClient("")
 
+    def test_sdk_header(self):
+        from captcha_sdk import __version__
+
+        client = CaptchaClient("test_key")
+        assert client.session.headers["X-SDK"] == f"python-sdk/{__version__}"
+
     def test_timeout_error_alias(self):
         from captcha_sdk import TimeoutError as LegacyTimeoutError
 
