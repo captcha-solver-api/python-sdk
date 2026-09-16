@@ -9,11 +9,17 @@ Prerequisites:
 import os
 import sys
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError as exc:
+    if exc.name != 'dotenv':
+        raise
+    load_dotenv = None
 
 repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(repo_root)
-load_dotenv(os.path.join(repo_root, '.env'))
+if load_dotenv is not None:
+    load_dotenv(os.path.join(repo_root, '.env'))
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless, RecaptchaV2Task
@@ -28,7 +34,7 @@ api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
 
 # Create a solver instance with your API key.
 # Optional: timeout (max seconds to wait for solution, default 120)
-# Optional: polling_interval (seconds between status checks, default 3)
+# Optional: polling_interval (seconds before and between status checks, default 5)
 solver = CaptchaClient(api_key)
 
 # --- Proxyless example ---

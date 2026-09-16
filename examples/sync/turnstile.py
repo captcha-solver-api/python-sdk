@@ -10,11 +10,17 @@ Prerequisites:
 import os
 import sys
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError as exc:
+    if exc.name != 'dotenv':
+        raise
+    load_dotenv = None
 
 repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(repo_root)
-load_dotenv(os.path.join(repo_root, '.env'))
+if load_dotenv is not None:
+    load_dotenv(os.path.join(repo_root, '.env'))
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import TurnstileTaskProxyless, TurnstileTask

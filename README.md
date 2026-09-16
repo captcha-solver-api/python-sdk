@@ -74,7 +74,7 @@ client = CaptchaClient("your_api_key")
 
 ## Quick Start
 
-Solve a reCAPTCHA v2 in 4 lines.
+Solve a reCAPTCHA v2 with a task object and one `solve()` call.
 
 ```python
 from captcha_solver_api import CaptchaClient
@@ -120,8 +120,8 @@ Constructor.
 |---|---|---|---|
 | `client_key` | `str` | required | Your Captcha Solver API key. Raises `ValidationError` if empty. |
 | `base_url` | `str` | `https://api.captcha-solver.com` | API base URL. Override only for self-hosted/staging deployments. |
-| `timeout` | `int` | `120` | Default max seconds `solve()` waits for a solution before raising `CaptchaTimeoutError`. Overridable per call. |
-| `polling_interval` | `int` | `3` | Seconds between `getTaskResult` polls inside `solve()`. |
+| `timeout` | `int` | `120` | Polling window after task creation, in seconds. Overridable per call; each HTTP request has a separate 30-second timeout. |
+| `polling_interval` | `int` | `5` | Seconds before the first `getTaskResult` poll and between subsequent polls, matching the API recommendation. |
 | `language_pool` | `Optional[str]` | `None` | Default worker pool (`"en"` or `"ru"`) applied to every call that doesn't pass its own `language_pool`. |
 
 Both clients hold a reusable connection pool (`requests.Session` / `httpx.AsyncClient`)
@@ -155,9 +155,9 @@ Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 ### `create_task(task, language_pool=None)`
 
 Submits `task` and returns its numeric task ID without waiting for a solution.
-Same parameters as `solve()`. Use this instead of `solve()` only if you need to
+Accepts `task` and `language_pool`; it does not accept `timeout`. Use this instead of `solve()` if you need to
 manage polling yourself (e.g. checking on many tasks from a different process).
-Raises `ApiError`, `NetworkError`.
+Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 
 ### `get_task_result(task_id)`
 
@@ -165,12 +165,12 @@ Fetches the current status of a task created with `create_task()`. Always
 returns a dict with a `status` key (`"processing"` or `"ready"`); when
 `"ready"`, also has a `solution` dict. This is a single poll, not a wait --
 call it repeatedly (as `solve()` does) until `status` is `"ready"`.
-Raises `ApiError`, `NetworkError`.
+Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 
 ### `get_balance()`
 
 Returns the account's current balance (`float`) in the account's currency.
-Raises `ApiError`, `NetworkError`.
+Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 
 ## Captcha Types
 
@@ -240,8 +240,10 @@ task = RecaptchaV2Task(
 Use this method to solve the Enterprise version of reCAPTCHA v2 and obtain a
 token for a page that uses `grecaptcha.enterprise`.
 
-`RecaptchaV2EnterpriseTaskProxyless` / `RecaptchaV2EnterpriseTask`. Same fields
-as reCAPTCHA v2, plus:
+`RecaptchaV2EnterpriseTaskProxyless` / `RecaptchaV2EnterpriseTask` accept
+`websiteURL`, `websiteKey`, `isInvisible`, `apiDomain`, `userAgent`, and `cookies`,
+plus `enterprisePayload`. Use `enterprisePayload={"s": "..."}` for the
+Enterprise `s` value; these classes do not accept `recaptchaDataSValue`.
 
 | Parameter | Required | Description |
 |---|---|---|
@@ -271,8 +273,8 @@ With proxy, use `RecaptchaV2EnterpriseTask` (same proxy fields as reCAPTCHA v2).
 Use this method to obtain a score-based reCAPTCHA v3 token for a specific site,
 action, and minimum score. This variant does not use a proxy.
 
-`RecaptchaV3TaskProxyless`. No proxy variant exists -- v3 is score-based and
-invisible, so there's no widget/session to pin to a proxy IP.
+`RecaptchaV3TaskProxyless`. This API supports v3 through the service's IPs;
+there is no corresponding task type for your own proxy.
 
 | Parameter | Required | Description |
 |---|---|---|
@@ -317,7 +319,10 @@ that the target page expects in `cf-turnstile-response`.
 | `pagedata` | no | Value of the `chlPageData` parameter, needed for some Cloudflare challenge pages beyond the basic widget. |
 | `userAgent` | no | User-Agent to solve with -- the returned token is tied to it, submit with the same one. |
 
-**Response:** `token` -- submit as `cf-turnstile-response`.
+**Response:** `token` -- submit as `cf-turnstile-response`. For Cloudflare
+Challenge pages, the solution also includes `userAgent`; use that User-Agent
+when submitting the token. Pass `action`, `data`, and `pagedata` when the page
+provides them. The API field is spelled `pagedata`, all lowercase.
 
 ```python
 from captcha_solver_api import CaptchaClient
@@ -389,7 +394,7 @@ pass the values collected from the target page before creating the task.
 | `version` | no | `3` (default) or `4`. |
 | `gt` | v3 only | Public key of the GeeTest widget. |
 | `challenge` | v3 only | Session-specific challenge value from the page -- must be freshly fetched for every request, it cannot be reused. |
-| `initParameters` | v4 only | Extra parameters from the page's `initGeetest` call; for v4 must contain `captcha_id`. |
+| `initParameters` | required for v4; optional for v3 | Extra initialization parameters; for v4 must contain `captcha_id`. |
 | `geetestApiServerSubdomain` | no | Custom GeeTest API subdomain, if the site uses one. |
 | `userAgent` | no | User-Agent to solve with. |
 | `risk_type` | no | Value of the `risk_type` parameter from the captcha-loading request, if present. Dynamic, single-use, and time-limited. |
@@ -562,6 +567,13 @@ it for every other call:
 result = client.solve(task, timeout=300)
 ```
 
+The [API recommends polling every 5 seconds](https://captcha-solver.com/en/docs/how-it-works).
+`solve()` waits for `polling_interval` before its first poll and between polls.
+Its default 120-second polling window is independent of the API's five-minute
+task lifetime. A local timeout does not cancel a task or mean that the API
+failed to solve it. Use `create_task()` and keep its `task_id` if you need to
+check the same task later; calling `solve()` again creates a new task.
+
 ### Worker language pool
 
 Set a default `language_pool` once at construction instead of passing it to every call:
@@ -647,9 +659,10 @@ See the dedicated [examples documentation](https://github.com/captcha-solver-api
 sync/async example list, setup steps, expected results, and placeholder guidance.
 
 - **Image/click captchas** (`image_to_text.py`, `coordinates.py`,
-  `yandex_smartcaptcha_image.py`) run end-to-end with nothing but a valid
+  `yandex_smartcaptcha_image.py`) run after installing the dependencies and setting a valid
   `CAPTCHA_API_KEY` -- they read sample images bundled in
   [examples/assets](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/assets), no target page needed.
+  `python-dotenv` is optional: install it only if you want the scripts to load a `.env` file.
 - **Token captchas** (`recaptcha_v2.py`, `recaptcha_v2_enterprise.py`, `recaptcha_v3.py`,
   `turnstile.py`, `yandex_smartcaptcha.py`, `geetest_v4.py`, `tencent.py`) use
   placeholder values (`https://example.com/...`, `YOUR_WEBSITE_KEY`, `YOUR_APP_ID`,
@@ -673,12 +686,11 @@ python examples/sync/image_to_text.py
 python examples/sync/coordinates.py
 ```
 
-**Verified against the live API** during development, using real target pages and
-real proxy credentials in place of the placeholders shown above: every captcha
-type in this SDK -- proxyless and with proxy -- returned a real, correctly-shaped
-solution when pointed at a genuine target. `geetest_v3.py`'s request shape was
-likewise confirmed correct when given a real, freshly-fetched `gt`/`challenge`
-pair.
+Live checks with real parameters have exercised all supported task types.
+Individual tasks may return `ERROR_CAPTCHA_UNSOLVABLE` or exceed the client's
+polling timeout. A `ready` response confirms that the service returned a
+solution; the target website must still accept the token with the matching
+page and session parameters.
 
 ## Requirements
 

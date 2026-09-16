@@ -42,7 +42,7 @@ class AsyncCaptchaClient:
         client_key: str,
         base_url: str = "https://api.captcha-solver.com",
         timeout: int = 120,
-        polling_interval: int = 3,
+        polling_interval: int = 5,
         language_pool: Optional[str] = None,
     ) -> None:
         """
@@ -52,8 +52,9 @@ class AsyncCaptchaClient:
                 deployments.
             timeout: Default max seconds `solve()` waits for a solution before
                 raising `CaptchaTimeoutError`. Can be overridden per call.
-            polling_interval: Seconds to wait between `getTaskResult` polls
-                inside `solve()`.
+            polling_interval: Seconds to wait before the first `getTaskResult`
+                poll and between subsequent polls inside `solve()`. Defaults
+                to the API's recommended interval of 5 seconds.
             language_pool: Default worker pool selector (e.g. `"en"` or `"ru"`)
                 applied to every `create_task()`/`solve()` call that doesn't pass
                 its own `language_pool`. Leave unset to use the account's default
@@ -174,6 +175,7 @@ class AsyncCaptchaClient:
         Raises:
             ApiError: The API reports an error for the task.
             NetworkError: The request failed at the transport level.
+            CaptchaTimeoutError: The HTTP request timed out.
         """
         payload = {
             "clientKey": self.client_key,
@@ -196,6 +198,7 @@ class AsyncCaptchaClient:
         Raises:
             ApiError: The API key is invalid or the account cannot be resolved.
             NetworkError: The request failed at the transport level.
+            CaptchaTimeoutError: The HTTP request timed out.
         """
         payload = {"clientKey": self.client_key}
         data = await self._request("getBalance", payload)
@@ -235,14 +238,16 @@ class AsyncCaptchaClient:
 
         task_id = await self.create_task(task, language_pool=language_pool)
 
-        deadline = time.time() + (timeout if timeout is not None else self.timeout)
+        deadline = time.monotonic() + (timeout if timeout is not None else self.timeout)
 
-        while time.time() < deadline:
+        while time.monotonic() < deadline:
+            remaining = deadline - time.monotonic()
+            await asyncio.sleep(min(self.polling_interval, max(0, remaining)))
+            if time.monotonic() >= deadline:
+                break
             result = await self.get_task_result(task_id)
 
             if result.get("status") == "ready":
                 return result["solution"]
-
-            await asyncio.sleep(self.polling_interval)
 
         raise CaptchaTimeoutError("Task solving timed out.")

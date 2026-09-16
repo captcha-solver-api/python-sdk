@@ -20,6 +20,26 @@ $env:CAPTCHA_API_KEY = "your_api_key"
 export CAPTCHA_API_KEY=your_api_key
 ```
 
+Environment variables work without `python-dotenv`. To use a `.env` file, install
+the optional loader first:
+
+```bash
+python -m pip install python-dotenv
+```
+
+### Installed package or repository source
+
+Both import methods are supported. For a regular installation of the local SDK,
+use `python -m pip install .` instead of `pip install -e .`. The examples add
+the repository root at the end of `sys.path`, so an installed package normally
+takes precedence. To use only the source files, install `requests` and `httpx`
+in a separate environment without installing the SDK. Existing `PYTHONPATH`
+settings or preloaded modules can affect import selection.
+
+To check the copy actually loaded by an example, print
+`captcha_solver_api.__file__` after its SDK import. A regular installation points
+to `site-packages`; the source import points to this repository's package folder.
+
 Replace placeholder values such as `YOUR_WEBSITE_KEY`, `YOUR_APP_ID`, `YOUR_CAPTCHA_ID`, and proxy credentials before running token or proxy examples. Do not commit real API keys or proxy credentials.
 
 ## Directories
@@ -60,8 +80,10 @@ Async scripts create an `AsyncCaptchaClient` and await the same operations as th
 ## Important notes
 
 - Image examples can use the bundled files in `examples/assets`; they do not require a target website.
+- `yandex_smartcaptcha_image.py` sends `imgInstructions` as required by the documented `smart_captcha` flow. The bundled screenshot contains the visual instruction and is reused for that field; use the target's separate instruction image when available.
 - Token examples use placeholder site keys and URLs. Replace them with values from a page you are authorized to test.
 - `geetest_v3.py` needs a fresh `challenge` for every request; it expires quickly and must not be hardcoded.
 - Files using `*Task` instead of `*TaskProxyless` demonstrate solving through your own proxy. Supply valid proxy settings for your account.
 - For task parameters and response formats, see the [CAPTCHA type documentation](https://captcha-solver.com/en/docs/captcha-types).
 - For client methods and errors, see the [main README](../README.md#client-reference).
+- The default polling interval is 5 seconds, including the wait before the first poll. The default polling timeout is 120 seconds; use `solve(task, timeout=300)` for a longer wait. A timeout does not cancel the server's task.
