@@ -86,4 +86,4 @@ Async scripts create an `AsyncCaptchaClient` and await the same operations as th
 - Files using `*Task` instead of `*TaskProxyless` demonstrate solving through your own proxy. Supply valid proxy settings for your account.
 - For task parameters and response formats, see the [CAPTCHA type documentation](https://captcha-solver.com/en/docs/captcha-types).
 - For client methods and errors, see the [main README](../README.md#client-reference).
-- The default polling interval is 5 seconds, including the wait before the first poll. The default polling timeout is 120 seconds; use `solve(task, timeout=300)` for a longer wait. A timeout does not cancel the server's task.
+- The default polling interval is 10 seconds, including the wait before the first poll. The default polling timeout is 120 seconds; use `solve(task, timeout=300)` for a longer wait. A timeout does not cancel the server's task.

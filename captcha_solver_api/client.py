@@ -31,7 +31,7 @@ class CaptchaClient:
         client_key: str,
         base_url: str = "https://api.captcha-solver.com",
         timeout: int = 120,
-        polling_interval: int = 5,
+        polling_interval: int = 10,
         language_pool: Optional[str] = None,
     ) -> None:
         """
@@ -43,7 +43,7 @@ class CaptchaClient:
                 raising `CaptchaTimeoutError`. Can be overridden per call.
             polling_interval: Seconds to wait before the first `getTaskResult`
                 poll and between subsequent polls inside `solve()`. Defaults
-                to the API's recommended interval of 5 seconds.
+                to 10 seconds.
             language_pool: Default worker pool selector (e.g. `"en"` or `"ru"`)
                 applied to every `create_task()`/`solve()` call that doesn't pass
                 its own `language_pool`. Leave unset to use the account's default

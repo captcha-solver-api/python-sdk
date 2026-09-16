@@ -121,7 +121,7 @@ Constructor.
 | `client_key` | `str` | required | Your Captcha Solver API key. Raises `ValidationError` if empty. |
 | `base_url` | `str` | `https://api.captcha-solver.com` | API base URL. Override only for self-hosted/staging deployments. |
 | `timeout` | `int` | `120` | Polling window after task creation, in seconds. Overridable per call; each HTTP request has a separate 30-second timeout. |
-| `polling_interval` | `int` | `5` | Seconds before the first `getTaskResult` poll and between subsequent polls, matching the API recommendation. |
+| `polling_interval` | `int` | `10` | Seconds before the first `getTaskResult` poll and between subsequent polls. |
 | `language_pool` | `Optional[str]` | `None` | Default worker pool (`"en"` or `"ru"`) applied to every call that doesn't pass its own `language_pool`. |
 
 Both clients hold a reusable connection pool (`requests.Session` / `httpx.AsyncClient`)
@@ -567,8 +567,9 @@ it for every other call:
 result = client.solve(task, timeout=300)
 ```
 
-The [API recommends polling every 5 seconds](https://captcha-solver.com/en/docs/how-it-works).
-`solve()` waits for `polling_interval` before its first poll and between polls.
+The [API requires at least 5 seconds between polls](https://captcha-solver.com/en/docs/how-it-works).
+The SDK defaults to 10 seconds. `solve()` waits for `polling_interval` before
+its first poll and between polls.
 Its default 120-second polling window is independent of the API's five-minute
 task lifetime. A local timeout does not cancel a task or mean that the API
 failed to solve it. Use `create_task()` and keep its `task_id` if you need to

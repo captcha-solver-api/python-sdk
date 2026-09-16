@@ -23,7 +23,7 @@ class Clock:
 
 
 CASES = [
-    (None, 20, [5, 10], False),
+    (None, 25, [10, 20], False),
     (2, 20, [2, 4], False),
     (None, 3, [], True),
     (5, 7, [5], True),

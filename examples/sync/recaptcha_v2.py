@@ -34,7 +34,7 @@ api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
 
 # Create a solver instance with your API key.
 # Optional: timeout (max seconds to wait for solution, default 120)
-# Optional: polling_interval (seconds before and between status checks, default 5)
+# Optional: polling_interval (seconds before and between status checks, default 10)
 solver = CaptchaClient(api_key)
 
 # --- Proxyless example ---
