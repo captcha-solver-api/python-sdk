@@ -525,8 +525,7 @@ class GeeTestTask(BaseTask, ProxyMixin):
 
 
 class YandexSmartCaptchaTaskProxyless(BaseTask):
-    """Yandex SmartCaptcha (token challenge) without proxy. For the image
-    challenge instead, use `CoordinatesTask` with `imgType="smart_captcha"`.
+    """Yandex SmartCaptcha (token challenge) without proxy.
 
     Args:
         websiteURL: Full URL of the page where the widget is located.
@@ -597,20 +596,16 @@ class YandexSmartCaptchaTask(BaseTask, ProxyMixin):
 
 
 class CoordinatesTask(BaseTask):
-    """Coordinate-based (click) image captcha. Used both for generic
-    "click on X" captchas and for Yandex SmartCaptcha's image challenge (set
-    `imgType` accordingly). No proxy variant -- the image is submitted directly.
+    """Coordinate-based (click) image captcha. No proxy variant -- the image
+    is submitted directly.
 
     Args:
         body: The captcha image, base64-encoded (no `data:image/...;base64,` prefix).
         comment: Hint for the worker, e.g. `"click on the green apple"`. Recommended
             for generic click captchas.
-        imgInstructions: Optional instruction image, base64-encoded, showing what
-            to click and in what order. Required when `imgType="smart_captcha"`.
+        imgInstructions: Optional instruction image, base64-encoded.
         minClicks: Minimum number of clicks expected (default `1`).
         maxClicks: Maximum number of clicks allowed.
-        imgType: Set to `"smart_captcha"` to solve a Yandex SmartCaptcha image
-            challenge instead of a generic click captcha.
 
     Returns (`solution` from `solve()`):
         `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click,
@@ -626,14 +621,12 @@ class CoordinatesTask(BaseTask):
         imgInstructions: Optional[str] = None,
         minClicks: Optional[int] = None,
         maxClicks: Optional[int] = None,
-        imgType: Optional[str] = None,
     ) -> None:
         self.body = body
         self.comment = comment
         self.imgInstructions = imgInstructions
         self.minClicks = minClicks
         self.maxClicks = maxClicks
-        self.imgType = imgType
 
 
 class TencentTaskProxyless(BaseTask):

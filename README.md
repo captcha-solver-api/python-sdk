@@ -440,7 +440,7 @@ for the widget on the target page. Use the coordinates method for image challeng
 
 `YandexSmartCaptchaTaskProxyless` / `YandexSmartCaptchaTask` -- token-based
 challenge. For the image challenge instead, use `CoordinatesTask` with
-`imgType="smart_captcha"` (see [Coordinates](#coordinates-click-captcha) below).
+[Coordinates](#coordinates-click-captcha) is available for generic click captchas.
 
 | Parameter | Required | Description |
 |---|---|---|
@@ -483,10 +483,9 @@ SmartCaptcha's image challenge. No proxy variant -- the image is submitted direc
 |---|---|---|
 | `body` | yes | The captcha image, base64-encoded. |
 | `comment` | no (recommended) | Hint for the worker, e.g. `"click on the green apple"`. |
-| `imgInstructions` | required for `imgType="smart_captcha"` | Instruction image, base64-encoded, showing what to click and in what order. |
+| `imgInstructions` | no | Optional instruction image, base64-encoded. |
 | `minClicks` | no | Minimum number of clicks expected (default `1`). |
 | `maxClicks` | no | Maximum number of clicks allowed. |
-| `imgType` | no | `"smart_captcha"` to solve a Yandex SmartCaptcha image challenge instead of a generic click captcha. |
 
 **Response:** `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click, in order.
 
@@ -504,9 +503,6 @@ task = CoordinatesTask(
 result = client.solve(task)
 print(result["coordinates"])  # [{"x": 140, "y": 110}]
 ```
-For the Yandex SmartCaptcha image challenge, see
-[examples/sync/yandex_smartcaptcha_image.py](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/sync/yandex_smartcaptcha_image.py)
-(or [examples/async](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/async/yandex_smartcaptcha_image.py)).
 
 ### Tencent
 

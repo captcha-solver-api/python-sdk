@@ -4,7 +4,6 @@ Example: Solve a Yandex SmartCaptcha challenge (token-based).
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
-    This example uses the token-based method. For image-based solving, see yandex_smartcaptcha_image.py.
 """
 
 import os

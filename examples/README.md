@@ -61,7 +61,6 @@ Each supported CAPTCHA type has a matching sync and async script:
 | GeeTest v3 | [geetest_v3.py](sync/geetest_v3.py) | [geetest_v3.py](async/geetest_v3.py) | `challenge`, `validate`, `seccode` |
 | GeeTest v4 | [geetest_v4.py](sync/geetest_v4.py) | [geetest_v4.py](async/geetest_v4.py) | `captcha_output` and related fields |
 | Yandex SmartCaptcha token | [yandex_smartcaptcha.py](sync/yandex_smartcaptcha.py) | [yandex_smartcaptcha.py](async/yandex_smartcaptcha.py) | `token` |
-| Yandex SmartCaptcha image | [yandex_smartcaptcha_image.py](sync/yandex_smartcaptcha_image.py) | [yandex_smartcaptcha_image.py](async/yandex_smartcaptcha_image.py) | `coordinates` |
 | Coordinates / click captcha | [coordinates.py](sync/coordinates.py) | [coordinates.py](async/coordinates.py) | `coordinates` |
 | Tencent | [tencent.py](sync/tencent.py) | [tencent.py](async/tencent.py) | `appid`, `ret`, `ticket`, `randstr` |
 
@@ -80,7 +79,6 @@ Async scripts create an `AsyncCaptchaClient` and await the same operations as th
 ## Important notes
 
 - Image examples can use the bundled files in `examples/assets`; they do not require a target website.
-- `yandex_smartcaptcha_image.py` sends `imgInstructions` as required by the documented `smart_captcha` flow. The bundled screenshot contains the visual instruction and is reused for that field; use the target's separate instruction image when available.
 - Token examples use placeholder site keys and URLs. Replace them with values from a page you are authorized to test.
 - `geetest_v3.py` needs a fresh `challenge` for every request; it expires quickly and must not be hardcoded.
 - Files using `*Task` instead of `*TaskProxyless` demonstrate solving through your own proxy. Supply valid proxy settings for your account.

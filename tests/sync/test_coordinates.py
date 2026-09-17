@@ -1,5 +1,5 @@
 """
-Tests for CoordinatesTask (generic click captcha + Yandex SmartCaptcha image mode).
+Tests for CoordinatesTask.
 """
 
 from unittest.mock import patch
@@ -20,18 +20,6 @@ class TestCoordinates:
         assert result["type"] == "CoordinatesTask"
         assert result["body"] == "base64string"
         assert result["comment"] == "click on the green apple"
-
-    def test_yandex_smartcaptcha_variant(self):
-        task = CoordinatesTask(
-            body="base64string",
-            imgType="smart_captcha",
-            imgInstructions="base64instructions",
-            comment="select objects in the order of the instruction",
-        )
-        result = task.to_dict()
-
-        assert result["imgType"] == "smart_captcha"
-        assert result["imgInstructions"] == "base64instructions"
 
     def test_with_click_limits(self):
         task = CoordinatesTask(
