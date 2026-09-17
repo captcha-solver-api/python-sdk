@@ -55,6 +55,15 @@ class ProxyMixin:
         proxy_login: Optional[str] = None,
         proxy_password: Optional[str] = None,
     ) -> None:
+        """Sets the proxy fields on this task.
+
+        Args:
+            proxy_type: `"http"`, `"socks4"`, or `"socks5"`.
+            proxy_address: Proxy IP address or hostname.
+            proxy_port: Proxy port.
+            proxy_login: Proxy auth username, if required.
+            proxy_password: Proxy auth password, if required.
+        """
         self.proxyType = proxy_type
         self.proxyAddress = proxy_address
         self.proxyPort = proxy_port
