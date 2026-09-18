@@ -655,8 +655,7 @@ Avoid importing it by name: it shadows Python's built-in `TimeoutError`.
 See the dedicated [examples documentation](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/README.md) for the full
 sync/async example list, setup steps, expected results, and placeholder guidance.
 
-- **Image/click captchas** (`image_to_text.py`, `coordinates.py`,
-  `yandex_smartcaptcha_image.py`) run after installing the dependencies and setting a valid
+- **Image/click captchas** (`image_to_text.py`, `coordinates.py`) run after installing the dependencies and setting a valid
   `CAPTCHA_API_KEY` -- they read sample images bundled in
   [examples/assets](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/assets), no target page needed.
   `python-dotenv` is optional: install it only if you want the scripts to load a `.env` file.
