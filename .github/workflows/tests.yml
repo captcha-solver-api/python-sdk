@@ -1,7 +1,10 @@
 name: Tests
 
 on:
+  # Run on pushes to main only; feature branches are covered by the
+  # pull_request trigger, so this avoids a duplicate run per commit.
   push:
+    branches: [main]
   pull_request:
   workflow_call:
 
