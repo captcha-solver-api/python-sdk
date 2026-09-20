@@ -9,6 +9,7 @@
 [![Typed](https://img.shields.io/badge/typing-typed-blue)](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/py.typed)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/captcha-solver-api/python-sdk/blob/main/LICENSE.md)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
 [![JavaScript SDK](https://img.shields.io/badge/also_available-JavaScript_SDK-f7df1e?logo=javascript&logoColor=black)](https://github.com/captcha-solver-api/javascript-sdk)
 
 Official Python SDK for the Captcha Solver API. Solve reCAPTCHA v2/v3, Cloudflare Turnstile, GeeTest, Yandex SmartCaptcha, Tencent, and image/click captchas with a single method call -- sync or async.

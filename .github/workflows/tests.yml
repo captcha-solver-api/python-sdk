@@ -9,8 +9,9 @@ on:
   workflow_call:
 
 jobs:
-  # Static checks: ruff lint + formatting. Runs once on a single Python
-  # version since the result does not depend on the interpreter.
+  # Static checks: ruff lint + formatting and mypy type checking. Runs once
+  # on a single Python version since the result does not depend on the
+  # interpreter.
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -29,6 +30,9 @@ jobs:
 
       - name: Ruff format check
         run: ruff format --check .
+
+      - name: mypy
+        run: mypy captcha_solver_api
 
   # Test suite across all supported Python versions, plus a build check
   # to catch packaging errors early. Skipped if lint fails to save CI minutes.
