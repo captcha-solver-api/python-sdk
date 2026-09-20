@@ -6,6 +6,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/captcha-solver-api?logo=python&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
 [![Downloads](https://img.shields.io/pepy/dt/captcha-solver-api)](https://pepy.tech/project/captcha-solver-api)
 [![Tests](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml/badge.svg)](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/dzmitry-duboyski/77b084ed0d46c740183f89ec66af8a95/raw/python-sdk-coverage.json)](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml)
 [![Typed](https://img.shields.io/badge/typing-typed-blue)](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/py.typed)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/captcha-solver-api/python-sdk/blob/main/LICENSE.md)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
