@@ -9,7 +9,6 @@ from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
 
 
 class TestRecaptchaV3:
-
     def test_to_dict(self):
         task = RecaptchaV3TaskProxyless(
             websiteURL="https://example.com",
@@ -24,7 +23,9 @@ class TestRecaptchaV3:
 
     def test_solve(self):
         client = CaptchaClient("test_key", polling_interval=0.1)
-        task = RecaptchaV3TaskProxyless(websiteURL="https://example.com", websiteKey="test_key", minScore=0.3)
+        task = RecaptchaV3TaskProxyless(
+            websiteURL="https://example.com", websiteKey="test_key", minScore=0.3
+        )
 
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [

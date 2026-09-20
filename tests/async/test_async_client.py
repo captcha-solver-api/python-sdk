@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, patch
 import httpx
 import pytest
 
-from captcha_solver_api import AsyncCaptchaClient, ApiError, CaptchaTimeoutError, ValidationError
+from captcha_solver_api import ApiError, AsyncCaptchaClient, CaptchaTimeoutError, ValidationError
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 

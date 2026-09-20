@@ -12,8 +12,8 @@ import requests
 from ._version import __version__
 from .exceptions import (
     ApiError,
-    NetworkError,
     CaptchaTimeoutError,
+    NetworkError,
     ValidationError,
 )
 
@@ -76,7 +76,7 @@ class CaptchaClient:
         to have it closed automatically."""
         self.session.close()
 
-    def __enter__(self) -> "CaptchaClient":
+    def __enter__(self) -> CaptchaClient:
         return self
 
     def __exit__(self, *exc_info: Any) -> None:
@@ -102,6 +102,8 @@ class CaptchaClient:
         except ValueError as exc:
             raise NetworkError(f"Non-JSON response from API: {response.text[:200]!r}") from exc
 
+        if not isinstance(data, dict):
+            raise NetworkError(f"Unexpected API response shape: {type(data).__name__}")
         return data
 
     def _ensure_success(self, data: Dict[str, Any]) -> None:
@@ -141,7 +143,7 @@ class CaptchaClient:
 
         data = self._request("createTask", payload)
         self._ensure_success(data)
-        return data["taskId"]
+        return int(data["taskId"])
 
     def get_task_result(self, task_id: int) -> Dict[str, Any]:
         """Fetches the current status of a task created with `create_task()`.
@@ -187,7 +189,7 @@ class CaptchaClient:
         payload = {"clientKey": self.client_key}
         data = self._request("getBalance", payload)
         self._ensure_success(data)
-        return data["balance"]
+        return float(data["balance"])
 
     def solve(
         self,
@@ -230,6 +232,9 @@ class CaptchaClient:
             result = self.get_task_result(task_id)
 
             if result.get("status") == "ready":
-                return result["solution"]
+                solution = result["solution"]
+                if not isinstance(solution, dict):
+                    raise NetworkError("API returned a ready task without a solution object")
+                return solution
 
         raise CaptchaTimeoutError("Task solving timed out.")

@@ -10,7 +10,6 @@ from captcha_solver_api.tasks import TurnstileTaskProxyless
 
 
 class TestAsyncTurnstile:
-
     async def test_solve(self):
         client = AsyncCaptchaClient("test_key", polling_interval=0.1)
         task = TurnstileTaskProxyless(websiteURL="https://example.com", websiteKey="test_key")

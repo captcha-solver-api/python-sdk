@@ -13,26 +13,26 @@ Example:
     result = client.solve(task)
 """
 
-from .client import CaptchaClient
+from ._version import __version__
 from .async_client import AsyncCaptchaClient
+from .client import CaptchaClient
 from .exceptions import (
-    CaptchaError,
     ApiError,
-    NetworkError,
+    CaptchaError,
     CaptchaTimeoutError,
+    NetworkError,
     TimeoutError,
     ValidationError,
 )
 
-from ._version import __version__
-
 __all__ = [
-    "CaptchaClient",
-    "AsyncCaptchaClient",
-    "CaptchaError",
     "ApiError",
-    "NetworkError",
+    "AsyncCaptchaClient",
+    "CaptchaClient",
+    "CaptchaError",
     "CaptchaTimeoutError",
+    "NetworkError",
     "TimeoutError",
     "ValidationError",
+    "__version__",
 ]

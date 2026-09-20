@@ -9,7 +9,13 @@ from unittest.mock import patch
 
 import pytest
 
-from captcha_solver_api import CaptchaClient, ApiError, CaptchaTimeoutError, NetworkError, ValidationError
+from captcha_solver_api import (
+    ApiError,
+    CaptchaClient,
+    CaptchaTimeoutError,
+    NetworkError,
+    ValidationError,
+)
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 

@@ -5,11 +5,10 @@ Tests for GeeTestTaskProxyless / GeeTestTask (v3 and v4).
 from unittest.mock import patch
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import GeeTestTaskProxyless, GeeTestTask
+from captcha_solver_api.tasks import GeeTestTask, GeeTestTaskProxyless
 
 
 class TestGeeTest:
-
     def test_v3_to_dict(self):
         task = GeeTestTaskProxyless(
             websiteURL="https://example.com",
@@ -60,14 +59,22 @@ class TestGeeTest:
 
     def test_solve_v3(self):
         client = CaptchaClient("test_key", polling_interval=0.1)
-        task = GeeTestTaskProxyless(websiteURL="https://example.com", gt="test_gt", challenge="test_challenge")
+        task = GeeTestTaskProxyless(
+            websiteURL="https://example.com", gt="test_gt", challenge="test_challenge"
+        )
 
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 105},
-                {"errorId": 0, "status": "ready", "solution": {
-                    "challenge": "c", "validate": "v", "seccode": "s",
-                }},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {
+                        "challenge": "c",
+                        "validate": "v",
+                        "seccode": "s",
+                    },
+                },
             ]
             result = client.solve(task)
 
@@ -76,16 +83,25 @@ class TestGeeTest:
     def test_solve_v4(self):
         client = CaptchaClient("test_key", polling_interval=0.1)
         task = GeeTestTaskProxyless(
-            websiteURL="https://example.com", version=4, initParameters={"captcha_id": "test_id"},
+            websiteURL="https://example.com",
+            version=4,
+            initParameters={"captcha_id": "test_id"},
         )
 
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 106},
-                {"errorId": 0, "status": "ready", "solution": {
-                    "captcha_id": "test_id", "lot_number": "1", "pass_token": "p",
-                    "gen_time": "t", "captcha_output": "o",
-                }},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {
+                        "captcha_id": "test_id",
+                        "lot_number": "1",
+                        "pass_token": "p",
+                        "gen_time": "t",
+                        "captcha_output": "o",
+                    },
+                },
             ]
             result = client.solve(task)
 

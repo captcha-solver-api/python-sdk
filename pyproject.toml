@@ -45,6 +45,9 @@ dev = [
     "pytest-asyncio>=0.21",
     "pytest-mock>=3",
     "python-dotenv>=1.0",
+    "ruff>=0.6",
+    "mypy>=1.10",
+    "types-requests>=2.28",
 ]
 
 [project.urls]
@@ -63,3 +66,27 @@ captcha_solver_api = ["py.typed"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.mypy]
+# mypy 2.x cannot target 3.9; 3.10 is the lowest it accepts. Runtime
+# compatibility with 3.9 is still covered by the CI test matrix.
+python_version = "3.10"
+strict = true
+files = ["captcha_solver_api"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+extend-exclude = [".pytest_cache", "*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "N", "PIE", "RUF"]
+ignore = [
+    "UP006", "UP035", "UP045",  # keep typing.Optional/Dict/List for 3.9 readability
+    "N803", "N815",             # task fields mirror API camelCase on purpose
+    "E501",                     # long lines in docstrings/tables
+]
+
+[tool.ruff.lint.per-file-ignores]
+"examples/**" = ["E402"]        # imports after sys.path/dotenv setup
+"tests/**" = ["RUF012"]

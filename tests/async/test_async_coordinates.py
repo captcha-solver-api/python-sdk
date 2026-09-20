@@ -10,7 +10,6 @@ from captcha_solver_api.tasks import CoordinatesTask
 
 
 class TestAsyncCoordinates:
-
     async def test_solve(self):
         client = AsyncCaptchaClient("test_key", polling_interval=0.1)
         task = CoordinatesTask(body="base64string", comment="click on the green apple")
@@ -18,7 +17,11 @@ class TestAsyncCoordinates:
         with patch.object(client, "_request", new_callable=AsyncMock) as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 108},
-                {"errorId": 0, "status": "ready", "solution": {"coordinates": [{"x": 358, "y": 268}]}},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {"coordinates": [{"x": 358, "y": 268}]},
+                },
             ]
             result = await client.solve(task)
 

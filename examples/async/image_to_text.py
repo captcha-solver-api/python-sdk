@@ -14,28 +14,28 @@ from base64 import b64encode
 try:
     from dotenv import load_dotenv
 except ModuleNotFoundError as exc:
-    if exc.name != 'dotenv':
+    if exc.name != "dotenv":
         raise
     load_dotenv = None
 
 repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(repo_root)
 if load_dotenv is not None:
-    load_dotenv(os.path.join(repo_root, '.env'))
-assets_dir = os.path.join(repo_root, 'examples', 'assets')
+    load_dotenv(os.path.join(repo_root, ".env"))
+assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
 
-api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
+api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 solver = AsyncCaptchaClient(api_key)
 
 
 async def main():
     # Base64 body must not include the data:image/...;base64, prefix.
-    with open(os.path.join(assets_dir, 'captcha-digits.png'), 'rb') as f:
-        body = b64encode(f.read()).decode('utf-8')
+    with open(os.path.join(assets_dir, "captcha-digits.png"), "rb") as f:
+        body = b64encode(f.read()).decode("utf-8")
 
     task = ImageToTextTask(body=body, numeric=1, minLength=4, maxLength=6)
 
@@ -45,7 +45,7 @@ async def main():
         sys.exit(str(e))
     else:
         # Solution contains {"text": "58204"}
-        print('result: ' + str(result))
+        print("result: " + str(result))
 
 
 asyncio.run(main())

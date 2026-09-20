@@ -15,8 +15,8 @@ import httpx
 from ._version import __version__
 from .exceptions import (
     ApiError,
-    NetworkError,
     CaptchaTimeoutError,
+    NetworkError,
     ValidationError,
 )
 
@@ -87,7 +87,7 @@ class AsyncCaptchaClient:
         (`async with AsyncCaptchaClient(...) as c:`) to have it closed automatically."""
         await self._client.aclose()
 
-    async def __aenter__(self) -> "AsyncCaptchaClient":
+    async def __aenter__(self) -> AsyncCaptchaClient:
         return self
 
     async def __aexit__(self, *exc_info: Any) -> None:
@@ -113,6 +113,8 @@ class AsyncCaptchaClient:
         except ValueError as exc:
             raise NetworkError(f"Non-JSON response from API: {response.text[:200]!r}") from exc
 
+        if not isinstance(data, dict):
+            raise NetworkError(f"Unexpected API response shape: {type(data).__name__}")
         return data
 
     def _ensure_success(self, data: Dict[str, Any]) -> None:
@@ -154,7 +156,7 @@ class AsyncCaptchaClient:
 
         data = await self._request("createTask", payload)
         self._ensure_success(data)
-        return data["taskId"]
+        return int(data["taskId"])
 
     async def get_task_result(self, task_id: int) -> Dict[str, Any]:
         """Fetch the current status of a previously submitted task.
@@ -203,7 +205,7 @@ class AsyncCaptchaClient:
         payload = {"clientKey": self.client_key}
         data = await self._request("getBalance", payload)
         self._ensure_success(data)
-        return data["balance"]
+        return float(data["balance"])
 
     async def solve(
         self,
@@ -248,6 +250,9 @@ class AsyncCaptchaClient:
             result = await self.get_task_result(task_id)
 
             if result.get("status") == "ready":
-                return result["solution"]
+                solution = result["solution"]
+                if not isinstance(solution, dict):
+                    raise NetworkError("API returned a ready task without a solution object")
+                return solution
 
         raise CaptchaTimeoutError("Task solving timed out.")

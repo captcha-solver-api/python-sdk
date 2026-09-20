@@ -5,11 +5,10 @@ Tests for RecaptchaV2EnterpriseTaskProxyless / RecaptchaV2EnterpriseTask.
 from unittest.mock import patch
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless, RecaptchaV2EnterpriseTask
+from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask, RecaptchaV2EnterpriseTaskProxyless
 
 
 class TestRecaptchaV2Enterprise:
-
     def test_proxyless_to_dict(self):
         task = RecaptchaV2EnterpriseTaskProxyless(
             websiteURL="https://example.com",
@@ -54,12 +53,18 @@ class TestRecaptchaV2Enterprise:
 
     def test_solve(self):
         client = CaptchaClient("test_key", polling_interval=0.1)
-        task = RecaptchaV2EnterpriseTaskProxyless(websiteURL="https://example.com", websiteKey="test_key")
+        task = RecaptchaV2EnterpriseTaskProxyless(
+            websiteURL="https://example.com", websiteKey="test_key"
+        )
 
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 101},
-                {"errorId": 0, "status": "ready", "solution": {"gRecaptchaResponse": "enterprise_token"}},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {"gRecaptchaResponse": "enterprise_token"},
+                },
             ]
             result = client.solve(task)
 

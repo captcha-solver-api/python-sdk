@@ -9,7 +9,6 @@ from captcha_solver_api.tasks import ImageToTextTask
 
 
 class TestImageToText:
-
     def test_to_dict(self):
         task = ImageToTextTask(
             body="base64string",
