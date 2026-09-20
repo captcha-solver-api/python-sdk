@@ -54,7 +54,30 @@ jobs:
         run: python -m pip install -e ".[dev]"
 
       - name: Run tests
-        run: python -m pytest tests/ -v
+        run: python -m pytest tests/ -v --cov --cov-report=term --cov-report=json
+
+      # Coverage badge: the percentage is written to a gist that shields.io
+      # renders in README. Only from main and from a single matrix entry so
+      # PRs and duplicate uploads never overwrite the number.
+      - name: Read coverage percentage
+        if: github.ref == 'refs/heads/main' && matrix.python-version == '3.12'
+        id: coverage
+        run: |
+          percent=$(python -c 'import json; print(round(json.load(open("coverage.json"))["totals"]["percent_covered"]))')
+          echo "percent=$percent" >> "$GITHUB_OUTPUT"
+
+      - name: Update coverage badge
+        if: github.ref == 'refs/heads/main' && matrix.python-version == '3.12'
+        uses: schneegans/dynamic-badges-action@v1.9.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 77b084ed0d46c740183f89ec66af8a95
+          filename: python-sdk-coverage.json
+          label: coverage
+          message: ${{ steps.coverage.outputs.percent }}%
+          valColorRange: ${{ steps.coverage.outputs.percent }}
+          minColorRange: 50
+          maxColorRange: 90
 
       - name: Verify package builds
         run: |
