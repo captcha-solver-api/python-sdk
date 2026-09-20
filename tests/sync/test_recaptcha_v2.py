@@ -5,11 +5,10 @@ Tests for RecaptchaV2TaskProxyless / RecaptchaV2Task.
 from unittest.mock import patch
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import RecaptchaV2TaskProxyless, RecaptchaV2Task
+from captcha_solver_api.tasks import RecaptchaV2Task, RecaptchaV2TaskProxyless
 
 
 class TestRecaptchaV2:
-
     def test_proxyless_to_dict(self):
         task = RecaptchaV2TaskProxyless(
             websiteURL="https://example.com",

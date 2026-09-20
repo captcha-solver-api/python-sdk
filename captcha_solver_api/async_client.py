@@ -15,8 +15,8 @@ import httpx
 from ._version import __version__
 from .exceptions import (
     ApiError,
-    NetworkError,
     CaptchaTimeoutError,
+    NetworkError,
     ValidationError,
 )
 
@@ -87,7 +87,7 @@ class AsyncCaptchaClient:
         (`async with AsyncCaptchaClient(...) as c:`) to have it closed automatically."""
         await self._client.aclose()
 
-    async def __aenter__(self) -> "AsyncCaptchaClient":
+    async def __aenter__(self) -> AsyncCaptchaClient:
         return self
 
     async def __aexit__(self, *exc_info: Any) -> None:

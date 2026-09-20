@@ -5,11 +5,10 @@ Tests for YandexSmartCaptchaTaskProxyless / YandexSmartCaptchaTask.
 from unittest.mock import patch
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless, YandexSmartCaptchaTask
+from captcha_solver_api.tasks import YandexSmartCaptchaTask, YandexSmartCaptchaTaskProxyless
 
 
 class TestYandexSmartCaptcha:
-
     def test_proxyless_to_dict(self):
         task = YandexSmartCaptchaTaskProxyless(
             websiteURL="https://example.com",
@@ -51,7 +50,9 @@ class TestYandexSmartCaptcha:
 
     def test_solve(self):
         client = CaptchaClient("test_key", polling_interval=0.1)
-        task = YandexSmartCaptchaTaskProxyless(websiteURL="https://example.com", websiteKey="Y5Lh0ti...")
+        task = YandexSmartCaptchaTaskProxyless(
+            websiteURL="https://example.com", websiteKey="Y5Lh0ti..."
+        )
 
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [

@@ -15,15 +15,15 @@ from base64 import b64encode
 try:
     from dotenv import load_dotenv
 except ModuleNotFoundError as exc:
-    if exc.name != 'dotenv':
+    if exc.name != "dotenv":
         raise
     load_dotenv = None
 
 repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(repo_root)
 if load_dotenv is not None:
-    load_dotenv(os.path.join(repo_root, '.env'))
-assets_dir = os.path.join(repo_root, 'examples', 'assets')
+    load_dotenv(os.path.join(repo_root, ".env"))
+assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import CoordinatesTask
@@ -34,7 +34,7 @@ from captcha_solver_api.tasks import CoordinatesTask
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
-api_key = os.getenv('CAPTCHA_API_KEY', 'YOUR_API_KEY')
+api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 solver = CaptchaClient(api_key)
@@ -45,16 +45,18 @@ solver = CaptchaClient(api_key)
 try:
     # Read and encode the captcha image to base64.
     # The body must be a pure base64 string without the data:image/...;base64, prefix.
-    with open(os.path.join(assets_dir, 'fruit-click.png'), 'rb') as f:
-        body = b64encode(f.read()).decode('utf-8')
+    with open(os.path.join(assets_dir, "fruit-click.png"), "rb") as f:
+        body = b64encode(f.read()).decode("utf-8")
 
-    result = solver.solve(CoordinatesTask(
-        body=body,                                # Base64-encoded captcha image (required)
-        comment='click on the green apple',       # Text hint for the worker
-    ))
+    result = solver.solve(
+        CoordinatesTask(
+            body=body,  # Base64-encoded captcha image (required)
+            comment="click on the green apple",  # Text hint for the worker
+        )
+    )
     # Solution contains {"coordinates": [{"x": 140, "y": 110}]}
     # Click on each coordinate in order. Coordinates are pixel positions.
-    print('result: ' + str(result))
+    print("result: " + str(result))
 except Exception as e:
     sys.exit(e)
 
@@ -62,23 +64,25 @@ except Exception as e:
 # Solves a captcha (examples/assets/traffic-lights.png) with instruction image
 # and click count limits.
 try:
-    with open(os.path.join(assets_dir, 'traffic-lights.png'), 'rb') as f:
-        body = b64encode(f.read()).decode('utf-8')
+    with open(os.path.join(assets_dir, "traffic-lights.png"), "rb") as f:
+        body = b64encode(f.read()).decode("utf-8")
 
     # Read and encode an optional instruction image.
     # This image helps the worker understand what to click.
-    with open(os.path.join(assets_dir, 'traffic-lights-instructions.png'), 'rb') as f:
-        img_instructions = b64encode(f.read()).decode('utf-8')
+    with open(os.path.join(assets_dir, "traffic-lights-instructions.png"), "rb") as f:
+        img_instructions = b64encode(f.read()).decode("utf-8")
 
-    result = solver.solve(CoordinatesTask(
-        body=body,                                # Base64-encoded captcha image
-        comment='click on all traffic lights',    # Text hint for the worker
-        imgInstructions=img_instructions,         # Optional instruction image
-        minClicks=1,                              # Minimum number of clicks (default 1)
-        maxClicks=3,                              # Maximum number of clicks allowed
-    ))
+    result = solver.solve(
+        CoordinatesTask(
+            body=body,  # Base64-encoded captcha image
+            comment="click on all traffic lights",  # Text hint for the worker
+            imgInstructions=img_instructions,  # Optional instruction image
+            minClicks=1,  # Minimum number of clicks (default 1)
+            maxClicks=3,  # Maximum number of clicks allowed
+        )
+    )
     # Solution contains coordinates for all requested clicks, e.g.
     # {"coordinates": [{"x": 110, "y": 150}, {"x": 430, "y": 130}]}
-    print('result: ' + str(result))
+    print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

@@ -10,7 +10,6 @@ from captcha_solver_api.tasks import ImageToTextTask
 
 
 class TestAsyncImageToText:
-
     async def test_solve(self):
         client = AsyncCaptchaClient("test_key", polling_interval=0.1)
         task = ImageToTextTask(body="base64string", numeric=1, minLength=4, maxLength=6)

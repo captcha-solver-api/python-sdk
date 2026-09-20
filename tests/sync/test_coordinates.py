@@ -9,7 +9,6 @@ from captcha_solver_api.tasks import CoordinatesTask
 
 
 class TestCoordinates:
-
     def test_to_dict(self):
         task = CoordinatesTask(
             body="base64string",
@@ -39,7 +38,11 @@ class TestCoordinates:
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 108},
-                {"errorId": 0, "status": "ready", "solution": {"coordinates": [{"x": 358, "y": 268}]}},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {"coordinates": [{"x": 358, "y": 268}]},
+                },
             ]
             result = client.solve(task)
 

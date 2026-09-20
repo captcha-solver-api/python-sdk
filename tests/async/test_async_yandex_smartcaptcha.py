@@ -10,10 +10,11 @@ from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
 
 
 class TestAsyncYandexSmartCaptcha:
-
     async def test_solve(self):
         client = AsyncCaptchaClient("test_key", polling_interval=0.1)
-        task = YandexSmartCaptchaTaskProxyless(websiteURL="https://example.com", websiteKey="Y5Lh0ti...")
+        task = YandexSmartCaptchaTaskProxyless(
+            websiteURL="https://example.com", websiteKey="Y5Lh0ti..."
+        )
 
         with patch.object(client, "_request", new_callable=AsyncMock) as mock_request:
             mock_request.side_effect = [

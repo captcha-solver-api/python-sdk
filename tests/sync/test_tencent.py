@@ -5,11 +5,10 @@ Tests for TencentTaskProxyless / TencentTask.
 from unittest.mock import patch
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import TencentTaskProxyless, TencentTask
+from captcha_solver_api.tasks import TencentTask, TencentTaskProxyless
 
 
 class TestTencent:
-
     def test_proxyless_to_dict(self):
         task = TencentTaskProxyless(
             websiteURL="https://example.com",
@@ -56,9 +55,16 @@ class TestTencent:
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 109},
-                {"errorId": 0, "status": "ready", "solution": {
-                    "appid": "190014885", "ret": 0, "ticket": "t", "randstr": "r",
-                }},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {
+                        "appid": "190014885",
+                        "ret": 0,
+                        "ticket": "t",
+                        "randstr": "r",
+                    },
+                },
             ]
             result = client.solve(task)
 

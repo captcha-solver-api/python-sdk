@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-import captcha_solver_api.client as sync_module
 import captcha_solver_api.async_client as async_module
-from captcha_solver_api import CaptchaClient, AsyncCaptchaClient, CaptchaTimeoutError
+import captcha_solver_api.client as sync_module
+from captcha_solver_api import AsyncCaptchaClient, CaptchaClient, CaptchaTimeoutError
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 
@@ -30,60 +30,62 @@ CASES = [
 ]
 
 
-@pytest.mark.parametrize('interval,timeout,expected_polls,times_out', CASES)
+@pytest.mark.parametrize("interval,timeout,expected_polls,times_out", CASES)
 def test_sync_polling_schedule(monkeypatch, interval, timeout, expected_polls, times_out):
     clock = Clock()
     polls = []
-    monkeypatch.setattr(sync_module, 'time', clock)
+    monkeypatch.setattr(sync_module, "time", clock)
 
     def request(endpoint, payload):
-        if endpoint == 'createTask':
+        if endpoint == "createTask":
             assert clock.now == 0
-            return {'errorId': 0, 'taskId': 100}
-        assert payload['taskId'] == 100
+            return {"errorId": 0, "taskId": 100}
+        assert payload["taskId"] == 100
         polls.append(clock.now)
         if len(polls) == 2:
-            return {'errorId': 0, 'status': 'ready', 'solution': {'token': 'done'}}
-        return {'errorId': 0, 'status': 'processing'}
+            return {"errorId": 0, "status": "ready", "solution": {"token": "done"}}
+        return {"errorId": 0, "status": "processing"}
 
-    options = {} if interval is None else {'polling_interval': interval}
-    with CaptchaClient('test-key', **options) as client:
-        monkeypatch.setattr(client, '_request', request)
-        task = RecaptchaV2TaskProxyless('https://example.com', 'site-key')
+    options = {} if interval is None else {"polling_interval": interval}
+    with CaptchaClient("test-key", **options) as client:
+        monkeypatch.setattr(client, "_request", request)
+        task = RecaptchaV2TaskProxyless("https://example.com", "site-key")
         if times_out:
             with pytest.raises(CaptchaTimeoutError):
                 client.solve(task, timeout=timeout)
             assert clock.now == timeout
         else:
-            assert client.solve(task, timeout=timeout) == {'token': 'done'}
+            assert client.solve(task, timeout=timeout) == {"token": "done"}
     assert polls == expected_polls
 
 
-@pytest.mark.parametrize('interval,timeout,expected_polls,times_out', CASES)
+@pytest.mark.parametrize("interval,timeout,expected_polls,times_out", CASES)
 async def test_async_polling_schedule(monkeypatch, interval, timeout, expected_polls, times_out):
     clock = Clock()
     polls = []
-    monkeypatch.setattr(async_module, 'time', clock)
-    monkeypatch.setattr(async_module, 'asyncio', SimpleNamespace(sleep=AsyncMock(side_effect=clock.sleep)))
+    monkeypatch.setattr(async_module, "time", clock)
+    monkeypatch.setattr(
+        async_module, "asyncio", SimpleNamespace(sleep=AsyncMock(side_effect=clock.sleep))
+    )
 
     async def request(endpoint, payload):
-        if endpoint == 'createTask':
+        if endpoint == "createTask":
             assert clock.now == 0
-            return {'errorId': 0, 'taskId': 100}
-        assert payload['taskId'] == 100
+            return {"errorId": 0, "taskId": 100}
+        assert payload["taskId"] == 100
         polls.append(clock.now)
         if len(polls) == 2:
-            return {'errorId': 0, 'status': 'ready', 'solution': {'token': 'done'}}
-        return {'errorId': 0, 'status': 'processing'}
+            return {"errorId": 0, "status": "ready", "solution": {"token": "done"}}
+        return {"errorId": 0, "status": "processing"}
 
-    options = {} if interval is None else {'polling_interval': interval}
-    async with AsyncCaptchaClient('test-key', **options) as client:
-        monkeypatch.setattr(client, '_request', request)
-        task = RecaptchaV2TaskProxyless('https://example.com', 'site-key')
+    options = {} if interval is None else {"polling_interval": interval}
+    async with AsyncCaptchaClient("test-key", **options) as client:
+        monkeypatch.setattr(client, "_request", request)
+        task = RecaptchaV2TaskProxyless("https://example.com", "site-key")
         if times_out:
             with pytest.raises(CaptchaTimeoutError):
                 await client.solve(task, timeout=timeout)
             assert clock.now == timeout
         else:
-            assert await client.solve(task, timeout=timeout) == {'token': 'done'}
+            assert await client.solve(task, timeout=timeout) == {"token": "done"}
     assert polls == expected_polls

@@ -11,7 +11,6 @@ from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 
 class TestAsyncRecaptchaV2:
-
     async def test_solve(self):
         client = AsyncCaptchaClient("test_key", polling_interval=0.1)
         task = RecaptchaV2TaskProxyless(websiteURL="https://example.com", websiteKey="test_key")

@@ -10,10 +10,11 @@ from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
 
 
 class TestAsyncRecaptchaV3:
-
     async def test_solve(self):
         client = AsyncCaptchaClient("test_key", polling_interval=0.1)
-        task = RecaptchaV3TaskProxyless(websiteURL="https://example.com", websiteKey="test_key", minScore=0.3)
+        task = RecaptchaV3TaskProxyless(
+            websiteURL="https://example.com", websiteKey="test_key", minScore=0.3
+        )
 
         with patch.object(client, "_request", new_callable=AsyncMock) as mock_request:
             mock_request.side_effect = [

@@ -5,11 +5,10 @@ Tests for TurnstileTaskProxyless / TurnstileTask.
 from unittest.mock import patch
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import TurnstileTaskProxyless, TurnstileTask
+from captcha_solver_api.tasks import TurnstileTask, TurnstileTaskProxyless
 
 
 class TestTurnstile:
-
     def test_proxyless_to_dict(self):
         task = TurnstileTaskProxyless(
             websiteURL="https://example.com",

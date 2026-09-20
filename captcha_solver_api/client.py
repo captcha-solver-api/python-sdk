@@ -12,8 +12,8 @@ import requests
 from ._version import __version__
 from .exceptions import (
     ApiError,
-    NetworkError,
     CaptchaTimeoutError,
+    NetworkError,
     ValidationError,
 )
 
@@ -76,7 +76,7 @@ class CaptchaClient:
         to have it closed automatically."""
         self.session.close()
 
-    def __enter__(self) -> "CaptchaClient":
+    def __enter__(self) -> CaptchaClient:
         return self
 
     def __exit__(self, *exc_info: Any) -> None:
