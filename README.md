@@ -2,6 +2,14 @@
 
 ![python-sdk-banner](https://raw.githubusercontent.com/captcha-solver-api/python-sdk/main/assets/repo-banner-python.png)
 
+[![PyPI](https://img.shields.io/pypi/v/captcha-solver-api?logo=pypi&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
+[![Python](https://img.shields.io/pypi/pyversions/captcha-solver-api?logo=python&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
+[![Downloads](https://img.shields.io/pypi/dm/captcha-solver-api)](https://pepy.tech/project/captcha-solver-api)
+[![Tests](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml/badge.svg)](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml)
+[![Typed](https://img.shields.io/badge/typing-typed-blue)](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/py.typed)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/captcha-solver-api/python-sdk/blob/main/LICENSE.md)
+[![JavaScript SDK](https://img.shields.io/badge/also_available-JavaScript_SDK-f7df1e?logo=javascript&logoColor=black)](https://github.com/captcha-solver-api/javascript-sdk)
+
 Official Python SDK for the Captcha Solver API. Solve reCAPTCHA v2/v3, Cloudflare Turnstile, GeeTest, Yandex SmartCaptcha, Tencent, and image/click captchas with a single method call -- sync or async.
 
 Full API reference (all endpoints, error codes, captcha-type details): **https://captcha-solver.com/en/docs/captcha-types**
