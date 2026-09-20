@@ -4,7 +4,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/captcha-solver-api?logo=pypi&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
 [![Python](https://img.shields.io/pypi/pyversions/captcha-solver-api?logo=python&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
-[![Downloads](https://img.shields.io/pypi/dm/captcha-solver-api)](https://pepy.tech/project/captcha-solver-api)
+[![Downloads](https://img.shields.io/pepy/dt/captcha-solver-api)](https://pepy.tech/project/captcha-solver-api)
 [![Tests](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml/badge.svg)](https://github.com/captcha-solver-api/python-sdk/actions/workflows/tests.yml)
 [![Typed](https://img.shields.io/badge/typing-typed-blue)](https://github.com/captcha-solver-api/python-sdk/blob/main/captcha_solver_api/py.typed)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/captcha-solver-api/python-sdk/blob/main/LICENSE.md)
