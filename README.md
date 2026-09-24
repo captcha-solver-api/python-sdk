@@ -1,6 +1,6 @@
 # Captcha Solver Python SDK
 
-![python-sdk-banner](https://raw.githubusercontent.com/captcha-solver-api/python-sdk/main/assets/repo-banner-python.png)
+![python-sdk-banner](https://raw.githubusercontent.com/captcha-solver-api/python-sdk/main/assets/repo-banner-python.png?v=09a4ebb)
 
 [![PyPI](https://img.shields.io/pypi/v/captcha-solver-api?logo=pypi&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
 [![Python](https://img.shields.io/pypi/pyversions/captcha-solver-api?logo=python&logoColor=white)](https://pypi.org/project/captcha-solver-api/)
