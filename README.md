@@ -50,6 +50,7 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
 - [Running the examples](#running-the-examples)
 - [Requirements](#requirements)
 - [API Documentation](#api-documentation)
+- [Useful Links](#useful-links)
 - [License](#license)
 
 ## Installation
@@ -708,6 +709,10 @@ page and session parameters.
 ## API Documentation
 
 Full API reference: https://captcha-solver.com/en/docs/captcha-types
+
+## Useful Links
+
+- [How to Automate Tencent CAPTCHA](https://captcha-solver.com/en/blog/how-to-automate-tencent-captcha) — a step-by-step guide with Python and JavaScript SDK examples.
 
 ## License
 
