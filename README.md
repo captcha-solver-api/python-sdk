@@ -330,12 +330,13 @@ that the target page expects in `cf-turnstile-response`.
 | `action` | no | Value of the widget's `data-action` attribute, if set. |
 | `data` | no | Custom payload from the widget's `data-cdata` attribute, if set. |
 | `pagedata` | no | Value of the `chlPageData` parameter, needed for some Cloudflare challenge pages beyond the basic widget. |
-| `userAgent` | no | User-Agent to solve with -- the returned token is tied to it, submit with the same one. |
+| `userAgent` | no | Current browser User-Agent. Pass it for Cloudflare Challenge pages; it is not needed for a standalone widget. |
 
 **Response:** `token` -- submit as `cf-turnstile-response`. For Cloudflare
-Challenge pages, the solution also includes `userAgent`; use that User-Agent
-when submitting the token. Pass `action`, `data`, and `pagedata` when the page
-provides them. The API field is spelled `pagedata`, all lowercase.
+Challenge pages, pass `action`, `data`, `pagedata`, and the current browser
+`userAgent` in the task. The solution also contains `userAgent`; switch the
+browser or HTTP client to this returned value before invoking the callback with
+the token. The API field is spelled `pagedata`, all lowercase.
 
 ```python
 from captcha_solver_api import CaptchaClient
@@ -343,10 +344,15 @@ from captcha_solver_api.tasks import TurnstileTaskProxyless
 client = CaptchaClient("your_api_key")
 task = TurnstileTaskProxyless(
     websiteURL="https://example.com/login",
-    websiteKey="YOUR_WEBSITE_KEY"
+    websiteKey="YOUR_WEBSITE_KEY",
+    action="managed",
+    data="INTERCEPTED_CDATA",
+    pagedata="INTERCEPTED_CHL_PAGE_DATA",
+    userAgent="CURRENT_BROWSER_USER_AGENT",
 )
 result = client.solve(task)
 print(result["token"])
+print(result.get("userAgent"))
 ```
 
 With proxy, use `TurnstileTask` (same proxy fields as reCAPTCHA v2).
@@ -712,6 +718,7 @@ Full API reference: https://captcha-solver.com/en/docs/captcha-types
 
 ## Useful Links
 
+- [Cloudflare Turnstile Puppeteer Demo](https://github.com/captcha-solver-api/cloudflare-turnstile-puppeteer-demo) — a working browser automation example for Cloudflare Turnstile.
 - [How to Automate Tencent CAPTCHA](https://captcha-solver.com/en/blog/how-to-automate-tencent-captcha) — a step-by-step guide with Python and JavaScript SDK examples.
 
 ## License

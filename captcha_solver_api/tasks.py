@@ -303,11 +303,14 @@ class TurnstileTaskProxyless(BaseTask):
             challenge pages beyond the basic widget. Named lowercase (not `pageData`)
             to match the API field name exactly -- Cloudflare-specific fields are
             the one place this API doesn't camelCase.
-        userAgent: User-Agent to solve with. The returned token is tied to it --
-            submit it with the same User-Agent.
+        userAgent: User-Agent of the browser that loaded the challenge. Pass it
+            together with `action`, `data`, and `pagedata` for Cloudflare
+            Challenge pages. It is not needed for a standalone widget.
 
     Returns (`solution` from `solve()`):
         `token` -- the value to submit as `cf-turnstile-response`.
+        `userAgent` -- for Cloudflare Challenge pages, switch the browser or HTTP
+            client to this returned User-Agent before invoking the callback.
     """
 
     type = "TurnstileTaskProxyless"
@@ -345,10 +348,14 @@ class TurnstileTask(BaseTask, ProxyMixin):
         pagedata: Value of the `chlPageData` parameter, needed for some Cloudflare
             challenge pages beyond the basic widget. Named lowercase (not `pageData`)
             to match the API field name exactly.
-        userAgent: User-Agent to solve with. The returned token is tied to it.
+        userAgent: User-Agent of the browser that loaded the challenge. Pass it
+            for Cloudflare Challenge pages; it is not needed for a standalone
+            widget.
 
     Returns (`solution` from `solve()`):
         `token` -- the value to submit as `cf-turnstile-response`.
+        `userAgent` -- for Cloudflare Challenge pages, switch the browser or HTTP
+            client to this returned User-Agent before invoking the callback.
     """
 
     type = "TurnstileTask"
