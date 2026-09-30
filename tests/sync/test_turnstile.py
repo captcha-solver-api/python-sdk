@@ -9,6 +9,18 @@ from captcha_solver_api.tasks import TurnstileTask, TurnstileTaskProxyless
 
 
 class TestTurnstile:
+    def test_proxyless_includes_challenge_user_agent(self):
+        task = TurnstileTaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="test_key",
+            action="managed",
+            data="cdata",
+            pagedata="page-data",
+            userAgent="Mozilla/5.0",
+        )
+
+        assert task.to_dict()["userAgent"] == "Mozilla/5.0"
+
     def test_proxyless_to_dict(self):
         task = TurnstileTaskProxyless(
             websiteURL="https://example.com",
@@ -25,12 +37,14 @@ class TestTurnstile:
             proxyType="http",
             proxyAddress="1.2.3.4",
             proxyPort=8080,
+            userAgent="Mozilla/5.0",
         )
         result = task.to_dict()
 
         assert result["type"] == "TurnstileTask"
         assert result["proxyType"] == "http"
         assert result["proxyAddress"] == "1.2.3.4"
+        assert result["userAgent"] == "Mozilla/5.0"
 
     def test_solve(self):
         client = CaptchaClient("test_key", polling_interval=0.1)
@@ -39,8 +53,15 @@ class TestTurnstile:
         with patch.object(client, "_request") as mock_request:
             mock_request.side_effect = [
                 {"errorId": 0, "taskId": 103},
-                {"errorId": 0, "status": "ready", "solution": {"token": "turnstile_token"}},
+                {
+                    "errorId": 0,
+                    "status": "ready",
+                    "solution": {
+                        "token": "turnstile_token",
+                        "userAgent": "returned-agent",
+                    },
+                },
             ]
             result = client.solve(task)
 
-        assert result == {"token": "turnstile_token"}
+        assert result == {"token": "turnstile_token", "userAgent": "returned-agent"}
