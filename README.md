@@ -720,6 +720,7 @@ Full API reference: https://captcha-solver.com/en/docs/captcha-types
 
 - [JavaScript SDK](https://github.com/captcha-solver-api/javascript-sdk)
 - [Python examples](https://github.com/captcha-solver-api/python-examples)
+- [Selenium Python examples](https://github.com/captcha-solver-api/captcha-solver-selenium-python-examples)
 - [JavaScript examples](https://github.com/captcha-solver-api/javascript-examples)
 - [Tencent CAPTCHA automation examples](https://github.com/captcha-solver-api/How-to-Automate-Tencent-CAPTCHA)
 - [Cloudflare Turnstile Puppeteer Demo](https://github.com/captcha-solver-api/cloudflare-turnstile-puppeteer-demo) — a working browser automation example for Cloudflare Turnstile.
