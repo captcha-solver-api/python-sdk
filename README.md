@@ -23,6 +23,7 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Quick Start](#quick-start)
+- [Build Faster with AI](#build-faster-with-ai)
 - [Supported CAPTCHA Types](#supported-captcha-types)
 - [Client Reference](#client-reference)
   - [CaptchaClient(...)](#captchaclient)
@@ -99,6 +100,23 @@ task = RecaptchaV2TaskProxyless(
 )
 result = client.solve(task)
 print(result["gRecaptchaResponse"])
+```
+
+## Build Faster with AI
+
+Use our [`llms.txt`](https://captcha-solver.com/llms.txt) as context when asking an
+AI assistant to build or update your integration. It contains the current API
+format, supported task parameters, SDK installation instructions, solution
+fields, and error codes in one file.
+
+Copy this prompt and add a description of the page and CAPTCHA you need to
+handle:
+
+```text
+Read https://captcha-solver.com/llms.txt and use the Captcha Solver Python SDK.
+Write a complete integration for this task: [describe your task here].
+Use the documented task parameters and show how to apply the returned solution
+on the target page.
 ```
 
 ## Supported CAPTCHA Types
