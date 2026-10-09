@@ -2,6 +2,21 @@
 
 All notable changes are documented here.
 
+## [1.0.4] - 2026-10-09
+
+### Documentation
+
+- improve editor documentation and usage examples
+- update changelog for v1.0.3
+
+### Maintenance
+
+- set version to 1.0.4
+- grant discussions write permission for release discussion
+
+[Full diff](https://github.com/captcha-solver-api/python-sdk/compare/v1.0.3...v1.0.4)
+
+
 ## [1.0.3] - 2026-10-05
 
 ### Fixed
