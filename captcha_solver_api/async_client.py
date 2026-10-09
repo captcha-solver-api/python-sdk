@@ -22,19 +22,39 @@ from .exceptions import (
 
 
 class AsyncCaptchaClient:
-    """
-    Async client for interacting with the Captcha Solver API.
+    """Asynchronous client for submitting tasks and awaiting CAPTCHA solutions.
 
     Holds a single, reused `httpx.AsyncClient` connection pool for the
     lifetime of the instance (created once, not per request), so repeated
     calls -- especially the `getTaskResult` polling inside `solve()` --
     reuse the same keep-alive connection instead of paying a fresh TCP/TLS
     handshake every time. Close it with `aclose()` when you're done, or use
-    it as an async context manager:
+    it as an async context manager.
+
+    Args:
+        client_key: Your Captcha Solver API key. Must not be empty.
+        base_url: API base URL. Defaults to `https://api.captcha-solver.com`.
+        timeout: Default polling timeout in seconds, starting after task creation.
+            Defaults to 120. Each HTTP request has a separate 30-second timeout.
+        polling_interval: Seconds before the first poll and between polls.
+            Defaults to 10. Waiting does not block the event loop.
+        language_pool: Default worker pool, e.g. `"en"` or `"ru"`. `None` uses
+            the account default. Can be overridden in `solve()` or `create_task()`.
+
+    Raises:
+        ValidationError: `client_key` is empty.
 
     Example:
+        from captcha_solver_api import AsyncCaptchaClient
+        from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+
+        task = RecaptchaV2TaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+        )
         async with AsyncCaptchaClient("YOUR_API_KEY") as client:
-            result = await client.solve(task)
+            solution = await client.solve(task)
+            token = solution["gRecaptchaResponse"]
     """
 
     def __init__(
@@ -45,13 +65,16 @@ class AsyncCaptchaClient:
         polling_interval: int = 10,
         language_pool: Optional[str] = None,
     ) -> None:
-        """
+        """Create an async client with a reusable HTTP connection pool.
+
         Args:
             client_key: Your Captcha Solver API key.
             base_url: API base URL. Override only for self-hosted or staging
                 deployments.
-            timeout: Default max seconds `solve()` waits for a solution before
-                raising `CaptchaTimeoutError`. Can be overridden per call.
+            timeout: Default polling timeout in seconds, starting after task
+                creation. Defaults to 120 and can be overridden per `solve()` call.
+                Each HTTP request has a separate 30-second timeout, so this is
+                not a strict deadline for the entire call.
             polling_interval: Seconds to wait before the first `getTaskResult`
                 poll and between subsequent polls inside `solve()`. Defaults
                 to 10 seconds.
@@ -145,6 +168,9 @@ class AsyncCaptchaClient:
             ApiError: The API rejected the task or its parameters.
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request timed out.
+
+        Example:
+            task_id = await client.create_task(task, language_pool="en")
         """
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
@@ -171,13 +197,20 @@ class AsyncCaptchaClient:
             task_id: The ID returned by `create_task()`.
 
         Returns:
-            The raw API response with `status`; ready responses also contain a
-            solution dictionary.
+            The raw API response with `status` (`"processing"` or `"ready"`).
+            Ready responses also contain a `solution` dict, e.g.
+            `{"gRecaptchaResponse": "..."}` for reCAPTCHA or `{"text": "..."}`
+            for `ImageToTextTask`.
 
         Raises:
             ApiError: The API reports an error for the task.
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request timed out.
+
+        Example:
+            result = await client.get_task_result(task_id)
+            if result["status"] == "ready":
+                solution = result["solution"]
         """
         payload = {
             "clientKey": self.client_key,
@@ -201,6 +234,9 @@ class AsyncCaptchaClient:
             ApiError: The API key is invalid or the account cannot be resolved.
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request timed out.
+
+        Example:
+            balance = await client.get_balance()
         """
         payload = {"clientKey": self.client_key}
         data = await self._request("getBalance", payload)
@@ -226,16 +262,31 @@ class AsyncCaptchaClient:
             task: A task object from `captcha_solver_api.tasks`.
             language_pool: Optional worker pool selector. Falls back to the
                 client's configured pool.
-            timeout: Maximum polling time for this call, in seconds. Overrides
-                the client's default timeout.
+            timeout: Polling timeout in seconds, starting after task creation.
+                `None` uses the client's default (120 unless configured otherwise).
+                Each HTTP request has a separate 30-second timeout, so this is
+                not a strict deadline for the entire call.
 
         Returns:
-            The solution dictionary once the task status becomes `"ready"`.
+            The `solution` dict once `status` is `"ready"`. Its shape depends on
+            the task type -- see the per-type docstrings in `captcha_solver_api.tasks`
+            or the README's method reference.
 
         Raises:
             ApiError: The API rejected the task or reported a solving error.
-            CaptchaTimeoutError: No solution was ready before the deadline.
-            NetworkError: A request failed at the transport level.
+            CaptchaTimeoutError: Polling exceeded its deadline or an HTTP request
+                timed out.
+            NetworkError: A request failed or the API returned an invalid response.
+
+        Example:
+            from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+
+            task = RecaptchaV2TaskProxyless(
+                websiteURL="https://example.com",
+                websiteKey="SITE_KEY",
+            )
+            solution = await client.solve(task, timeout=180)
+            token = solution["gRecaptchaResponse"]
         """
 
         task_id = await self.create_task(task, language_pool=language_pool)

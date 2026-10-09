@@ -86,6 +86,19 @@ class RecaptchaV2TaskProxyless(BaseTask):
 
     Returns (`solution` from `solve()`):
         `gRecaptchaResponse` -- the token to submit as `g-recaptcha-response`.
+
+    Example:
+        from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+
+        task = RecaptchaV2TaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+        )
+        solution = client.solve(task)
+        answer = solution["gRecaptchaResponse"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "RecaptchaV2TaskProxyless"
@@ -132,6 +145,22 @@ class RecaptchaV2Task(BaseTask, ProxyMixin):
 
     Returns (`solution` from `solve()`):
         `gRecaptchaResponse` -- the token to submit as `g-recaptcha-response`.
+
+    Example:
+        from captcha_solver_api.tasks import RecaptchaV2Task
+
+        task = RecaptchaV2Task(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+            proxyType="http",
+            proxyAddress="proxy.example.com",
+            proxyPort=8080,
+        )
+        solution = client.solve(task)
+        answer = solution["gRecaptchaResponse"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "RecaptchaV2Task"
@@ -180,6 +209,19 @@ class RecaptchaV2EnterpriseTaskProxyless(BaseTask):
 
     Returns (`solution` from `solve()`):
         `gRecaptchaResponse` -- the token to submit as `g-recaptcha-response`.
+
+    Example:
+        from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless
+
+        task = RecaptchaV2EnterpriseTaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+        )
+        solution = client.solve(task)
+        answer = solution["gRecaptchaResponse"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "RecaptchaV2EnterpriseTaskProxyless"
@@ -223,6 +265,22 @@ class RecaptchaV2EnterpriseTask(BaseTask, ProxyMixin):
 
     Returns (`solution` from `solve()`):
         `gRecaptchaResponse` -- the token to submit as `g-recaptcha-response`.
+
+    Example:
+        from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
+
+        task = RecaptchaV2EnterpriseTask(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+            proxyType="http",
+            proxyAddress="proxy.example.com",
+            proxyPort=8080,
+        )
+        solution = client.solve(task)
+        answer = solution["gRecaptchaResponse"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "RecaptchaV2EnterpriseTask"
@@ -270,6 +328,21 @@ class RecaptchaV3TaskProxyless(BaseTask):
 
     Returns (`solution` from `solve()`):
         `gRecaptchaResponse` -- the token to submit as `g-recaptcha-response`.
+
+    Example:
+        from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
+
+        task = RecaptchaV3TaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+            minScore=0.3,
+            pageAction="login",
+        )
+        solution = client.solve(task)
+        answer = solution["gRecaptchaResponse"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "RecaptchaV3TaskProxyless"
@@ -311,6 +384,19 @@ class TurnstileTaskProxyless(BaseTask):
         `token` -- the value to submit as `cf-turnstile-response`.
         `userAgent` -- for Cloudflare Challenge pages, switch the browser or HTTP
             client to this returned User-Agent before invoking the callback.
+
+    Example:
+        from captcha_solver_api.tasks import TurnstileTaskProxyless
+
+        task = TurnstileTaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+        )
+        solution = client.solve(task)
+        answer = solution["token"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "TurnstileTaskProxyless"
@@ -356,6 +442,22 @@ class TurnstileTask(BaseTask, ProxyMixin):
         `token` -- the value to submit as `cf-turnstile-response`.
         `userAgent` -- for Cloudflare Challenge pages, switch the browser or HTTP
             client to this returned User-Agent before invoking the callback.
+
+    Example:
+        from captcha_solver_api.tasks import TurnstileTask
+
+        task = TurnstileTask(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+            proxyType="http",
+            proxyAddress="proxy.example.com",
+            proxyPort=8080,
+        )
+        solution = client.solve(task)
+        answer = solution["token"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "TurnstileTask"
@@ -407,6 +509,18 @@ class ImageToTextTask(BaseTask):
 
     Returns (`solution` from `solve()`):
         `text` -- the recognized text/answer.
+
+    Example:
+        from captcha_solver_api.tasks import ImageToTextTask
+
+        task = ImageToTextTask(
+            body="BASE64_IMAGE",
+        )
+        solution = client.solve(task)
+        answer = solution["text"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "ImageToTextTask"
@@ -455,6 +569,20 @@ class GeeTestTaskProxyless(BaseTask):
     Returns (`solution` from `solve()`):
         v3: `challenge`, `validate`, `seccode`.
         v4: `captcha_id`, `lot_number`, `pass_token`, `gen_time`, `captcha_output`.
+
+    Example:
+        from captcha_solver_api.tasks import GeeTestTaskProxyless
+
+        task = GeeTestTaskProxyless(
+            websiteURL="https://example.com",
+            version=4,
+            initParameters={"captcha_id": "CAPTCHA_ID"},
+        )
+        solution = client.solve(task)
+        answer = solution["captcha_output"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "GeeTestTaskProxyless"
@@ -505,6 +633,23 @@ class GeeTestTask(BaseTask, ProxyMixin):
     Returns (`solution` from `solve()`):
         v3: `challenge`, `validate`, `seccode`.
         v4: `captcha_id`, `lot_number`, `pass_token`, `gen_time`, `captcha_output`.
+
+    Example:
+        from captcha_solver_api.tasks import GeeTestTask
+
+        task = GeeTestTask(
+            websiteURL="https://example.com",
+            version=4,
+            initParameters={"captcha_id": "CAPTCHA_ID"},
+            proxyType="http",
+            proxyAddress="proxy.example.com",
+            proxyPort=8080,
+        )
+        solution = client.solve(task)
+        answer = solution["captcha_output"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "GeeTestTask"
@@ -551,6 +696,19 @@ class YandexSmartCaptchaTaskProxyless(BaseTask):
 
     Returns (`solution` from `solve()`):
         `token` -- the value to submit as the SmartCaptcha response token.
+
+    Example:
+        from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
+
+        task = YandexSmartCaptchaTaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+        )
+        solution = client.solve(task)
+        answer = solution["token"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "YandexSmartCaptchaTaskProxyless"
@@ -584,6 +742,22 @@ class YandexSmartCaptchaTask(BaseTask, ProxyMixin):
 
     Returns (`solution` from `solve()`):
         `token` -- the value to submit as the SmartCaptcha response token.
+
+    Example:
+        from captcha_solver_api.tasks import YandexSmartCaptchaTask
+
+        task = YandexSmartCaptchaTask(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+            proxyType="http",
+            proxyAddress="proxy.example.com",
+            proxyPort=8080,
+        )
+        solution = client.solve(task)
+        answer = solution["token"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "YandexSmartCaptchaTask"
@@ -626,6 +800,19 @@ class CoordinatesTask(BaseTask):
     Returns (`solution` from `solve()`):
         `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click,
         in order.
+
+    Example:
+        from captcha_solver_api.tasks import CoordinatesTask
+
+        task = CoordinatesTask(
+            body="BASE64_IMAGE",
+            comment="Click on the green apple",
+        )
+        solution = client.solve(task)
+        answer = solution["coordinates"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "CoordinatesTask"
@@ -657,6 +844,19 @@ class TencentTaskProxyless(BaseTask):
     Returns (`solution` from `solve()`):
         `appid`, `ret`, `ticket`, `randstr` -- pass these to the page's Tencent
         captcha callback.
+
+    Example:
+        from captcha_solver_api.tasks import TencentTaskProxyless
+
+        task = TencentTaskProxyless(
+            websiteURL="https://example.com",
+            appId="APP_ID",
+        )
+        solution = client.solve(task)
+        answer = solution["ticket"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "TencentTaskProxyless"
@@ -689,6 +889,22 @@ class TencentTask(BaseTask, ProxyMixin):
     Returns (`solution` from `solve()`):
         `appid`, `ret`, `ticket`, `randstr` -- pass these to the page's Tencent
         captcha callback.
+
+    Example:
+        from captcha_solver_api.tasks import TencentTask
+
+        task = TencentTask(
+            websiteURL="https://example.com",
+            appId="APP_ID",
+            proxyType="http",
+            proxyAddress="proxy.example.com",
+            proxyPort=8080,
+        )
+        solution = client.solve(task)
+        answer = solution["ticket"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "TencentTask"

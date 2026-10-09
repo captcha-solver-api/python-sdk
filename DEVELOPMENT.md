@@ -35,6 +35,26 @@ No API key or internet access is needed:
 CI (`.github/workflows/tests.yml`) runs the suite on Python 3.9–3.13 for every push
 and pull request and checks that the package builds.
 
+## Editor documentation
+
+Keep Google-style docstrings on public clients, methods, task classes, and
+exceptions. Document every argument by its exact signature name, including
+defaults, units, accepted values, and whether `None` omits an API field. Methods
+should describe their return value and raised SDK exceptions; task classes should
+describe the solution fields returned by `solve()`.
+
+Keep constructor settings on the client class as well as `__init__`, so class
+hover and constructor signature help both have useful documentation. Include
+short examples and keep sync/async documentation aligned (`await` for async
+calls). Examples using `client`, `task`, or `task_id` assume those already exist;
+async examples belong inside an `async def` function.
+
+Type annotations and `captcha_solver_api/py.typed` must remain in the wheel and
+source distribution. To review an editor-facing change, install the built wheel
+in a separate environment, inspect `help(CaptchaClient.solve)` and
+`help(RecaptchaV2TaskProxyless)`, and check hover/signature help with that environment
+selected in the editor.
+
 ## Building locally
 
 ```bash
