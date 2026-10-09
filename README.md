@@ -21,6 +21,7 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
 ## Table of Contents
 
 - [Installation](#installation)
+- [Editor documentation](#editor-documentation)
 - [Configuration](#configuration)
 - [Quick Start](#quick-start)
 - [Build Faster with AI](#build-faster-with-ai)
@@ -64,6 +65,31 @@ Or install the latest version from GitHub:
 
 ```bash
 pip install git+https://github.com/captcha-solver-api/python-sdk.git
+```
+
+## Editor documentation
+
+The SDK includes Python docstrings (the equivalent of JSDoc), type annotations,
+and a `py.typed` marker in the installed package. With Python language support
+enabled in your editor, hover over `CaptchaClient`, `AsyncCaptchaClient`, their
+methods, or a task class such as `RecaptchaV2TaskProxyless` to read the documentation.
+Signature help shows argument names, types, and defaults while you type a call.
+
+Docstrings describe parameters, solution fields, exceptions, and usage examples.
+Task examples assume an existing synchronous `client`; with `AsyncCaptchaClient`,
+use `solution = await client.solve(task)` instead. Async snippets run inside an
+`async def` function. In VS Code, select the Python interpreter where the SDK is
+installed and enable the Python and Pylance extensions. In PyCharm, use Quick
+Documentation. The exact presentation depends on the editor.
+
+You can also read the same documentation without an editor:
+
+```python
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+
+help(CaptchaClient.solve)
+help(RecaptchaV2TaskProxyless)
 ```
 
 ## Configuration

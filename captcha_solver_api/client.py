@@ -19,11 +19,32 @@ from .exceptions import (
 
 
 class CaptchaClient:
-    """
-    Main client for interacting with the Captcha Solver API.
+    """Synchronous client for submitting tasks and waiting for CAPTCHA solutions.
+
+    Args:
+        client_key: Your Captcha Solver API key. Must not be empty.
+        base_url: API base URL. Defaults to `https://api.captcha-solver.com`.
+        timeout: Default polling timeout in seconds, starting after task creation.
+            Defaults to 120. Each HTTP request has a separate 30-second timeout.
+        polling_interval: Seconds before the first poll and between polls.
+            Defaults to 10.
+        language_pool: Default worker pool, e.g. `"en"` or `"ru"`. `None` uses
+            the account default. Can be overridden in `solve()` or `create_task()`.
+
+    Raises:
+        ValidationError: `client_key` is empty.
 
     Example:
-        client = CaptchaClient("YOUR_API_KEY")
+        from captcha_solver_api import CaptchaClient
+        from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+
+        task = RecaptchaV2TaskProxyless(
+            websiteURL="https://example.com",
+            websiteKey="SITE_KEY",
+        )
+        with CaptchaClient("YOUR_API_KEY") as client:
+            solution = client.solve(task)
+            token = solution["gRecaptchaResponse"]
     """
 
     def __init__(
@@ -34,13 +55,16 @@ class CaptchaClient:
         polling_interval: int = 10,
         language_pool: Optional[str] = None,
     ) -> None:
-        """
+        """Create a client with a reusable HTTP connection pool.
+
         Args:
             client_key: Your Captcha Solver API key.
             base_url: API base URL. Override only for self-hosted or staging
                 deployments.
-            timeout: Default max seconds `solve()` waits for a solution before
-                raising `CaptchaTimeoutError`. Can be overridden per call.
+            timeout: Default polling timeout in seconds, starting after task
+                creation. Defaults to 120 and can be overridden per `solve()` call.
+                Each HTTP request has a separate 30-second timeout, so this is
+                not a strict deadline for the entire call.
             polling_interval: Seconds to wait before the first `getTaskResult`
                 poll and between subsequent polls inside `solve()`. Defaults
                 to 10 seconds.
@@ -132,6 +156,9 @@ class CaptchaClient:
             ApiError: The API rejected the task (bad key, bad parameters, etc).
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request itself timed out (not the solve).
+
+        Example:
+            task_id = client.create_task(task, language_pool="en")
         """
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
@@ -164,6 +191,11 @@ class CaptchaClient:
             ApiError: The API reports an error for this task (e.g. it expired).
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request timed out.
+
+        Example:
+            result = client.get_task_result(task_id)
+            if result["status"] == "ready":
+                solution = result["solution"]
         """
         payload = {
             "clientKey": self.client_key,
@@ -185,6 +217,9 @@ class CaptchaClient:
             ApiError: The API key is invalid or the account can't be resolved.
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request timed out.
+
+        Example:
+            balance = client.get_balance()
         """
         payload = {"clientKey": self.client_key}
         data = self._request("getBalance", payload)
@@ -205,9 +240,10 @@ class CaptchaClient:
             task: One of the task objects from `captcha_solver_api.tasks`.
             language_pool: Worker pool selector, e.g. `"en"` or `"ru"`. Falls back
                 to the client's `language_pool` (set at construction) when omitted.
-            timeout: Overrides the client's default polling timeout for this call
-                only (useful for captcha types that reliably take longer, e.g.
-                classic reCAPTCHA v2), in seconds.
+            timeout: Polling timeout in seconds, starting after task creation.
+                `None` uses the client's default (120 unless configured otherwise).
+                Each HTTP request has a separate 30-second timeout, so this is
+                not a strict deadline for the entire call.
 
         Returns:
             The `solution` dict once `status` is `"ready"`. Its shape depends on
@@ -216,8 +252,19 @@ class CaptchaClient:
 
         Raises:
             ApiError: The API rejected the task or reported an error while solving.
-            CaptchaTimeoutError: No solution was ready before the deadline.
-            NetworkError: A request failed at the transport level.
+            CaptchaTimeoutError: Polling exceeded its deadline or an HTTP request
+                timed out.
+            NetworkError: A request failed or the API returned an invalid response.
+
+        Example:
+            from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+
+            task = RecaptchaV2TaskProxyless(
+                websiteURL="https://example.com",
+                websiteKey="SITE_KEY",
+            )
+            solution = client.solve(task, timeout=180)
+            token = solution["gRecaptchaResponse"]
         """
 
         task_id = self.create_task(task, language_pool=language_pool)
