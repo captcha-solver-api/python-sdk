@@ -85,7 +85,7 @@ Async scripts create an `AsyncCaptchaClient` and await the same operations as th
 
 - Image examples can use the bundled files in `examples/assets`; they do not require a target website.
 - Token examples use placeholder site keys and URLs. Replace them with values from a page you are authorized to test.
-- `geetest_v3.py` needs a fresh `challenge` for every request; it expires quickly and must not be hardcoded.
+- `geetest_v3_*.py` need a fresh `challenge` for every request; it expires quickly and must not be hardcoded.
 - Files using `*Task` instead of `*TaskProxyless` demonstrate solving through your own proxy. Supply valid proxy settings for your account.
 - For task parameters and response formats, see the [CAPTCHA type documentation](https://captcha-solver.com/en/docs/captcha-types).
 - For client methods and errors, see the [main README](../README.md#client-reference).
