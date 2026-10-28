@@ -53,7 +53,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://captcha-solver.com"
-Documentation = "https://captcha-solver.com/en/docs/captcha-types"
+Documentation = "https://github.com/captcha-solver-api/python-sdk#readme"
 Repository = "https://github.com/captcha-solver-api/python-sdk"
 
 [tool.setuptools.packages.find]
