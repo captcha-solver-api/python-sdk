@@ -151,14 +151,17 @@ on the target page.
 |---|---|---|
 | reCAPTCHA v2 | ✅ | ✅ |
 | reCAPTCHA v2 Enterprise | ✅ | ✅ |
-| reCAPTCHA v3 | ✅ | ❌ |
+| reCAPTCHA v3 | ✅ | — |
 | Cloudflare Turnstile | ✅ | ✅ |
 | GeeTest v3 | ✅ | ✅ |
 | GeeTest v4 | ✅ | ✅ |
-| Image to Text | ✅ | ❌ |
+| Image to Text | ✅ | — |
 | Yandex SmartCaptcha | ✅ | ✅ |
-| Coordinates (click captcha) | ✅ | ❌ |
+| Coordinates (click captcha) | ✅ | — |
 | Tencent | ✅ | ✅ |
+
+An em dash means that this CAPTCHA type has no separate task method that accepts
+your own proxy; it does not indicate that solving the CAPTCHA is unsupported.
 
 ## Client Reference
 
