@@ -1,10 +1,4 @@
-"""
-Example: Solve reCAPTCHA v2 with the async client.
-
-Prerequisites:
-    Set the CAPTCHA_API_KEY environment variable.
-    httpx must be installed (it's a package dependency, so `pip install captcha-solver-api` covers it).
-"""
+"""Example: Solve reCAPTCHA v2 through your own proxy using the async client."""
 
 import asyncio
 import os
@@ -23,23 +17,26 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import AsyncCaptchaClient
-from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api.tasks import RecaptchaV2Task
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
-
 solver = AsyncCaptchaClient(api_key)
 
 
 async def main():
-    task = RecaptchaV2TaskProxyless(
-        websiteURL="https://example.com/login",  # Full URL of the page with the captcha
-        websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value on that page
+    task = RecaptchaV2Task(
+        websiteURL="https://example.com/login",
+        websiteKey="YOUR_WEBSITE_KEY",
+        proxyType="http",
+        proxyAddress="1.2.3.4",
+        proxyPort=8080,
+        proxyLogin="user",
+        proxyPassword="password",
     )
-
     try:
         result = await solver.solve(task)
-    except Exception as e:
-        sys.exit(str(e))
+    except Exception as exc:
+        sys.exit(str(exc))
     else:
         print("result: " + str(result))
 

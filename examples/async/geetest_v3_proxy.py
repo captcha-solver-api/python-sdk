@@ -31,7 +31,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import AsyncCaptchaClient
-from captcha_solver_api.tasks import GeeTestTask, GeeTestTaskProxyless
+from captcha_solver_api.tasks import GeeTestTask
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
@@ -51,27 +51,6 @@ async def main():
     async with httpx.AsyncClient() as client:
         resp = await client.get("https://target-site.com/path/to/geetest/init", timeout=30)
         challenge = resp.json()["challenge"]
-
-    # --- Proxyless example ---
-    # Solves GeeTest v3 without a proxy.
-    # v3 is the default version, so the version field can be omitted.
-    try:
-        result = await solver.solve(
-            GeeTestTaskProxyless(
-                websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
-                gt="f2ae6cadcf7886856696c46d84d109d1",  # Public key of the GeeTest widget
-                challenge=challenge,  # Session-specific value, must be fresh
-                # Optional fields
-                # geetestApiServerSubdomain='api-na.geetest.com',  # Custom API subdomain
-                # initParameters={...},                              # Extra params from initGeetest call
-                # userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...',  # Browser User-Agent
-            )
-        )
-        # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
-        # Pass solution.validate and solution.seccode to the page's GeeTest callback.
-        print("result: " + str(result))
-    except Exception as e:
-        sys.exit(e)
 
     # --- With proxy example ---
     # Solves GeeTest v3 through your own proxy.

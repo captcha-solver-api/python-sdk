@@ -23,7 +23,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import TurnstileTask, TurnstileTaskProxyless
+from captcha_solver_api.tasks import TurnstileTaskProxyless
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
@@ -54,30 +54,6 @@ try:
     )
     # Solution contains {"token": "0.zxcv..."}
     # Pass this token to the widget callback or cf-turnstile-response field.
-    print("result: " + str(result))
-except Exception as e:
-    sys.exit(e)
-
-# --- With proxy example ---
-# Solves Cloudflare Turnstile through your own proxy.
-try:
-    result = solver.solve(
-        TurnstileTask(
-            websiteURL="https://example.com/login",  # Full URL of the page with Turnstile
-            websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-            # --- Proxy parameters (replace with your own -- these are placeholders) ---
-            proxyType="http",  # http, socks4, or socks5
-            proxyAddress="1.2.3.4",  # Proxy IP address
-            proxyPort=8080,  # Proxy port
-            proxyLogin="user",  # Login for proxy authorization (optional)
-            proxyPassword="password",  # Password for proxy authorization (optional)
-            # --- Optional fields ---
-            # action='login',
-            # data='custom-cdata-value',
-            # pagedata='chl-page-data-value',
-            # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',
-        )
-    )
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

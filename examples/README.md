@@ -48,21 +48,26 @@ Replace placeholder values such as `YOUR_WEBSITE_KEY`, `YOUR_APP_ID`, `YOUR_CAPT
 - [`async`](async) contains asynchronous examples using `AsyncCaptchaClient`.
 - [`assets`](assets) contains sample images used by image and coordinate examples.
 
-Each supported CAPTCHA type has a matching sync and async script:
+Each supported CAPTCHA type has matching sync and async scripts. Types that can
+use your own proxy have separate `*_proxyless.py` and `*_proxy.py` files so each
+script demonstrates exactly one task variant.
 
 | CAPTCHA type | Sync | Async | Main result |
 |---|---|---|---|
 | Account balance | [balance.py](sync/balance.py) | [balance.py](async/balance.py) | `float` balance |
-| reCAPTCHA v2 | [recaptcha_v2.py](sync/recaptcha_v2.py) | [recaptcha_v2.py](async/recaptcha_v2.py) | `gRecaptchaResponse` |
-| reCAPTCHA v2 Enterprise | [recaptcha_v2_enterprise.py](sync/recaptcha_v2_enterprise.py) | [recaptcha_v2_enterprise.py](async/recaptcha_v2_enterprise.py) | `gRecaptchaResponse` |
+| reCAPTCHA v2 (proxyless) | [recaptcha_v2_proxyless.py](sync/recaptcha_v2_proxyless.py) | [recaptcha_v2_proxyless.py](async/recaptcha_v2_proxyless.py) | `gRecaptchaResponse` |
+| reCAPTCHA v2 (proxy) | [recaptcha_v2_proxy.py](sync/recaptcha_v2_proxy.py) | [recaptcha_v2_proxy.py](async/recaptcha_v2_proxy.py) | `gRecaptchaResponse` |
+| reCAPTCHA v2 Enterprise (proxyless) | [recaptcha_v2_enterprise_proxyless.py](sync/recaptcha_v2_enterprise_proxyless.py) | [recaptcha_v2_enterprise_proxyless.py](async/recaptcha_v2_enterprise_proxyless.py) | `gRecaptchaResponse` |
+| reCAPTCHA v2 Enterprise (proxy) | [recaptcha_v2_enterprise_proxy.py](sync/recaptcha_v2_enterprise_proxy.py) | [recaptcha_v2_enterprise_proxy.py](async/recaptcha_v2_enterprise_proxy.py) | `gRecaptchaResponse` |
 | reCAPTCHA v3 | [recaptcha_v3.py](sync/recaptcha_v3.py) | [recaptcha_v3.py](async/recaptcha_v3.py) | `gRecaptchaResponse` |
-| Cloudflare Turnstile | [turnstile.py](sync/turnstile.py) | [turnstile.py](async/turnstile.py) | `token` |
+| Cloudflare Turnstile (proxyless) | [turnstile_proxyless.py](sync/turnstile_proxyless.py) | [turnstile_proxyless.py](async/turnstile_proxyless.py) | `token` |
+| Cloudflare Turnstile (proxy) | [turnstile_proxy.py](sync/turnstile_proxy.py) | [turnstile_proxy.py](async/turnstile_proxy.py) | `token` |
 | Image to Text | [image_to_text.py](sync/image_to_text.py) | [image_to_text.py](async/image_to_text.py) | `text` |
-| GeeTest v3 | [geetest_v3.py](sync/geetest_v3.py) | [geetest_v3.py](async/geetest_v3.py) | `challenge`, `validate`, `seccode` |
-| GeeTest v4 | [geetest_v4.py](sync/geetest_v4.py) | [geetest_v4.py](async/geetest_v4.py) | `captcha_output` and related fields |
-| Yandex SmartCaptcha token | [yandex_smartcaptcha.py](sync/yandex_smartcaptcha.py) | [yandex_smartcaptcha.py](async/yandex_smartcaptcha.py) | `token` |
+| GeeTest v3 (proxyless / proxy) | [proxyless](sync/geetest_v3_proxyless.py) / [proxy](sync/geetest_v3_proxy.py) | [proxyless](async/geetest_v3_proxyless.py) / [proxy](async/geetest_v3_proxy.py) | `challenge`, `validate`, `seccode` |
+| GeeTest v4 (proxyless / proxy) | [proxyless](sync/geetest_v4_proxyless.py) / [proxy](sync/geetest_v4_proxy.py) | [proxyless](async/geetest_v4_proxyless.py) / [proxy](async/geetest_v4_proxy.py) | `captcha_output` and related fields |
+| Yandex SmartCaptcha (proxyless / proxy) | [proxyless](sync/yandex_smartcaptcha_proxyless.py) / [proxy](sync/yandex_smartcaptcha_proxy.py) | [proxyless](async/yandex_smartcaptcha_proxyless.py) / [proxy](async/yandex_smartcaptcha_proxy.py) | `token` |
 | Coordinates / click captcha | [coordinates.py](sync/coordinates.py) | [coordinates.py](async/coordinates.py) | `coordinates` |
-| Tencent | [tencent.py](sync/tencent.py) | [tencent.py](async/tencent.py) | `appid`, `ret`, `ticket`, `randstr` |
+| Tencent (proxyless / proxy) | [proxyless](sync/tencent_proxyless.py) / [proxy](sync/tencent_proxy.py) | [proxyless](async/tencent_proxyless.py) / [proxy](async/tencent_proxy.py) | `appid`, `ret`, `ticket`, `randstr` |
 
 ## Running an example
 
@@ -71,7 +76,7 @@ Run commands from the repository root so local imports and bundled assets resolv
 ```bash
 python examples/sync/balance.py
 python examples/sync/image_to_text.py
-python examples/async/recaptcha_v2.py
+python examples/async/recaptcha_v2_proxyless.py
 ```
 
 Async scripts create an `AsyncCaptchaClient` and await the same operations as the synchronous client. For several captchas, see the parallel solving pattern in the main [README](../README.md#solving-multiple-captchas-in-parallel).

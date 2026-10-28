@@ -24,7 +24,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import AsyncCaptchaClient
-from captcha_solver_api.tasks import TurnstileTask, TurnstileTaskProxyless
+from captcha_solver_api.tasks import TurnstileTaskProxyless
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
@@ -53,30 +53,5 @@ async def main():
         print("result: " + str(result))
     except Exception as e:
         sys.exit(e)
-
-    # --- With proxy example ---
-    # Solves Cloudflare Turnstile through your own proxy.
-    try:
-        result = await solver.solve(
-            TurnstileTask(
-                websiteURL="https://example.com/login",  # Full URL of the page with Turnstile
-                websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-                # --- Proxy parameters (replace with your own -- these are placeholders) ---
-                proxyType="http",  # http, socks4, or socks5
-                proxyAddress="1.2.3.4",  # Proxy IP address
-                proxyPort=8080,  # Proxy port
-                proxyLogin="user",  # Login for proxy authorization (optional)
-                proxyPassword="password",  # Password for proxy authorization (optional)
-                # --- Optional fields ---
-                # action='login',
-                # data='custom-cdata-value',
-                # pagedata='chl-page-data-value',
-                # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',
-            )
-        )
-        print("result: " + str(result))
-    except Exception as e:
-        sys.exit(e)
-
 
 asyncio.run(main())
