@@ -75,6 +75,10 @@ enabled in your editor, hover over `CaptchaClient`, `AsyncCaptchaClient`, their
 methods, or a task class such as `RecaptchaV2TaskProxyless` to read the documentation.
 Signature help shows argument names, types, and defaults while you type a call.
 
+The `captcha_solver_api/py.typed` file is intentionally empty. It is the standard
+[PEP 561](https://peps.python.org/pep-0561/) marker that tells type checkers to use
+the inline type annotations shipped with this package.
+
 Docstrings describe parameters, solution fields, exceptions, and usage examples.
 Task examples assume an existing synchronous `client`; with `AsyncCaptchaClient`,
 use `solution = await client.solve(task)` instead. Async snippets run inside an
