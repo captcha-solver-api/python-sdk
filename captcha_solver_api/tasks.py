@@ -12,7 +12,10 @@ once the task is `"ready"`.
 
 from __future__ import annotations
 
+import inspect
 from typing import Any, Dict, Optional
+
+from .exceptions import ValidationError
 
 
 class BaseTask:
@@ -23,11 +26,26 @@ class BaseTask:
     def to_dict(self) -> Dict[str, Any]:
         """Serializes the task to the dict shape expected by the `task` field
         of `createTask`, dropping any fields left as `None`."""
+        self._validate_required_fields()
         result = {"type": self.type}
         for key, value in self.__dict__.items():
             if value is not None:
                 result[key] = value
         return result
+
+    def _validate_required_fields(self) -> None:
+        """Reject missing values for constructor parameters without defaults."""
+        parameters = inspect.signature(type(self).__init__).parameters
+        missing = []
+        for name, parameter in parameters.items():
+            if name == "self" or parameter.default is not inspect.Parameter.empty:
+                continue
+            value = getattr(self, name, None)
+            if value is None or (isinstance(value, str) and not value.strip()):
+                missing.append(name)
+        if missing:
+            fields = ", ".join(missing)
+            raise ValidationError(f"Missing required task parameter(s): {fields}")
 
 
 class ProxyMixin:

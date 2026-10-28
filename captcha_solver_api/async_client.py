@@ -19,6 +19,7 @@ from .exceptions import (
     NetworkError,
     ValidationError,
 )
+from .tasks import BaseTask
 
 
 class AsyncCaptchaClient:
@@ -172,6 +173,9 @@ class AsyncCaptchaClient:
         Example:
             task_id = await client.create_task(task, language_pool="en")
         """
+        if not isinstance(task, BaseTask):
+            raise ValidationError("task must be an instance of BaseTask")
+
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
             "task": task.to_dict(),
