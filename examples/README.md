@@ -61,6 +61,7 @@ Each supported CAPTCHA type has a matching sync and async script:
 | GeeTest v3 | [geetest_v3.py](sync/geetest_v3.py) | [geetest_v3.py](async/geetest_v3.py) | `challenge`, `validate`, `seccode` |
 | GeeTest v4 | [geetest_v4.py](sync/geetest_v4.py) | [geetest_v4.py](async/geetest_v4.py) | `captcha_output` and related fields |
 | Yandex SmartCaptcha token | [yandex_smartcaptcha.py](sync/yandex_smartcaptcha.py) | [yandex_smartcaptcha.py](async/yandex_smartcaptcha.py) | `token` |
+| Yandex SmartCaptcha image | [yandex_smartcaptcha_image.py](sync/yandex_smartcaptcha_image.py) | [yandex_smartcaptcha_image.py](async/yandex_smartcaptcha_image.py) | `coordinates` |
 | Coordinates / click captcha | [coordinates.py](sync/coordinates.py) | [coordinates.py](async/coordinates.py) | `coordinates` |
 | Tencent | [tencent.py](sync/tencent.py) | [tencent.py](async/tencent.py) | `appid`, `ret`, `ticket`, `randstr` |
 

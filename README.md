@@ -502,8 +502,8 @@ Use this method to solve the token-based Yandex SmartCaptcha and obtain a token
 for the widget on the target page. Use the coordinates method for image challenges.
 
 `YandexSmartCaptchaTaskProxyless` / `YandexSmartCaptchaTask` -- token-based
-challenge. For the image challenge instead, use `CoordinatesTask` with
-[Coordinates](#coordinates-click-captcha) is available for generic click captchas.
+challenge. For the image challenge instead, use `CoordinatesTask` as described
+in [Coordinates](#coordinates-click-captcha).
 
 | Parameter | Required | Description |
 |---|---|---|
@@ -718,7 +718,8 @@ Avoid importing it by name: it shadows Python's built-in `TimeoutError`.
 See the dedicated [examples documentation](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/README.md) for the full
 sync/async example list, setup steps, expected results, and placeholder guidance.
 
-- **Image/click captchas** (`image_to_text.py`, `coordinates.py`) run after installing the dependencies and setting a valid
+- **Image/click captchas** (`image_to_text.py`, `coordinates.py`,
+  `yandex_smartcaptcha_image.py`) run after installing the dependencies and setting a valid
   `CAPTCHA_API_KEY` -- they read sample images bundled in
   [examples/assets](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/assets), no target page needed.
   `python-dotenv` is optional: install it only if you want the scripts to load a `.env` file.
@@ -743,6 +744,7 @@ export CAPTCHA_API_KEY=your_api_key
 python examples/sync/balance.py
 python examples/sync/image_to_text.py
 python examples/sync/coordinates.py
+python examples/sync/yandex_smartcaptcha_image.py
 ```
 
 Live checks with real parameters have exercised all supported task types.

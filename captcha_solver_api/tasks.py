@@ -787,13 +787,16 @@ class YandexSmartCaptchaTask(BaseTask, ProxyMixin):
 
 class CoordinatesTask(BaseTask):
     """Coordinate-based (click) image captcha. No proxy variant -- the image
-    is submitted directly.
+    is submitted directly. Use this task for generic click captchas and the
+    image-based variant of Yandex SmartCaptcha.
 
     Args:
         body: The captcha image, base64-encoded (no `data:image/...;base64,` prefix).
         comment: Hint for the worker, e.g. `"click on the green apple"`. Recommended
             for generic click captchas.
-        imgInstructions: Optional instruction image, base64-encoded.
+        imgInstructions: Optional instruction image, base64-encoded. For Yandex
+            SmartCaptcha image challenges, use the image showing the required
+            click order.
         minClicks: Minimum number of clicks expected (default `1`).
         maxClicks: Maximum number of clicks allowed.
 

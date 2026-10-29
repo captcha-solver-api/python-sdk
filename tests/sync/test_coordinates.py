@@ -23,11 +23,13 @@ class TestCoordinates:
     def test_with_click_limits(self):
         task = CoordinatesTask(
             body="base64string",
+            imgInstructions="base64instructions",
             minClicks=1,
             maxClicks=5,
         )
         result = task.to_dict()
 
+        assert result["imgInstructions"] == "base64instructions"
         assert result["minClicks"] == 1
         assert result["maxClicks"] == 5
 
