@@ -46,6 +46,10 @@ class BaseTask:
         if missing:
             fields = ", ".join(missing)
             raise ValidationError(f"Missing required task parameter(s): {fields}")
+        self._validate_specific_fields()
+
+    def _validate_specific_fields(self) -> None:
+        """Validate task-specific requirements that depend on other fields."""
 
 
 class ProxyMixin:
@@ -566,6 +570,29 @@ class ImageToTextTask(BaseTask):
         self.imgInstructions = imgInstructions
 
 
+def _validate_geetest_fields(task: Any) -> None:
+    """Validate fields whose required status depends on the GeeTest version."""
+    version = 3 if task.version is None else task.version
+    if version not in (3, 4):
+        raise ValidationError("GeeTest version must be 3 or 4")
+
+    if version == 3:
+        missing = [
+            name
+            for name in ("gt", "challenge")
+            if not isinstance(getattr(task, name, None), str) or not getattr(task, name).strip()
+        ]
+        if missing:
+            fields = ", ".join(missing)
+            raise ValidationError(f"Missing required GeeTest v3 parameter(s): {fields}")
+        return
+
+    init_parameters = task.initParameters
+    captcha_id = init_parameters.get("captcha_id") if isinstance(init_parameters, dict) else None
+    if not isinstance(captcha_id, str) or not captcha_id.strip():
+        raise ValidationError("Missing required GeeTest v4 parameter: initParameters.captcha_id")
+
+
 class GeeTestTaskProxyless(BaseTask):
     """GeeTest v3 or v4 without proxy. Set `version=4` for v4 (and provide
     `initParameters["captcha_id"]`); v3 is the default and needs `gt`/`challenge`
@@ -604,6 +631,9 @@ class GeeTestTaskProxyless(BaseTask):
     """
 
     type = "GeeTestTaskProxyless"
+
+    def _validate_specific_fields(self) -> None:
+        _validate_geetest_fields(self)
 
     def __init__(
         self,
@@ -671,6 +701,9 @@ class GeeTestTask(BaseTask, ProxyMixin):
     """
 
     type = "GeeTestTask"
+
+    def _validate_specific_fields(self) -> None:
+        _validate_geetest_fields(self)
 
     def __init__(
         self,
