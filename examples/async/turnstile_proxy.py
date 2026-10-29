@@ -24,7 +24,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import AsyncCaptchaClient
-from captcha_solver_api.tasks import TurnstileTask, TurnstileTaskProxyless
+from captcha_solver_api.tasks import TurnstileTask
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
@@ -32,28 +32,6 @@ solver = AsyncCaptchaClient(api_key)
 
 
 async def main():
-    # --- Proxyless example ---
-    # Solves Cloudflare Turnstile without a proxy.
-    # The token is tied to the User-Agent. If you pass userAgent, use the same
-    # User-Agent in your browser or bot when submitting the token.
-    try:
-        result = await solver.solve(
-            TurnstileTaskProxyless(
-                websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
-                websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-                # Optional fields (pass only if the target site sets them)
-                # action='login',                           # Value of data-action attribute
-                # data='custom-cdata-value',                # Value of data-cdata attribute
-                # pagedata='chl-page-data-value',           # Value of chlPageData parameter
-                # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',  # Must match the browser submitting the token
-            )
-        )
-        # Solution contains {"token": "0.zxcv..."}
-        # Pass this token to the widget callback or cf-turnstile-response field.
-        print("result: " + str(result))
-    except Exception as e:
-        sys.exit(e)
-
     # --- With proxy example ---
     # Solves Cloudflare Turnstile through your own proxy.
     try:

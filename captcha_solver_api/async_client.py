@@ -19,6 +19,7 @@ from .exceptions import (
     NetworkError,
     ValidationError,
 )
+from .tasks import BaseTask
 
 
 class AsyncCaptchaClient:
@@ -42,7 +43,7 @@ class AsyncCaptchaClient:
             the account default. Can be overridden in `solve()` or `create_task()`.
 
     Raises:
-        ValidationError: `client_key` is empty.
+        ValidationError: `client_key` is missing, empty, or whitespace.
 
     Example:
         from captcha_solver_api import AsyncCaptchaClient
@@ -84,9 +85,9 @@ class AsyncCaptchaClient:
                 pool.
 
         Raises:
-            ValidationError: `client_key` is empty.
+            ValidationError: `client_key` is missing, empty, or whitespace.
         """
-        if not client_key:
+        if not isinstance(client_key, str) or not client_key.strip():
             raise ValidationError("client_key is required")
 
         self.client_key = client_key
@@ -165,6 +166,8 @@ class AsyncCaptchaClient:
             The numeric task ID to pass to `get_task_result()`.
 
         Raises:
+            ValidationError: `task` is not a task object, or a required task
+                parameter is missing or empty. Raised before any request is sent.
             ApiError: The API rejected the task or its parameters.
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request timed out.
@@ -172,6 +175,9 @@ class AsyncCaptchaClient:
         Example:
             task_id = await client.create_task(task, language_pool="en")
         """
+        if not isinstance(task, BaseTask):
+            raise ValidationError("task must be an instance of BaseTask")
+
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
             "task": task.to_dict(),
@@ -273,6 +279,8 @@ class AsyncCaptchaClient:
             or the README's method reference.
 
         Raises:
+            ValidationError: `task` is not a task object, or a required task
+                parameter is missing or empty. Raised before any request is sent.
             ApiError: The API rejected the task or reported a solving error.
             CaptchaTimeoutError: Polling exceeded its deadline or an HTTP request
                 timed out.
