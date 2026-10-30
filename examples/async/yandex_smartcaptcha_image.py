@@ -23,7 +23,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import AsyncCaptchaClient
-from captcha_solver_api.tasks import CoordinatesTask
+from captcha_solver_api.tasks import YandexSmartCaptchaImageTask
 
 
 def encode_image(filename: str) -> str:
@@ -37,11 +37,9 @@ async def main() -> None:
     api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
     async with AsyncCaptchaClient(api_key) as solver:
         result = await solver.solve(
-            CoordinatesTask(
-                body=encode_image("yandex-smartcaptcha-image.png"),
+            YandexSmartCaptchaImageTask(
+                image=encode_image("yandex-smartcaptcha-image.png"),
                 imgInstructions=encode_image("yandex-smartcaptcha-instructions.png"),
-                minClicks=4,
-                maxClicks=4,
             )
         )
     # Click the returned points on the captcha image in the listed order.

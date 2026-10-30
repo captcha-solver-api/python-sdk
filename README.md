@@ -499,11 +499,9 @@ With proxy, use `GeeTestTask` (same proxy fields as reCAPTCHA v2).
 <sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#yandex-smartcaptcha)</sup>
 
 Use this method to solve the token-based Yandex SmartCaptcha and obtain a token
-for the widget on the target page. Use the coordinates method for image challenges.
+for the widget on the target page. Use the dedicated image method for image challenges.
 
-`YandexSmartCaptchaTaskProxyless` / `YandexSmartCaptchaTask` -- token-based
-challenge. For the image challenge instead, use `CoordinatesTask` as described
-in [Coordinates](#coordinates-click-captcha).
+`YandexSmartCaptchaTaskProxyless` / `YandexSmartCaptchaTask` -- token-based challenge.
 
 | Parameter | Required | Description |
 |---|---|---|
@@ -532,15 +530,45 @@ print(result["token"])
 With proxy, use `YandexSmartCaptchaTask` (same proxy fields as reCAPTCHA v2,
 plus the `https` option above).
 
+#### Image challenge
+
+Use `YandexSmartCaptchaImageTask` when SmartCaptcha shows a main image and a
+separate strip indicating the symbols to click. The SDK sends API v2 type
+`SmartCaptchaTask`; both images must be base64-encoded.
+
+| Parameter | Required | Description |
+|---|---|---|
+| `image` | yes | Main captcha image, base64-encoded. |
+| `imgInstructions` | yes | Click-order instruction image, base64-encoded. |
+| `comment` | no | Optional text hint for the worker. |
+
+**Response:** `coordinates` -- ordered `{"x": int, "y": int}` click positions.
+
+```python
+import base64
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import YandexSmartCaptchaImageTask
+
+with open("captcha.png", "rb") as f:
+    image = base64.b64encode(f.read()).decode("utf-8")
+with open("instructions.png", "rb") as f:
+    instructions = base64.b64encode(f.read()).decode("utf-8")
+
+task = YandexSmartCaptchaImageTask(
+    image=image,
+    imgInstructions=instructions,
+)
+result = CaptchaClient("your_api_key").solve(task)
+print(result["coordinates"])
+```
+
 ### Coordinates (click captcha)
 
 <sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#coordinates)</sup>
 
-Use this method to identify points that a worker should click in an image. It
-supports generic click captchas and the image version of Yandex SmartCaptcha.
+Use this method to identify points that a worker should click in a generic image.
 
-`CoordinatesTask`. Used both for generic "click on X" captchas and for Yandex
-SmartCaptcha's image challenge. No proxy variant -- the image is submitted directly.
+`CoordinatesTask`. No proxy variant -- the image is submitted directly.
 
 | Parameter | Required | Description |
 |---|---|---|

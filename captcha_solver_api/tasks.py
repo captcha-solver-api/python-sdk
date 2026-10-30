@@ -787,16 +787,13 @@ class YandexSmartCaptchaTask(BaseTask, ProxyMixin):
 
 class CoordinatesTask(BaseTask):
     """Coordinate-based (click) image captcha. No proxy variant -- the image
-    is submitted directly. Use this task for generic click captchas and the
-    image-based variant of Yandex SmartCaptcha.
+    is submitted directly. Use this task for generic click captchas.
 
     Args:
         body: The captcha image, base64-encoded (no `data:image/...;base64,` prefix).
         comment: Hint for the worker, e.g. `"click on the green apple"`. Recommended
             for generic click captchas.
-        imgInstructions: Optional instruction image, base64-encoded. For Yandex
-            SmartCaptcha image challenges, use the image showing the required
-            click order.
+        imgInstructions: Optional instruction image, base64-encoded.
         minClicks: Minimum number of clicks expected (default `1`).
         maxClicks: Maximum number of clicks allowed.
 
@@ -833,6 +830,31 @@ class CoordinatesTask(BaseTask):
         self.imgInstructions = imgInstructions
         self.minClicks = minClicks
         self.maxClicks = maxClicks
+
+
+class YandexSmartCaptchaImageTask(BaseTask):
+    """Image-based Yandex SmartCaptcha using API v2 ``SmartCaptchaTask``.
+
+    Args:
+        image: Main SmartCaptcha challenge image, base64-encoded.
+        imgInstructions: Click-order instruction image, base64-encoded.
+        comment: Optional text hint for the worker.
+
+    Returns (``solution`` from ``solve()``):
+        ``coordinates`` -- an ordered list of ``{"x": int, "y": int}`` points.
+    """
+
+    type = "SmartCaptchaTask"
+
+    def __init__(
+        self,
+        image: str,
+        imgInstructions: str,
+        comment: Optional[str] = None,
+    ) -> None:
+        self.image = image
+        self.imgInstructions = imgInstructions
+        self.comment = comment
 
 
 class TencentTaskProxyless(BaseTask):
