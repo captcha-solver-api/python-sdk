@@ -22,7 +22,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import RecaptchaV2Task, RecaptchaV2TaskProxyless
+from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
@@ -52,27 +52,6 @@ try:
     )
     # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
     # Pass this token to the g-recaptcha-response field or widget callback.
-    print("result: " + str(result))
-except Exception as e:
-    sys.exit(e)
-
-# --- With proxy example ---
-# Solves reCAPTCHA v2 through your own proxy.
-# Required when the target site is geo-restricted or you need session consistency.
-try:
-    result = solver.solve(
-        RecaptchaV2Task(
-            websiteURL="https://example.com/login",  # Full URL of the page with captcha
-            websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-            # --- Proxy parameters (replace with your own -- these are placeholders) ---
-            proxyType="http",  # http, socks4, or socks5
-            proxyAddress="1.2.3.4",  # Proxy IP address
-            proxyPort=8080,  # Proxy port
-            proxyLogin="user",  # Login for proxy authorization (optional)
-            proxyPassword="password",  # Password for proxy authorization (optional)
-        )
-    )
-    # Solution contains the same gRecaptchaResponse token.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

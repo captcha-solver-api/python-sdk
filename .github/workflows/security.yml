@@ -1,0 +1,56 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # New advisories are published without any change in this repository,
+  # so re-check the dependencies weekly as well (Mondays, 06:00 UTC).
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# CodeQL is not run here: the repository uses CodeQL default setup
+# (Settings -> Code security), and GitHub rejects results from a workflow
+# while default setup is enabled.
+
+jobs:
+  # Known vulnerabilities in the runtime dependencies that users install
+  # with the package. pip-audit resolves them from pyproject.toml in an
+  # isolated environment, so the result matches a fresh `pip install`.
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pip-audit
+        run: python -m pip install pip-audit
+
+      - name: Audit runtime dependencies
+        run: pip-audit .
+
+  # Static analysis of the SDK source for insecure patterns, such as disabled
+  # TLS verification, requests without timeouts, or eval/exec.
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install bandit
+        run: python -m pip install bandit
+
+      - name: Scan package source
+        run: bandit -r captcha_solver_api

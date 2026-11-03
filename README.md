@@ -75,6 +75,10 @@ enabled in your editor, hover over `CaptchaClient`, `AsyncCaptchaClient`, their
 methods, or a task class such as `RecaptchaV2TaskProxyless` to read the documentation.
 Signature help shows argument names, types, and defaults while you type a call.
 
+The `captcha_solver_api/py.typed` file is intentionally empty. It is the standard
+[PEP 561](https://peps.python.org/pep-0561/) marker that tells type checkers to use
+the inline type annotations shipped with this package.
+
 Docstrings describe parameters, solution fields, exceptions, and usage examples.
 Task examples assume an existing synchronous `client`; with `AsyncCaptchaClient`,
 use `solution = await client.solve(task)` instead. Async snippets run inside an
@@ -151,14 +155,18 @@ on the target page.
 |---|---|---|
 | reCAPTCHA v2 | ✅ | ✅ |
 | reCAPTCHA v2 Enterprise | ✅ | ✅ |
-| reCAPTCHA v3 | ✅ | ❌ |
+| reCAPTCHA v3 | ✅ | - |
 | Cloudflare Turnstile | ✅ | ✅ |
 | GeeTest v3 | ✅ | ✅ |
 | GeeTest v4 | ✅ | ✅ |
-| Image to Text | ✅ | ❌ |
+| Image to Text | ✅ | - |
 | Yandex SmartCaptcha | ✅ | ✅ |
-| Coordinates (click captcha) | ✅ | ❌ |
+| Yandex SmartCaptcha Image | ✅ | - |
+| Coordinates (click captcha) | ✅ | - |
 | Tencent | ✅ | ✅ |
+
+A dash (`-`) means that this CAPTCHA type has no separate task class that accepts
+your own proxy; it does not indicate that solving the CAPTCHA is unsupported.
 
 ## Client Reference
 
@@ -207,14 +215,17 @@ solution -- wraps `create_task()` + `get_task_result()` so you don't poll by han
 
 Returns the `solution` dict once `status` is `"ready"` -- its shape depends on
 the task type (see [Captcha Types](#captcha-types)).
-Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
+Raises `ValidationError` before any request if `task` is not a task object or a
+required task parameter is missing or empty. Otherwise raises `ApiError`,
+`CaptchaTimeoutError`, or `NetworkError`.
 
 ### `create_task(task, language_pool=None)`
 
 Submits `task` and returns its numeric task ID without waiting for a solution.
 Accepts `task` and `language_pool`; it does not accept `timeout`. Use this instead of `solve()` if you need to
 manage polling yourself (e.g. checking on many tasks from a different process).
-Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
+Raises `ValidationError` before any request if `task` is invalid (same rules as
+`solve()`). Otherwise raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 
 ### `get_task_result(task_id)`
 
@@ -479,7 +490,7 @@ print(result["validate"])
 print(result["seccode"])
 ```
 `challenge` is session-specific and expires quickly, so it can't be hardcoded
-into a static example -- see [examples/sync/geetest_v3.py](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/sync/geetest_v3.py)
+into a static example -- see [examples/sync/geetest_v3_proxyless.py](https://github.com/captcha-solver-api/python-sdk/blob/main/examples/sync/geetest_v3_proxyless.py)
 for where the fetch belongs in the flow.
 
 ```python
@@ -662,6 +673,16 @@ task lifetime. A local timeout does not cancel a task or mean that the API
 failed to solve it. Use `create_task()` and keep its `task_id` if you need to
 check the same task later; calling `solve()` again creates a new task.
 
+While polling, `solve()` retries short network failures and HTTP timeouts of
+`getTaskResult` on the next poll, so a brief outage does not lose an already
+created task. After `poll_retries` (default 3) consecutive failures the error is
+raised. API errors are not retried, and `createTask` is never retried because
+that could create and pay for a second task. To change the limit:
+
+```python
+client.poll_retries = 5
+```
+
 ### Worker language pool
 
 Set a default `language_pool` once at construction instead of passing it to every call:
@@ -731,11 +752,24 @@ try:
 except ValidationError as e:
     print(f"Invalid argument: {e}")
 except ApiError as e:
-    print(f"API error: {e.error_code} {e.error_description}")
-except CaptchaTimeoutError:
-    print("Task timed out")
+    print(f"API error: {e.error_code} {e.error_description} (task {e.task_id})")
+except CaptchaTimeoutError as e:
+    print(f"Task {e.task_id} timed out")
 except NetworkError as e:
     print(f"Network error: {e}")
+```
+
+Every SDK error has a `task_id` attribute. It is set when the error happens
+after the task was created (while polling in `solve()` or in `get_task_result()`)
+and is `None` otherwise. A polling timeout does not cancel the task, so you can
+keep checking it:
+
+```python
+try:
+    result = client.solve(task)
+except CaptchaTimeoutError as e:
+    if e.task_id is not None:
+        status = client.get_task_result(e.task_id)
 ```
 
 `TimeoutError` is still exported as a deprecated alias of `CaptchaTimeoutError`.
@@ -751,12 +785,12 @@ sync/async example list, setup steps, expected results, and placeholder guidance
   `CAPTCHA_API_KEY` -- they read sample images bundled in
   [examples/assets](https://github.com/captcha-solver-api/python-sdk/tree/main/examples/assets), no target page needed.
   `python-dotenv` is optional: install it only if you want the scripts to load a `.env` file.
-- **Token captchas** (`recaptcha_v2.py`, `recaptcha_v2_enterprise.py`, `recaptcha_v3.py`,
-  `turnstile.py`, `yandex_smartcaptcha.py`, `geetest_v4.py`, `tencent.py`) use
+- **Token captchas** (`recaptcha_v2_*.py`, `recaptcha_v2_enterprise_*.py`, `recaptcha_v3.py`,
+  `turnstile_*.py`, `yandex_smartcaptcha_*.py`, `geetest_v4_*.py`, `tencent_*.py`) use
   placeholder values (`https://example.com/...`, `YOUR_WEBSITE_KEY`, `YOUR_APP_ID`,
   `YOUR_CAPTCHA_ID`) -- replace these with the real values from your own target
   page before running.
-- **`geetest_v3.py`** additionally needs `challenge` fetched fresh for every
+- **`geetest_v3_*.py`** additionally needs `challenge` fetched fresh for every
   request -- it's single-use and expires within seconds, so it can't be
   hardcoded into a static example. `"https://target-site.com/path/to/geetest/init"`
   is a placeholder; replace it with a request to your own target's equivalent
@@ -797,8 +831,8 @@ Full API reference: https://captcha-solver.com/en/docs/captcha-types
 - [Selenium Python examples](https://github.com/captcha-solver-api/captcha-solver-selenium-python-examples)
 - [JavaScript examples](https://github.com/captcha-solver-api/javascript-examples)
 - [Tencent CAPTCHA automation examples](https://github.com/captcha-solver-api/How-to-Automate-Tencent-CAPTCHA)
-- [Cloudflare Turnstile Puppeteer Demo](https://github.com/captcha-solver-api/cloudflare-turnstile-puppeteer-demo) — a working browser automation example for Cloudflare Turnstile.
-- [How to Automate Tencent CAPTCHA](https://captcha-solver.com/en/blog/how-to-automate-tencent-captcha) — a step-by-step guide with Python and JavaScript SDK examples.
+- [Cloudflare Turnstile Puppeteer Demo](https://github.com/captcha-solver-api/cloudflare-turnstile-puppeteer-demo) - a working browser automation example for Cloudflare Turnstile.
+- [How to Automate Tencent CAPTCHA](https://captcha-solver.com/en/blog/how-to-automate-tencent-captcha) - a step-by-step guide with Python and JavaScript SDK examples.
 
 ## License
 

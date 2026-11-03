@@ -2,13 +2,32 @@
 Custom exceptions used by the Captcha Solver SDK.
 """
 
+from typing import Optional
+
 
 class CaptchaError(Exception):
     """Base exception for all SDK errors.
 
     Catch this to handle `ApiError`, `NetworkError`, `CaptchaTimeoutError`, and
     `ValidationError` together.
+
+    Attributes:
+        task_id: ID of the task the error relates to, or `None` if it was raised
+            before a task was created (for example, by `createTask` or
+            `getBalance`). Errors from `solve()` and `get_task_result()` set it,
+            so you can keep polling the same task with `get_task_result()` or
+            mention it when contacting support.
+
+    Example:
+        try:
+            solution = client.solve(task)
+        except CaptchaTimeoutError as exc:
+            print("Task", exc.task_id, "is not ready yet")
     """
+
+    def __init__(self, *args: object, task_id: Optional[int] = None) -> None:
+        super().__init__(*args)
+        self.task_id = task_id
 
 
 class NetworkError(CaptchaError):
@@ -51,10 +70,15 @@ class ApiError(CaptchaError):
             print(exc.error_code, exc.error_description)
     """
 
-    def __init__(self, error_code: str, error_description: str) -> None:
+    def __init__(
+        self,
+        error_code: str,
+        error_description: str,
+        task_id: Optional[int] = None,
+    ) -> None:
         self.error_code = error_code
         self.error_description = error_description
-        super().__init__(f"{error_code}: {error_description}")
+        super().__init__(f"{error_code}: {error_description}", task_id=task_id)
 
 
 class ValidationError(CaptchaError):

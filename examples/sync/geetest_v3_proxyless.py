@@ -30,7 +30,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import CaptchaClient
-from captcha_solver_api.tasks import GeeTestTask, GeeTestTaskProxyless
+from captcha_solver_api.tasks import GeeTestTaskProxyless
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
@@ -72,26 +72,6 @@ try:
     )
     # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
     # Pass solution.validate and solution.seccode to the page's GeeTest callback.
-    print("result: " + str(result))
-except Exception as e:
-    sys.exit(e)
-
-# --- With proxy example ---
-# Solves GeeTest v3 through your own proxy.
-try:
-    result = solver.solve(
-        GeeTestTask(
-            websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
-            gt="f2ae6cadcf7886856696c46d84d109d1",  # Public key of the GeeTest widget
-            challenge=challenge,  # Session-specific value, must be fresh
-            # --- Proxy parameters (replace with your own -- these are placeholders) ---
-            proxyType="http",  # http, socks4, or socks5
-            proxyAddress="1.2.3.4",  # Proxy IP address
-            proxyPort=8080,  # Proxy port
-            proxyLogin="user",  # Login for proxy authorization (optional)
-            proxyPassword="password",  # Password for proxy authorization (optional)
-        )
-    )
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

@@ -27,8 +27,8 @@ python -m pytest -k turnstile       # filter by name
 
 No API key or internet access is needed:
 
-- `tests/sync/`, `tests/async/` — unit tests, HTTP calls are mocked.
-- `tests/integration/` — the client sends real HTTP requests to a server started on
+- `tests/sync/`, `tests/async/` - unit tests, HTTP calls are mocked.
+- `tests/integration/` - the client sends real HTTP requests to a server started on
   `127.0.0.1` by the `api_server` fixture, which records path, headers and body.
   Use it to check what actually goes over the wire (e.g. the `X-SDK` header).
 

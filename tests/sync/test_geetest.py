@@ -4,11 +4,55 @@ Tests for GeeTestTaskProxyless / GeeTestTask (v3 and v4).
 
 from unittest.mock import patch
 
-from captcha_solver_api import CaptchaClient
+import pytest
+
+from captcha_solver_api import CaptchaClient, ValidationError
 from captcha_solver_api.tasks import GeeTestTask, GeeTestTaskProxyless
 
 
 class TestGeeTest:
+    @pytest.mark.parametrize(
+        "task",
+        [
+            GeeTestTaskProxyless(websiteURL="https://example.com"),
+            GeeTestTask(
+                websiteURL="https://example.com",
+                proxyType="http",
+                proxyAddress="1.2.3.4",
+                proxyPort=8080,
+            ),
+        ],
+    )
+    def test_v3_requires_gt_and_challenge(self, task):
+        with pytest.raises(
+            ValidationError,
+            match=r"Missing required GeeTest v3 parameter\(s\): gt, challenge",
+        ):
+            task.to_dict()
+
+    @pytest.mark.parametrize("init_parameters", [None, {}, {"captcha_id": " "}])
+    def test_v4_requires_captcha_id(self, init_parameters):
+        task = GeeTestTaskProxyless(
+            websiteURL="https://example.com",
+            version=4,
+            initParameters=init_parameters,
+        )
+
+        with pytest.raises(
+            ValidationError,
+            match=r"Missing required GeeTest v4 parameter: initParameters\.captcha_id",
+        ):
+            task.to_dict()
+
+    def test_rejects_unsupported_version(self):
+        task = GeeTestTaskProxyless(
+            websiteURL="https://example.com",
+            version=5,
+        )
+
+        with pytest.raises(ValidationError, match="GeeTest version must be 3 or 4"):
+            task.to_dict()
+
     def test_v3_to_dict(self):
         task = GeeTestTaskProxyless(
             websiteURL="https://example.com",

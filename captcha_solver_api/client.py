@@ -12,10 +12,12 @@ import requests
 from ._version import __version__
 from .exceptions import (
     ApiError,
+    CaptchaError,
     CaptchaTimeoutError,
     NetworkError,
     ValidationError,
 )
+from .tasks import BaseTask
 
 
 class CaptchaClient:
@@ -32,7 +34,7 @@ class CaptchaClient:
             the account default. Can be overridden in `solve()` or `create_task()`.
 
     Raises:
-        ValidationError: `client_key` is empty.
+        ValidationError: `client_key` is missing, empty, or whitespace.
 
     Example:
         from captcha_solver_api import CaptchaClient
@@ -46,6 +48,10 @@ class CaptchaClient:
             solution = client.solve(task)
             token = solution["gRecaptchaResponse"]
     """
+
+    #: Consecutive `getTaskResult` network failures or HTTP timeouts that
+    #: `solve()` tolerates before raising. Each retry happens on the next poll.
+    poll_retries: int = 3
 
     def __init__(
         self,
@@ -74,9 +80,9 @@ class CaptchaClient:
                 pool.
 
         Raises:
-            ValidationError: `client_key` is empty.
+            ValidationError: `client_key` is missing, empty, or whitespace.
         """
-        if not client_key:
+        if not isinstance(client_key, str) or not client_key.strip():
             raise ValidationError("client_key is required")
 
         self.client_key = client_key
@@ -153,6 +159,8 @@ class CaptchaClient:
             The numeric task ID to pass to `get_task_result()`.
 
         Raises:
+            ValidationError: `task` is not a task object, or a required task
+                parameter is missing or empty. Raised before any request is sent.
             ApiError: The API rejected the task (bad key, bad parameters, etc).
             NetworkError: The request failed at the transport level.
             CaptchaTimeoutError: The HTTP request itself timed out (not the solve).
@@ -160,6 +168,9 @@ class CaptchaClient:
         Example:
             task_id = client.create_task(task, language_pool="en")
         """
+        if not isinstance(task, BaseTask):
+            raise ValidationError("task must be an instance of BaseTask")
+
         payload: Dict[str, Any] = {
             "clientKey": self.client_key,
             "task": task.to_dict(),
@@ -201,8 +212,12 @@ class CaptchaClient:
             "clientKey": self.client_key,
             "taskId": task_id,
         }
-        data = self._request("getTaskResult", payload)
-        self._ensure_success(data)
+        try:
+            data = self._request("getTaskResult", payload)
+            self._ensure_success(data)
+        except CaptchaError as exc:
+            exc.task_id = task_id
+            raise
         return data
 
     def get_balance(self) -> float:
@@ -251,10 +266,17 @@ class CaptchaClient:
             or the README's method reference.
 
         Raises:
+            ValidationError: `task` is not a task object, or a required task
+                parameter is missing or empty. Raised before any request is sent.
             ApiError: The API rejected the task or reported an error while solving.
             CaptchaTimeoutError: Polling exceeded its deadline or an HTTP request
                 timed out.
             NetworkError: A request failed or the API returned an invalid response.
+                While polling, up to `poll_retries` consecutive network failures or
+                HTTP timeouts are retried on the next poll before this is raised.
+
+            Errors raised after the task is created have `task_id` set, so the
+            task can still be checked with `get_task_result(exc.task_id)`.
 
         Example:
             from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
@@ -270,18 +292,35 @@ class CaptchaClient:
         task_id = self.create_task(task, language_pool=language_pool)
 
         deadline = time.monotonic() + (timeout if timeout is not None else self.timeout)
+        poll_failures = 0
 
         while time.monotonic() < deadline:
             remaining = deadline - time.monotonic()
             time.sleep(min(self.polling_interval, max(0, remaining)))
             if time.monotonic() >= deadline:
                 break
-            result = self.get_task_result(task_id)
+            try:
+                result = self.get_task_result(task_id)
+            except (NetworkError, CaptchaTimeoutError):
+                # getTaskResult is safe to repeat: retry a short transport
+                # failure on the next poll instead of losing a paid task.
+                poll_failures += 1
+                if poll_failures > self.poll_retries:
+                    raise
+                continue
+            poll_failures = 0
 
             if result.get("status") == "ready":
                 solution = result["solution"]
                 if not isinstance(solution, dict):
-                    raise NetworkError("API returned a ready task without a solution object")
+                    raise NetworkError(
+                        "API returned a ready task without a solution object",
+                        task_id=task_id,
+                    )
                 return solution
 
-        raise CaptchaTimeoutError("Task solving timed out.")
+        raise CaptchaTimeoutError(
+            f"Task {task_id} was not solved within the polling timeout. It may still "
+            f"be solved later: check it with get_task_result({task_id}).",
+            task_id=task_id,
+        )
