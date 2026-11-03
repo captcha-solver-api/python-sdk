@@ -15,6 +15,7 @@ import httpx
 from ._version import __version__
 from .exceptions import (
     ApiError,
+    CaptchaError,
     CaptchaTimeoutError,
     NetworkError,
     ValidationError,
@@ -226,8 +227,12 @@ class AsyncCaptchaClient:
             "clientKey": self.client_key,
             "taskId": task_id,
         }
-        data = await self._request("getTaskResult", payload)
-        self._ensure_success(data)
+        try:
+            data = await self._request("getTaskResult", payload)
+            self._ensure_success(data)
+        except CaptchaError as exc:
+            exc.task_id = task_id
+            raise
         return data
 
     async def get_balance(self) -> float:
@@ -292,6 +297,9 @@ class AsyncCaptchaClient:
                 While polling, up to `poll_retries` consecutive network failures or
                 HTTP timeouts are retried on the next poll before this is raised.
 
+            Errors raised after the task is created have `task_id` set, so the
+            task can still be checked with `get_task_result(exc.task_id)`.
+
         Example:
             from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
@@ -327,7 +335,14 @@ class AsyncCaptchaClient:
             if result.get("status") == "ready":
                 solution = result["solution"]
                 if not isinstance(solution, dict):
-                    raise NetworkError("API returned a ready task without a solution object")
+                    raise NetworkError(
+                        "API returned a ready task without a solution object",
+                        task_id=task_id,
+                    )
                 return solution
 
-        raise CaptchaTimeoutError("Task solving timed out.")
+        raise CaptchaTimeoutError(
+            f"Task {task_id} was not solved within the polling timeout. It may still "
+            f"be solved later: check it with get_task_result({task_id}).",
+            task_id=task_id,
+        )

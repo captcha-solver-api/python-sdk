@@ -752,11 +752,24 @@ try:
 except ValidationError as e:
     print(f"Invalid argument: {e}")
 except ApiError as e:
-    print(f"API error: {e.error_code} {e.error_description}")
-except CaptchaTimeoutError:
-    print("Task timed out")
+    print(f"API error: {e.error_code} {e.error_description} (task {e.task_id})")
+except CaptchaTimeoutError as e:
+    print(f"Task {e.task_id} timed out")
 except NetworkError as e:
     print(f"Network error: {e}")
+```
+
+Every SDK error has a `task_id` attribute. It is set when the error happens
+after the task was created (while polling in `solve()` or in `get_task_result()`)
+and is `None` otherwise. A polling timeout does not cancel the task, so you can
+keep checking it:
+
+```python
+try:
+    result = client.solve(task)
+except CaptchaTimeoutError as e:
+    if e.task_id is not None:
+        status = client.get_task_result(e.task_id)
 ```
 
 `TimeoutError` is still exported as a deprecated alias of `CaptchaTimeoutError`.
