@@ -2,6 +2,50 @@
 
 All notable changes are documented here.
 
+## [1.1.0] - 2026-11-03
+
+### Added
+
+- expose task_id on errors raised after task creation
+- retry transient polling failures in solve()
+- add Yandex SmartCaptcha image example
+
+### Fixed
+
+- send Yandex image captcha as SmartCaptchaTask
+- validate version-specific GeeTest parameters
+- tighten validation and document required task parameters
+- format async proxyless examples
+- validate required task parameters
+
+### Documentation
+
+- replace em dashes in contributor docs
+- list https proxy type for Yandex SmartCaptcha
+- expand async Image to Text example
+- close the async client in every async example
+- align task docs and examples after merging main
+- add security policy
+- split proxy examples into separate files
+- explain py.typed marker
+- clarify unavailable proxy task variants
+- link package metadata to SDK readme
+- update changelog for v1.0.4
+
+### Maintenance
+
+- set version to 1.1.0
+- drop CodeQL job in favor of default setup
+- raise minimum requests and httpx versions
+- configure Dependabot for pip and GitHub Actions
+- add dependency audit, bandit, and CodeQL checks
+- pin test runner for Python 3.9
+- run Python matrix on Ubuntu 22.04
+- set version to 1.0.5
+
+[Full diff](https://github.com/captcha-solver-api/python-sdk/compare/v1.0.4...v1.1.0)
+
+
 ## [1.0.4] - 2026-10-09
 
 ### Documentation
