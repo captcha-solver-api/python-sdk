@@ -38,10 +38,10 @@ jobs:
   # to catch packaging errors early. Skipped if lint fails to save CI minutes.
   test:
     needs: lint
-    # Python 3.9 is not available through setup-python on Ubuntu 26.04,
-    # which ubuntu-latest currently resolves to. Keep the compatibility
-    # matrix on an image that provides every supported Python version.
-    runs-on: ubuntu-22.04
+    # Ubuntu 26.04 (the current ubuntu-latest) does not provide Python 3.9
+    # through actions/setup-python. Pin the matrix runner while Python 3.9 is
+    # part of the SDK's supported version range.
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
