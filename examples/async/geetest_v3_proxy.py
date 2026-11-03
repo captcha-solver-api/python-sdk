@@ -35,9 +35,6 @@ from captcha_solver_api.tasks import GeeTestTask
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-# GeeTest tasks may take longer. Increase timeout if needed.
-solver = AsyncCaptchaClient(api_key, timeout=300, polling_interval=10)
-
 
 async def main():
     """
@@ -45,32 +42,34 @@ async def main():
     For each request to the API you need to get a new value from the target page.
     Below is an example of fetching it from a demo endpoint.
     """
-    # Fetch a fresh challenge value from the target page.
-    # In production, extract this from the page's initGeetest call or network requests.
-    # "target-site.com" is a placeholder -- point this at your real target before running.
-    async with httpx.AsyncClient() as client:
-        resp = await client.get("https://target-site.com/path/to/geetest/init", timeout=30)
-        challenge = resp.json()["challenge"]
+    # GeeTest tasks may take longer. Increase timeout if needed.
+    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+        # Fetch a fresh challenge value from the target page.
+        # In production, extract this from the page's initGeetest call or network requests.
+        # "target-site.com" is a placeholder -- point this at your real target before running.
+        async with httpx.AsyncClient() as client:
+            resp = await client.get("https://target-site.com/path/to/geetest/init", timeout=30)
+            challenge = resp.json()["challenge"]
 
-    # --- With proxy example ---
-    # Solves GeeTest v3 through your own proxy.
-    try:
-        result = await solver.solve(
-            GeeTestTask(
-                websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
-                gt="f2ae6cadcf7886856696c46d84d109d1",  # Public key of the GeeTest widget
-                challenge=challenge,  # Session-specific value, must be fresh
-                # --- Proxy parameters (replace with your own -- these are placeholders) ---
-                proxyType="http",  # http, socks4, or socks5
-                proxyAddress="1.2.3.4",  # Proxy IP address
-                proxyPort=8080,  # Proxy port
-                proxyLogin="user",  # Login for proxy authorization (optional)
-                proxyPassword="password",  # Password for proxy authorization (optional)
+        # --- With proxy example ---
+        # Solves GeeTest v3 through your own proxy.
+        try:
+            result = await solver.solve(
+                GeeTestTask(
+                    websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
+                    gt="f2ae6cadcf7886856696c46d84d109d1",  # Public key of the GeeTest widget
+                    challenge=challenge,  # Session-specific value, must be fresh
+                    # --- Proxy parameters (replace with your own -- these are placeholders) ---
+                    proxyType="http",  # http, socks4, or socks5
+                    proxyAddress="1.2.3.4",  # Proxy IP address
+                    proxyPort=8080,  # Proxy port
+                    proxyLogin="user",  # Login for proxy authorization (optional)
+                    proxyPassword="password",  # Password for proxy authorization (optional)
+                )
             )
-        )
-        print("result: " + str(result))
-    except Exception as e:
-        sys.exit(e)
+            print("result: " + str(result))
+        except Exception as e:
+            sys.exit(e)
 
 
 asyncio.run(main())

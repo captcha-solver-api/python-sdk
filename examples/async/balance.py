@@ -32,17 +32,16 @@ from captcha_solver_api import AsyncCaptchaClient
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-solver = AsyncCaptchaClient(api_key)
-
 
 async def main():
-    # Get the current account balance.
-    # Returns a float with the available amount in your account currency.
-    try:
-        balance = await solver.get_balance()
-        print("Balance: " + str(balance))
-    except Exception as e:
-        sys.exit(e)
+    async with AsyncCaptchaClient(api_key) as solver:
+        # Get the current account balance.
+        # Returns a float with the available amount in your account currency.
+        try:
+            balance = await solver.get_balance()
+            print("Balance: " + str(balance))
+        except Exception as e:
+            sys.exit(e)
 
 
 asyncio.run(main())

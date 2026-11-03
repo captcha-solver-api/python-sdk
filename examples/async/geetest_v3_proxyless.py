@@ -35,9 +35,6 @@ from captcha_solver_api.tasks import GeeTestTaskProxyless
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-# GeeTest tasks may take longer. Increase timeout if needed.
-solver = AsyncCaptchaClient(api_key, timeout=300, polling_interval=10)
-
 
 async def main():
     """
@@ -45,33 +42,35 @@ async def main():
     For each request to the API you need to get a new value from the target page.
     Below is an example of fetching it from a demo endpoint.
     """
-    # Fetch a fresh challenge value from the target page.
-    # In production, extract this from the page's initGeetest call or network requests.
-    # "target-site.com" is a placeholder -- point this at your real target before running.
-    async with httpx.AsyncClient() as client:
-        resp = await client.get("https://target-site.com/path/to/geetest/init", timeout=30)
-        challenge = resp.json()["challenge"]
+    # GeeTest tasks may take longer. Increase timeout if needed.
+    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+        # Fetch a fresh challenge value from the target page.
+        # In production, extract this from the page's initGeetest call or network requests.
+        # "target-site.com" is a placeholder -- point this at your real target before running.
+        async with httpx.AsyncClient() as client:
+            resp = await client.get("https://target-site.com/path/to/geetest/init", timeout=30)
+            challenge = resp.json()["challenge"]
 
-    # --- Proxyless example ---
-    # Solves GeeTest v3 without a proxy.
-    # v3 is the default version, so the version field can be omitted.
-    try:
-        result = await solver.solve(
-            GeeTestTaskProxyless(
-                websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
-                gt="f2ae6cadcf7886856696c46d84d109d1",  # Public key of the GeeTest widget
-                challenge=challenge,  # Session-specific value, must be fresh
-                # Optional fields
-                # geetestApiServerSubdomain='api-na.geetest.com',  # Custom API subdomain
-                # initParameters={...},                              # Extra params from initGeetest call
-                # userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...',  # Browser User-Agent
+        # --- Proxyless example ---
+        # Solves GeeTest v3 without a proxy.
+        # v3 is the default version, so the version field can be omitted.
+        try:
+            result = await solver.solve(
+                GeeTestTaskProxyless(
+                    websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
+                    gt="f2ae6cadcf7886856696c46d84d109d1",  # Public key of the GeeTest widget
+                    challenge=challenge,  # Session-specific value, must be fresh
+                    # Optional fields
+                    # geetestApiServerSubdomain='api-na.geetest.com',  # Custom API subdomain
+                    # initParameters={...},                              # Extra params from initGeetest call
+                    # userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...',  # Browser User-Agent
+                )
             )
-        )
-        # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
-        # Pass solution.validate and solution.seccode to the page's GeeTest callback.
-        print("result: " + str(result))
-    except Exception as e:
-        sys.exit(e)
+            # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
+            # Pass solution.validate and solution.seccode to the page's GeeTest callback.
+            print("result: " + str(result))
+        except Exception as e:
+            sys.exit(e)
 
 
 asyncio.run(main())

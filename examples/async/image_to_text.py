@@ -29,23 +29,22 @@ from captcha_solver_api.tasks import ImageToTextTask
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-solver = AsyncCaptchaClient(api_key)
-
 
 async def main():
-    # Base64 body must not include the data:image/...;base64, prefix.
-    with open(os.path.join(assets_dir, "captcha-digits.png"), "rb") as f:
-        body = b64encode(f.read()).decode("utf-8")
+    async with AsyncCaptchaClient(api_key) as solver:
+        # Base64 body must not include the data:image/...;base64, prefix.
+        with open(os.path.join(assets_dir, "captcha-digits.png"), "rb") as f:
+            body = b64encode(f.read()).decode("utf-8")
 
-    task = ImageToTextTask(body=body, numeric=1, minLength=4, maxLength=6)
+        task = ImageToTextTask(body=body, numeric=1, minLength=4, maxLength=6)
 
-    try:
-        result = await solver.solve(task)
-    except Exception as e:
-        sys.exit(str(e))
-    else:
-        # Solution contains {"text": "58204"}
-        print("result: " + str(result))
+        try:
+            result = await solver.solve(task)
+        except Exception as e:
+            sys.exit(str(e))
+        else:
+            # Solution contains {"text": "58204"}
+            print("result: " + str(result))
 
 
 asyncio.run(main())
