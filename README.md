@@ -673,6 +673,16 @@ task lifetime. A local timeout does not cancel a task or mean that the API
 failed to solve it. Use `create_task()` and keep its `task_id` if you need to
 check the same task later; calling `solve()` again creates a new task.
 
+While polling, `solve()` retries short network failures and HTTP timeouts of
+`getTaskResult` on the next poll, so a brief outage does not lose an already
+created task. After `poll_retries` (default 3) consecutive failures the error is
+raised. API errors are not retried, and `createTask` is never retried because
+that could create and pay for a second task. To change the limit:
+
+```python
+client.poll_retries = 5
+```
+
 ### Worker language pool
 
 Set a default `language_pool` once at construction instead of passing it to every call:

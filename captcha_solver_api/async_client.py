@@ -58,6 +58,10 @@ class AsyncCaptchaClient:
             token = solution["gRecaptchaResponse"]
     """
 
+    #: Consecutive `getTaskResult` network failures or HTTP timeouts that
+    #: `solve()` tolerates before raising. Each retry happens on the next poll.
+    poll_retries: int = 3
+
     def __init__(
         self,
         client_key: str,
@@ -285,6 +289,8 @@ class AsyncCaptchaClient:
             CaptchaTimeoutError: Polling exceeded its deadline or an HTTP request
                 timed out.
             NetworkError: A request failed or the API returned an invalid response.
+                While polling, up to `poll_retries` consecutive network failures or
+                HTTP timeouts are retried on the next poll before this is raised.
 
         Example:
             from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
@@ -300,13 +306,23 @@ class AsyncCaptchaClient:
         task_id = await self.create_task(task, language_pool=language_pool)
 
         deadline = time.monotonic() + (timeout if timeout is not None else self.timeout)
+        poll_failures = 0
 
         while time.monotonic() < deadline:
             remaining = deadline - time.monotonic()
             await asyncio.sleep(min(self.polling_interval, max(0, remaining)))
             if time.monotonic() >= deadline:
                 break
-            result = await self.get_task_result(task_id)
+            try:
+                result = await self.get_task_result(task_id)
+            except (NetworkError, CaptchaTimeoutError):
+                # getTaskResult is safe to repeat: retry a short transport
+                # failure on the next poll instead of losing a paid task.
+                poll_failures += 1
+                if poll_failures > self.poll_retries:
+                    raise
+                continue
+            poll_failures = 0
 
             if result.get("status") == "ready":
                 solution = result["solution"]
