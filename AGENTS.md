@@ -4,11 +4,11 @@ Python SDK for the Captcha Solver API, published on PyPI as `captcha-solver-api`
 
 ## Project layout
 
-- `captcha_solver_api/` — package: `client.py` (sync), `async_client.py` (async), `tasks.py`, `exceptions.py`
-- `tests/sync/`, `tests/async/` — unit tests, HTTP is mocked
-- `tests/integration/` — real HTTP requests to a local stub server (`api_server` fixture)
-- `examples/sync/`, `examples/async/` — runnable examples
-- `DEVELOPMENT.md` — setup, tests, release process
+- `captcha_solver_api/` - package: `client.py` (sync), `async_client.py` (async), `tasks.py`, `exceptions.py`
+- `tests/sync/`, `tests/async/` - unit tests, HTTP is mocked
+- `tests/integration/` - real HTTP requests to a local stub server (`api_server` fixture)
+- `examples/sync/`, `examples/async/` - runnable examples
+- `DEVELOPMENT.md` - setup, tests, release process
 
 ## Commands
 
