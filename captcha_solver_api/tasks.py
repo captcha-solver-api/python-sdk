@@ -783,7 +783,8 @@ class YandexSmartCaptchaTask(BaseTask, ProxyMixin):
     Args:
         websiteURL: Required. Full URL of the page where the widget is located.
         websiteKey: Required. The `sitekey` value from the page source or captcha iframe.
-        proxyType: Required. `"http"`, `"socks4"`, or `"socks5"`.
+        proxyType: Required. `"http"`, `"https"`, `"socks4"`, or `"socks5"`. `"https"`
+            is accepted only for this CAPTCHA type.
         proxyAddress: Required. Proxy IP address or hostname.
         proxyPort: Required. Proxy port.
         proxyLogin: Optional. Proxy auth username, if required.
