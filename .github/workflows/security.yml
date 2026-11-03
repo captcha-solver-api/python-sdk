@@ -13,6 +13,10 @@ on:
 permissions:
   contents: read
 
+# CodeQL is not run here: the repository uses CodeQL default setup
+# (Settings -> Code security), and GitHub rejects results from a workflow
+# while default setup is enabled.
+
 jobs:
   # Known vulnerabilities in the runtime dependencies that users install
   # with the package. pip-audit resolves them from pyproject.toml in an
@@ -50,23 +54,3 @@ jobs:
 
       - name: Scan package source
         run: bandit -r captcha_solver_api
-
-  # GitHub CodeQL analysis. Results appear under Security -> Code scanning.
-  # Do not also enable CodeQL "default setup" in the repository settings:
-  # GitHub rejects uploads from this workflow while default setup is on.
-  codeql:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: python
-          queries: security-extended
-
-      - name: Analyze
-        uses: github/codeql-action/analyze@v3
