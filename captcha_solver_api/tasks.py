@@ -600,12 +600,12 @@ class GeeTestTaskProxyless(BaseTask):
 
     Args:
         websiteURL: Required. Full URL of the page where the widget is located.
-        version: Optional. `3` (default) or `4`.
-        gt: Optional. Public key of the GeeTest widget. Required for v3.
-        challenge: Optional. Session-specific challenge value from the page. Required for
-            v3, and must be freshly fetched for every request -- it cannot be reused.
-        initParameters: Optional. Extra parameters from the page's `initGeetest` call. For
-            v4, must contain `captcha_id`.
+        version: Optional. `3` (default) or `4`. Must be `4` for GeeTest v4.
+        gt: Required for v3. Public key of the GeeTest widget.
+        challenge: Required for v3. Session-specific challenge value from the page. Must be
+            freshly fetched for every request -- it cannot be reused.
+        initParameters: Required for v4. Parameters from the page's `initGeetest` call;
+            must contain `captcha_id`. Optional for v3.
         geetestApiServerSubdomain: Optional. Custom GeeTest API subdomain, if the site uses one.
         userAgent: Optional. User-Agent to solve with.
         risk_type: Optional. Value of the `risk_type` parameter from the captcha-loading
@@ -667,12 +667,12 @@ class GeeTestTask(BaseTask, ProxyMixin):
         proxyPort: Required. Proxy port.
         proxyLogin: Optional. Proxy auth username, if required.
         proxyPassword: Optional. Proxy auth password, if required.
-        version: Optional. `3` (default) or `4`.
-        gt: Optional. Public key of the GeeTest widget. Required for v3.
-        challenge: Optional. Session-specific challenge value from the page, must be fresh.
-            Required for v3.
-        initParameters: Optional. Extra parameters from the page's `initGeetest` call. For
-            v4, must contain `captcha_id`.
+        version: Optional. `3` (default) or `4`. Must be `4` for GeeTest v4.
+        gt: Required for v3. Public key of the GeeTest widget.
+        challenge: Required for v3. Session-specific challenge value from the page, must be
+            fresh.
+        initParameters: Required for v4. Parameters from the page's `initGeetest` call;
+            must contain `captcha_id`. Optional for v3.
         geetestApiServerSubdomain: Optional. Custom GeeTest API subdomain, if the site uses one.
         userAgent: Optional. User-Agent to solve with.
         risk_type: Optional. Value of the `risk_type` parameter from the captcha-loading
@@ -884,15 +884,33 @@ class CoordinatesTask(BaseTask):
 
 
 class YandexSmartCaptchaImageTask(BaseTask):
-    """Image-based Yandex SmartCaptcha using API v2 ``SmartCaptchaTask``.
+    """Image-based Yandex SmartCaptcha, sent as API type `SmartCaptchaTask`. No proxy
+    variant exists for this type -- the images are submitted directly.
 
     Args:
-        image: Main SmartCaptcha challenge image, base64-encoded.
-        imgInstructions: Click-order instruction image, base64-encoded.
-        comment: Optional text hint for the worker.
+        image: Required. Main SmartCaptcha challenge image, base64-encoded.
+        imgInstructions: Required. Click-order instruction image, base64-encoded.
+        comment: Optional. Text hint for the worker, e.g. `"click the symbols in order"`.
 
-    Returns (``solution`` from ``solve()``):
-        ``coordinates`` -- an ordered list of ``{"x": int, "y": int}`` points.
+    Returns (`solution` from `solve()`):
+        `coordinates` -- an ordered list of `{"x": int, "y": int}` points to click.
+
+    Example:
+        import base64
+
+        from captcha_solver_api.tasks import YandexSmartCaptchaImageTask
+
+        with open("captcha.png", "rb") as f:
+            image = base64.b64encode(f.read()).decode("utf-8")
+        with open("instructions.png", "rb") as f:
+            instructions = base64.b64encode(f.read()).decode("utf-8")
+
+        task = YandexSmartCaptchaImageTask(image=image, imgInstructions=instructions)
+        solution = client.solve(task)
+        points = solution["coordinates"]
+
+    Note:
+        Optional arguments default to `None` and are omitted from the request.
     """
 
     type = "SmartCaptchaTask"

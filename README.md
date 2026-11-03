@@ -161,6 +161,7 @@ on the target page.
 | GeeTest v4 | ✅ | ✅ |
 | Image to Text | ✅ | - |
 | Yandex SmartCaptcha | ✅ | ✅ |
+| Yandex SmartCaptcha Image | ✅ | - |
 | Coordinates (click captcha) | ✅ | - |
 | Tencent | ✅ | ✅ |
 
@@ -807,8 +808,8 @@ Full API reference: https://captcha-solver.com/en/docs/captcha-types
 - [Selenium Python examples](https://github.com/captcha-solver-api/captcha-solver-selenium-python-examples)
 - [JavaScript examples](https://github.com/captcha-solver-api/javascript-examples)
 - [Tencent CAPTCHA automation examples](https://github.com/captcha-solver-api/How-to-Automate-Tencent-CAPTCHA)
-- [Cloudflare Turnstile Puppeteer Demo](https://github.com/captcha-solver-api/cloudflare-turnstile-puppeteer-demo) — a working browser automation example for Cloudflare Turnstile.
-- [How to Automate Tencent CAPTCHA](https://captcha-solver.com/en/blog/how-to-automate-tencent-captcha) — a step-by-step guide with Python and JavaScript SDK examples.
+- [Cloudflare Turnstile Puppeteer Demo](https://github.com/captcha-solver-api/cloudflare-turnstile-puppeteer-demo) - a working browser automation example for Cloudflare Turnstile.
+- [How to Automate Tencent CAPTCHA](https://captcha-solver.com/en/blog/how-to-automate-tencent-captcha) - a step-by-step guide with Python and JavaScript SDK examples.
 
 ## License
 
