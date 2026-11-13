@@ -932,8 +932,11 @@ class YandexSmartCaptchaKaleidoscopeTask(BaseTask):
     `PazlCaptchaTask`. No proxy variant exists because the image is submitted directly.
 
     Args:
-        image: Required. Main Kaleidoscope challenge image, base64-encoded.
-        task: Required. Puzzle steps serialized as a JSON array string.
+        image: Required. Main Kaleidoscope challenge image, base64-encoded
+            without a `data:image/...;base64,` prefix.
+        task: Required. Puzzle-step sequence captured from the same challenge,
+            serialized as a JSON array string. Preserve the original order;
+            the sequence is challenge-specific.
 
     Returns (`solution` from `solve()`):
         A string containing the number of slider-arrow clicks required to solve
@@ -952,6 +955,14 @@ class YandexSmartCaptchaKaleidoscopeTask(BaseTask):
     type = "PazlCaptchaTask"
 
     def __init__(self, image: str, task: str) -> None:
+        """Create a Kaleidoscope puzzle task.
+
+        Args:
+            image: Main challenge image encoded as a pure Base64 string, without
+                a data-URL prefix.
+            task: Challenge-specific puzzle steps encoded as a JSON array string,
+                for example `"[15,24,4,13,10]"`. Keep the captured order unchanged.
+        """
         self.image = image
         self.task = task
 
