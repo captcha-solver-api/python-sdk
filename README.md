@@ -511,7 +511,8 @@ With proxy, use `GeeTestTask` (same proxy fields as reCAPTCHA v2).
 <sup>[API method description.](https://captcha-solver.com/en/docs/captcha-types#yandex-smartcaptcha)</sup>
 
 Use this method to solve the token-based Yandex SmartCaptcha and obtain a token
-for the widget on the target page. Use the dedicated image method for image challenges.
+for the widget on the target page. Use the dedicated image methods for visual
+SmartCaptcha and Kaleidoscope challenges.
 
 `YandexSmartCaptchaTaskProxyless` / `YandexSmartCaptchaTask` -- token-based challenge.
 
@@ -603,6 +604,10 @@ task = YandexSmartCaptchaKaleidoscopeTask(
 clicks = CaptchaClient("your_api_key").solve(task)
 print(clicks)
 ```
+
+Runnable examples:
+[sync](examples/sync/yandex_smartcaptcha_kaleidoscope.py) and
+[async](examples/async/yandex_smartcaptcha_kaleidoscope.py).
 
 ### Coordinates (click captcha)
 
@@ -838,6 +843,7 @@ python examples/sync/balance.py
 python examples/sync/image_to_text.py
 python examples/sync/coordinates.py
 python examples/sync/yandex_smartcaptcha_image.py
+python examples/sync/yandex_smartcaptcha_kaleidoscope.py
 ```
 
 Live checks with real parameters have exercised all supported task types.

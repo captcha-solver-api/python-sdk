@@ -67,7 +67,7 @@ script demonstrates exactly one task variant.
 | GeeTest v4 (proxyless / proxy) | [proxyless](sync/geetest_v4_proxyless.py) / [proxy](sync/geetest_v4_proxy.py) | [proxyless](async/geetest_v4_proxyless.py) / [proxy](async/geetest_v4_proxy.py) | `captcha_output` and related fields |
 | Yandex SmartCaptcha (proxyless / proxy) | [proxyless](sync/yandex_smartcaptcha_proxyless.py) / [proxy](sync/yandex_smartcaptcha_proxy.py) | [proxyless](async/yandex_smartcaptcha_proxyless.py) / [proxy](async/yandex_smartcaptcha_proxy.py) | `token` |
 | Yandex SmartCaptcha image | [yandex_smartcaptcha_image.py](sync/yandex_smartcaptcha_image.py) | [yandex_smartcaptcha_image.py](async/yandex_smartcaptcha_image.py) | `coordinates` |
-| Yandex SmartCaptcha Kaleidoscope | [yandex_smartcaptcha_kaleidoscope.py](sync/yandex_smartcaptcha_kaleidoscope.py) | [yandex_smartcaptcha_kaleidoscope.py](async/yandex_smartcaptcha_kaleidoscope.py) | slider-arrow click count |
+| Yandex SmartCaptcha Kaleidoscope | [yandex_smartcaptcha_kaleidoscope.py](sync/yandex_smartcaptcha_kaleidoscope.py) | [yandex_smartcaptcha_kaleidoscope.py](async/yandex_smartcaptcha_kaleidoscope.py) | `str` slider-arrow click count |
 | Coordinates / click captcha | [coordinates.py](sync/coordinates.py) | [coordinates.py](async/coordinates.py) | `coordinates` |
 | Tencent (proxyless / proxy) | [proxyless](sync/tencent_proxyless.py) / [proxy](sync/tencent_proxy.py) | [proxyless](async/tencent_proxyless.py) / [proxy](async/tencent_proxy.py) | `appid`, `ret`, `ticket`, `randstr` |
 
@@ -78,6 +78,7 @@ Run commands from the repository root so local imports and bundled assets resolv
 ```bash
 python examples/sync/balance.py
 python examples/sync/image_to_text.py
+python examples/sync/yandex_smartcaptcha_kaleidoscope.py
 python examples/async/recaptcha_v2_proxyless.py
 ```
 
