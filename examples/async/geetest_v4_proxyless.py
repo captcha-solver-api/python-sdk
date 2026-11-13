@@ -1,6 +1,17 @@
 """
 Example: Solve a GeeTest v4 challenge with the async client.
 
+This example solves GeeTest v4 without a customer proxy. Obtain captcha_id from
+the target's v4 loader and pass it in initParameters; the returned v4 fields
+must be applied and verified through the target's own flow. It uses
+GeeTestTaskProxyless with version 4 and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and obtain captcha_id from the target's v4 loader.
+STEP-02 - Create GeeTestTaskProxyless with version 4 and await solve().
+STEP-03 - Print the returned v4 fields and explain their site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and captcha_id with values from your target page.
@@ -27,17 +38,22 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import GeeTestTaskProxyless
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient and obtain captcha_id from the target's v4 loader.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     # GeeTest v4 tasks may take longer. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+    async with AsyncCaptchaClient(
+        api_key, debug=debug_enabled(), timeout=300, polling_interval=10
+    ) as solver:
         # --- Proxyless example ---
         # Solves GeeTest v4 without a proxy.
         # v4 drops gt/challenge. The widget is identified by captcha_id inside initParameters.
         try:
+            # STEP-02: Create GeeTestTaskProxyless with version 4 and await solve().
             result = await solver.solve(
                 GeeTestTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page with the GeeTest widget
@@ -49,10 +65,12 @@ async def main():
                     # userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...',  # Browser User-Agent
                 )
             )
+            # STEP-03: Print the returned v4 fields and explain their site-specific application.
             # Solution contains {"captcha_id": "...", "lot_number": "...", "pass_token": "...", "gen_time": "...", "captcha_output": "..."}
             # Pass these values together into the page's GeeTest v4 callback as-is.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

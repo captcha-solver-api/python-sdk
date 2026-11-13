@@ -1,6 +1,17 @@
 """
 Example: Solve a reCAPTCHA v2 Enterprise challenge with the async client.
 
+This example solves reCAPTCHA v2 Enterprise through your own proxy. Supply the
+page URL, Enterprise key and payload, and proxy details; the returned
+gRecaptchaResponse must be submitted and verified by the target integration.
+It uses RecaptchaV2EnterpriseTask and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient, Enterprise parameters, and customer proxy credentials.
+STEP-02 - Create RecaptchaV2EnterpriseTask and await solve() through that proxy.
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -25,16 +36,19 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient, Enterprise parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- With proxy example ---
         # Solves reCAPTCHA v2 Enterprise through your own proxy.
         # Use when the target site is geo-restricted or you need a consistent session.
         try:
+            # STEP-02: Create RecaptchaV2EnterpriseTask and await solve() through that proxy.
             result = await solver.solve(
                 RecaptchaV2EnterpriseTask(
                     websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -52,9 +66,11 @@ async def main():
                     cookies="foo=bar; baz=1",  # Session cookies if needed
                 )
             )
+            # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
             # Solution contains the same gRecaptchaResponse token.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

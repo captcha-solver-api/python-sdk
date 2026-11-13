@@ -1,6 +1,17 @@
 """
 Example: Solve a reCAPTCHA v3 challenge.
 
+This example solves score-based reCAPTCHA v3 without a customer proxy. Extract
+the site key and page action from grecaptcha.execute(), choose the required
+minimum score, and submit the returned gRecaptchaResponse through the target's
+own flow. It uses RecaptchaV3TaskProxyless and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient and extract the site key and action from grecaptcha.execute().
+STEP-02 - Create RecaptchaV3TaskProxyless with the required score and call solve().
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, websiteKey, and minScore with values from your target
@@ -25,23 +36,26 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient and extract the site key and action from grecaptcha.execute().
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # reCAPTCHA v3 tasks may take longer to solve. Increase timeout if needed.
-solver = CaptchaClient(api_key, timeout=180)
+solver = CaptchaClient(api_key, debug=debug_enabled(), timeout=180)
 
 # reCAPTCHA v3 returns a score instead of a pass/fail challenge.
 # The higher the minScore you request, the harder and longer the task takes.
 # minScore values: 0.3 (fastest), 0.7 (balanced), 0.9 (highest, slowest).
 try:
+    # STEP-02: Create RecaptchaV3TaskProxyless with the required score and call solve().
     result = solver.solve(
         RecaptchaV3TaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with the v3 widget
@@ -53,8 +67,10 @@ try:
             # apiDomain='www.recaptcha.net',            # Set if site loads from recaptcha.net
         )
     )
+    # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
     # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
     # Pass this token to the g-recaptcha-response field or grecaptcha callback.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

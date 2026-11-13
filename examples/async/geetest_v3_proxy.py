@@ -1,6 +1,17 @@
 """
 Example: Solve a GeeTest v3 challenge with the async client.
 
+This example solves GeeTest v3 through your own proxy. Obtain gt, fetch a fresh
+challenge for every task, and supply the proxy details; the returned challenge,
+validate, and seccode fields must be submitted and verified by the target. It
+uses GeeTestTask and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient, fetch a fresh challenge, and set proxy credentials.
+STEP-02 - Create GeeTestTask with gt and challenge, then await solve() through the proxy.
+STEP-03 - Print challenge, validate, and seccode and explain their site-specific use.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, gt, and challenge with values from your target page.
@@ -32,7 +43,9 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import GeeTestTask
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient, fetch a fresh challenge, and set proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -43,7 +56,9 @@ async def main():
     Below is an example of fetching it from a demo endpoint.
     """
     # GeeTest tasks may take longer. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+    async with AsyncCaptchaClient(
+        api_key, debug=debug_enabled(), timeout=300, polling_interval=10
+    ) as solver:
         # Fetch a fresh challenge value from the target page.
         # In production, extract this from the page's initGeetest call or network requests.
         # "target-site.com" is a placeholder -- point this at your real target before running.
@@ -54,6 +69,7 @@ async def main():
         # --- With proxy example ---
         # Solves GeeTest v3 through your own proxy.
         try:
+            # STEP-02: Create GeeTestTask with gt and challenge, then await solve() through the proxy.
             result = await solver.solve(
                 GeeTestTask(
                     websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
@@ -67,8 +83,10 @@ async def main():
                     proxyPassword="password",  # Password for proxy authorization (optional)
                 )
             )
+            # STEP-03: Print challenge, validate, and seccode and explain their site-specific use.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

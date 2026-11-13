@@ -1,6 +1,17 @@
 """
 Example: Solve a GeeTest v4 challenge.
 
+This example solves GeeTest v4 through your own proxy. Obtain captcha_id from
+the target's v4 loader, pass it in initParameters, and supply the proxy details;
+the returned v4 fields require site-specific submission and verification. It
+uses GeeTestTask with version 4 and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient, obtain captcha_id, and set customer proxy credentials.
+STEP-02 - Create GeeTestTask with version 4 and call solve() through the proxy.
+STEP-03 - Print the returned v4 fields and explain their site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and captcha_id with values from your target page.
@@ -26,22 +37,25 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import GeeTestTask
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient, obtain captcha_id, and set customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # GeeTest v4 tasks may take longer. Increase timeout if needed.
-solver = CaptchaClient(api_key, timeout=300, polling_interval=10)
+solver = CaptchaClient(api_key, debug=debug_enabled(), timeout=300, polling_interval=10)
 
 # --- With proxy example ---
 # Solves GeeTest v4 through your own proxy.
 try:
+    # STEP-02: Create GeeTestTask with version 4 and call solve() through the proxy.
     result = solver.solve(
         GeeTestTask(
             websiteURL="https://example.com/login",  # Full URL of the page with the GeeTest widget
@@ -57,6 +71,8 @@ try:
             proxyPassword="password",  # Password for proxy authorization (optional)
         )
     )
+    # STEP-03: Print the returned v4 fields and explain their site-specific application.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

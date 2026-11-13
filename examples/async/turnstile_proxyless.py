@@ -1,6 +1,17 @@
 """
 Example: Solve a Cloudflare Turnstile challenge with the async client.
 
+This example solves a Turnstile widget without a customer proxy. Supply the
+page URL and data-sitekey plus action, data, pagedata, and matching User-Agent
+when the page uses them; then apply the returned token through the page-specific
+callback or field. It uses TurnstileTaskProxyless and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and extract the widget key and challenge data.
+STEP-02 - Create TurnstileTaskProxyless and await solve() without a customer proxy.
+STEP-03 - Print the token and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -25,17 +36,20 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import TurnstileTaskProxyless
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient and extract the widget key and challenge data.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- Proxyless example ---
         # Solves Cloudflare Turnstile without a proxy.
         # The token is tied to the User-Agent. If you pass userAgent, use the same
         # User-Agent in your browser or bot when submitting the token.
         try:
+            # STEP-02: Create TurnstileTaskProxyless and await solve() without a customer proxy.
             result = await solver.solve(
                 TurnstileTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
@@ -47,10 +61,12 @@ async def main():
                     # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',  # Must match the browser submitting the token
                 )
             )
+            # STEP-03: Print the token and explain its site-specific application.
             # Solution contains {"token": "0.zxcv..."}
             # Pass this token to the widget callback or cf-turnstile-response field.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

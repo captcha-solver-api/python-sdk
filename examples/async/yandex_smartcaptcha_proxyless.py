@@ -1,6 +1,17 @@
 """
 Example: Solve a Yandex SmartCaptcha challenge (token-based) with the async client.
 
+This example solves token-based Yandex SmartCaptcha without a customer proxy.
+Supply the target page URL and sitekey from its widget or iframe; the returned
+token must be submitted through the page's smart-token or backend flow and then
+verified there. It uses YandexSmartCaptchaTaskProxyless and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and obtain the page URL and SmartCaptcha site key.
+STEP-02 - Create YandexSmartCaptchaTaskProxyless and await solve() without a customer proxy.
+STEP-03 - Print the token and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -24,17 +35,20 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient and obtain the page URL and SmartCaptcha site key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- Proxyless example ---
         # Solves Yandex SmartCaptcha without a proxy.
         # The service's own proxies are used to solve the captcha.
         # websiteKey is the sitekey value from the page code or captcha iframe.
         try:
+            # STEP-02: Create YandexSmartCaptchaTaskProxyless and await solve() without a customer proxy.
             result = await solver.solve(
                 YandexSmartCaptchaTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
@@ -44,10 +58,12 @@ async def main():
                     # cookies='session=abc123; token=xyz789',                     # Session cookies if needed
                 )
             )
+            # STEP-03: Print the token and explain its site-specific application.
             # Solution contains {"token": "dV9xNjYyNTU3NjkxO4k9OTQuNVMuMjkuMjM9..."}
             # Use solution.token in the smart-token field or pass to your site's backend.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

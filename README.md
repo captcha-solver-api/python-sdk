@@ -44,6 +44,7 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
   - [Tencent](#tencent)
 - [Advanced Usage](#advanced-usage)
   - [Check balance](#check-balance)
+  - [Debug mode](#debug-mode)
   - [Custom timeout and polling](#custom-timeout-and-polling)
   - [Worker language pool](#worker-language-pool)
   - [Async client](#async-client)
@@ -188,6 +189,7 @@ Constructor.
 | `timeout` | `int` | `120` | Polling window after task creation, in seconds. Overridable per call; each HTTP request has a separate 30-second timeout. |
 | `polling_interval` | `int` | `10` | Seconds before the first `getTaskResult` poll and between subsequent polls. |
 | `language_pool` | `Optional[str]` | `None` | Default worker pool (`"en"` or `"ru"`) applied to every call that doesn't pass its own `language_pool`. |
+| `debug` | `bool` | `False` | Emit sanitized request/response, timing, polling, error, and solve summary logs. |
 
 Both clients hold a reusable connection pool (`requests.Session` / `httpx.AsyncClient`)
 for their lifetime instead of opening one per request. Close it when you're done --
@@ -586,7 +588,7 @@ Use this method to identify points that a worker should click in a generic image
 | `body` | yes | The captcha image, base64-encoded. |
 | `comment` | no (recommended) | Hint for the worker, e.g. `"click on the green apple"`. |
 | `imgInstructions` | no | Optional instruction image, base64-encoded. |
-| `minClicks` | no | Minimum number of clicks expected (default `1`). |
+| `minClicks` | no | Minimum number of clicks expected. When unset, the SDK omits this field and lets the API apply its default. |
 | `maxClicks` | no | Maximum number of clicks allowed. |
 
 **Response:** `coordinates` -- a list of `{"x": int, "y": int}` pixel positions to click, in order.
@@ -648,6 +650,36 @@ balance = client.get_balance()
 print(f"Balance: {balance}")
 ```
 
+### Debug mode
+
+Pass `debug=True` to either client to diagnose an integration. The SDK logs its version and
+configuration, each HTTP operation and duration, compact one-line `processing` polls, detailed
+sanitized request/response blocks for completed operations and failures, and a `SOLVE SUMMARY`
+after every `solve()` call (including failed calls). Debug mode is never enabled from an
+environment variable and logging failures do not change request results or SDK exceptions.
+
+```python
+client = CaptchaClient("your_api_key", debug=True)
+solution = client.solve(task)
+```
+
+API credentials, cookies, and proxy credentials are replaced with `[MASKED]`. Proxy type and
+port remain visible. Base64 image fields are
+replaced with their character count, and other strings longer than 200 characters retain only
+their first and last 40 characters plus the original length. The SDK does not log HTTP headers.
+URLs and custom task fields can still contain application data, so review logs before sharing
+them publicly.
+
+Every runnable sync and async example accepts the same `--debug` flag. For example:
+
+```bash
+python examples/sync/image_to_text.py --debug
+```
+
+Examples read `CAPTCHA_API_KEY` from the environment or `.env`. They create real paid CAPTCHA
+tasks unless their description says otherwise. The dedicated walkthrough remains available at
+[`examples/sync/debug_mode.py`](examples/sync/debug_mode.py).
+
 ### Custom timeout and polling
 
 ```python
@@ -675,8 +707,8 @@ check the same task later; calling `solve()` again creates a new task.
 
 While polling, `solve()` retries short network failures and HTTP timeouts of
 `getTaskResult` on the next poll, so a brief outage does not lose an already
-created task. After `poll_retries` (default 3) consecutive failures the error is
-raised. API errors are not retried, and `createTask` is never retried because
+created task. The SDK tolerates up to `poll_retries` (default 3) consecutive
+failures and raises the next one. API errors are not retried, and `createTask` is never retried because
 that could create and pay for a second task. To change the limit:
 
 ```python

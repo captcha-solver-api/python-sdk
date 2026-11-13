@@ -1,6 +1,17 @@
 """
 Example: Solve a reCAPTCHA v2 challenge.
 
+This example solves reCAPTCHA v2 without a customer proxy. Supply the target
+page URL and the widget's data-sitekey; the service returns
+gRecaptchaResponse, which your integration must submit and verify using the
+page-specific flow. It uses RecaptchaV2TaskProxyless and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient and obtain the page URL and data-sitekey.
+STEP-02 - Create RecaptchaV2TaskProxyless and call solve() without a customer proxy.
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -23,24 +34,27 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient and obtain the page URL and data-sitekey.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # Optional: timeout (max seconds to wait for solution, default 120)
 # Optional: polling_interval (seconds before and between status checks, default 10)
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- Proxyless example ---
 # Solves reCAPTCHA v2 without a proxy.
 # The service uses its own IP addresses.
 try:
+    # STEP-02: Create RecaptchaV2TaskProxyless and call solve() without a customer proxy.
     # Create a task and wait for the solution.
     # solve() handles task creation, polling, and returns the solution dict.
     result = solver.solve(
@@ -50,8 +64,10 @@ try:
             isInvisible=False,  # Set True for invisible reCAPTCHA
         )
     )
+    # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
     # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
     # Pass this token to the g-recaptcha-response field or widget callback.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

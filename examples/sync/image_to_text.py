@@ -1,6 +1,16 @@
 """
 Example: Solve an Image to Text challenge.
 
+This example reads bundled CAPTCHA images as Base64, adds optional answer-format
+hints, sends each image directly to the service without a proxy, and prints the
+recognized text. It uses ImageToTextTask and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient and locate the bundled images.
+STEP-02 - Read an image as Base64 and create ImageToTextTask with answer hints.
+STEP-03 - Call solve(), which creates the task and polls for its solution.
+STEP-04 - Print the recognized text, or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Ready to run as-is: sample captcha images are bundled in examples/assets/.
@@ -26,28 +36,32 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient and locate the bundled images.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # Image to Text tasks are usually fast. Default timeout is fine.
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- Basic example ---
 # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
 # with character set hints.
 try:
+    # STEP-02: Read an image as Base64 and create ImageToTextTask with answer hints.
     # Read and encode the captcha image to base64.
     # The body must be a pure base64 string without the data:image/...;base64, prefix.
     with open(os.path.join(assets_dir, "captcha-digits.png"), "rb") as f:
         digits_body = b64encode(f.read()).decode("utf-8")
 
+    # STEP-03: Call solve(), which creates the task and polls for its solution.
     result = solver.solve(
         ImageToTextTask(
             body=digits_body,  # Base64-encoded image (required)
@@ -58,6 +72,7 @@ try:
     )
     # Solution contains {"text": "58204"}
     # Submit solution.text to the target form field.
+    # STEP-04: Print the recognized text, or report the error.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

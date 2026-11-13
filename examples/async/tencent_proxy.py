@@ -1,6 +1,18 @@
 """
 Example: Solve a Tencent captcha challenge with the async client.
 
+This example solves Tencent CAPTCHA through your own proxy. Obtain appId and any
+custom captchaScript from the target page, provide the proxy details, and pass
+the returned ticket and randstr to the page-specific callback. It uses
+TencentTask and AsyncCaptchaClient.solve(); callback delivery alone is not proof
+of server-side acceptance.
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient, Tencent parameters, and proxy credentials.
+STEP-02 - Create TencentTask and await solve() through that proxy.
+STEP-03 - Print ticket and randstr and explain their site-specific application.
+STEP-04 - Report errors; page or server acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and appId with values from your target page.
@@ -25,16 +37,19 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import TencentTask
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient, Tencent parameters, and proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- With proxy example ---
         # Solves Tencent captcha through your own proxy.
         # Use when the target site is geo-restricted or you need a consistent session.
         try:
+            # STEP-02: Create TencentTask and await solve() through that proxy.
             result = await solver.solve(
                 TencentTask(
                     websiteURL="https://example.com/register",  # Full URL of the page with captcha
@@ -48,9 +63,11 @@ async def main():
                     captchaScript="https://captchacdn.tencentcloudcs.com/TCaptcha-global.js",
                 )
             )
+            # STEP-03: Print ticket and randstr and explain their site-specific application.
             # Solution contains the same appid, ret, ticket, and randstr values.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page or server acceptance must be verified by the integration.
             sys.exit(e)
 
 

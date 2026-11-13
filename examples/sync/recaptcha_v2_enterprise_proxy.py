@@ -1,6 +1,17 @@
 """
 Example: Solve a reCAPTCHA v2 Enterprise challenge.
 
+This example solves reCAPTCHA v2 Enterprise through your own proxy. Supply the
+page URL, Enterprise key and payload, and proxy details; the returned
+gRecaptchaResponse must be submitted and verified by the target integration.
+It uses RecaptchaV2EnterpriseTask and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient, Enterprise parameters, and customer proxy credentials.
+STEP-02 - Create RecaptchaV2EnterpriseTask and call solve() through that proxy.
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -24,22 +35,25 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient, Enterprise parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- With proxy example ---
 # Solves reCAPTCHA v2 Enterprise through your own proxy.
 # Use when the target site is geo-restricted or you need a consistent session.
 try:
+    # STEP-02: Create RecaptchaV2EnterpriseTask and call solve() through that proxy.
     result = solver.solve(
         RecaptchaV2EnterpriseTask(
             websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -57,7 +71,9 @@ try:
             cookies="foo=bar; baz=1",  # Session cookies if needed
         )
     )
+    # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
     # Solution contains the same gRecaptchaResponse token.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

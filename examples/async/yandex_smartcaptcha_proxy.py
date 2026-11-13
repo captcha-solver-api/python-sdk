@@ -1,6 +1,17 @@
 """
 Example: Solve a Yandex SmartCaptcha challenge (token-based) with the async client.
 
+This example solves token-based Yandex SmartCaptcha through your own proxy.
+Supply the page URL, sitekey, and proxy details; then submit and verify the
+returned token through the target's site-specific flow. It uses
+YandexSmartCaptchaTask and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient, SmartCaptcha parameters, and proxy credentials.
+STEP-02 - Create YandexSmartCaptchaTask and await solve() through that proxy.
+STEP-03 - Print the token and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -24,16 +35,19 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTask
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient, SmartCaptcha parameters, and proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- With proxy example ---
         # Solves Yandex SmartCaptcha through your own proxy.
         # Note: this is the only captcha type where an https proxy is accepted.
         try:
+            # STEP-02: Create YandexSmartCaptchaTask and await solve() through that proxy.
             result = await solver.solve(
                 YandexSmartCaptchaTask(
                     websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
@@ -49,9 +63,11 @@ async def main():
                     # cookies='session=abc123; token=xyz789',                     # Session cookies if needed
                 )
             )
+            # STEP-03: Print the token and explain its site-specific application.
             # Solution contains the same token.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

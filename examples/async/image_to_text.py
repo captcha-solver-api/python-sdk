@@ -1,6 +1,16 @@
 """
 Example: Solve an image captcha with the async client.
 
+This example reads bundled CAPTCHA images as Base64, adds optional answer-format
+hints, sends each image directly to the service without a proxy, and prints the
+recognized text. It uses ImageToTextTask and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and locate the bundled images.
+STEP-02 - Read an image as Base64 and create ImageToTextTask with answer hints.
+STEP-03 - Await solve(), which creates the task and polls for its solution.
+STEP-04 - Print the recognized text, or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Ready to run as-is: sample captcha images are bundled in examples/assets/.
@@ -26,6 +36,7 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
+from examples._cli import debug_enabled
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
@@ -40,14 +51,17 @@ def encode_image(filename):
 
 
 async def main():
+    # STEP-01: Configure AsyncCaptchaClient and locate the bundled images.
     # Image to Text tasks are usually fast. Default timeout is fine.
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         digits_body = encode_image("captcha-digits.png")
 
         # --- Basic example ---
         # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
         # with character set hints.
         try:
+            # STEP-02: Read an image as Base64 and create ImageToTextTask with answer hints.
+            # STEP-03: Await solve(), which creates the task and polls for its solution.
             result = await solver.solve(
                 ImageToTextTask(
                     body=digits_body,  # Base64-encoded image (required)
@@ -58,6 +72,7 @@ async def main():
             )
             # Solution contains {"text": "58204"}
             # Submit solution.text to the target form field.
+            # STEP-04: Print the recognized text, or report the error.
             print("result: " + str(result))
         except Exception as e:
             sys.exit(e)

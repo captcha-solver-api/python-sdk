@@ -1,6 +1,17 @@
 """
 Example: Solve a GeeTest v4 challenge with the async client.
 
+This example solves GeeTest v4 through your own proxy. Obtain captcha_id from
+the target's v4 loader, pass it in initParameters, and supply the proxy details;
+the returned v4 fields require site-specific submission and verification. It
+uses GeeTestTask with version 4 and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient, obtain captcha_id, and set proxy credentials.
+STEP-02 - Create GeeTestTask with version 4 and await solve() through the proxy.
+STEP-03 - Print the returned v4 fields and explain their site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and captcha_id with values from your target page.
@@ -27,16 +38,21 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import GeeTestTask
+from examples._cli import debug_enabled
 
+# STEP-01: Configure AsyncCaptchaClient, obtain captcha_id, and set proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     # GeeTest v4 tasks may take longer. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+    async with AsyncCaptchaClient(
+        api_key, debug=debug_enabled(), timeout=300, polling_interval=10
+    ) as solver:
         # --- With proxy example ---
         # Solves GeeTest v4 through your own proxy.
         try:
+            # STEP-02: Create GeeTestTask with version 4 and await solve() through the proxy.
             result = await solver.solve(
                 GeeTestTask(
                     websiteURL="https://example.com/login",  # Full URL of the page with the GeeTest widget
@@ -52,8 +68,10 @@ async def main():
                     proxyPassword="password",  # Password for proxy authorization (optional)
                 )
             )
+            # STEP-03: Print the returned v4 fields and explain their site-specific application.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

@@ -1,6 +1,17 @@
 """
 Example: Solve a click-based image captcha using CoordinatesTask with the async client.
 
+This example reads local challenge and instruction images, encodes them as
+Base64, describes what the worker should click, and prints the ordered
+coordinates returned by the service. No proxy or target page is involved. It
+uses CoordinatesTask and AsyncCaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and locate the bundled images.
+STEP-02 - Read the image data and create CoordinatesTask without a proxy.
+STEP-03 - Await solve(), which creates the task and polls for its solution.
+STEP-04 - Print the coordinates to click in the same order, or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Ready to run as-is: sample captcha images are bundled in examples/assets/.
@@ -28,21 +39,25 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import CoordinatesTask
+from examples._cli import debug_enabled
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    # STEP-01: Configure AsyncCaptchaClient and locate the bundled images.
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- Basic example ---
         # Solves a simple click-based captcha (examples/assets/fruit-click.png) with
         # a hint for the worker. The worker will click on the specified points on the image.
         try:
+            # STEP-02: Read the image data and create CoordinatesTask without a proxy.
             # Read and encode the captcha image to base64.
             # The body must be a pure base64 string without the data:image/...;base64, prefix.
             with open(os.path.join(assets_dir, "fruit-click.png"), "rb") as f:
                 body = b64encode(f.read()).decode("utf-8")
 
+            # STEP-03: Await solve(), which creates the task and polls for its solution.
             result = await solver.solve(
                 CoordinatesTask(
                     body=body,  # Base64-encoded captcha image (required)
@@ -51,6 +66,7 @@ async def main():
             )
             # Solution contains {"coordinates": [{"x": 140, "y": 110}]}
             # Click on each coordinate in order. Coordinates are pixel positions.
+            # STEP-04: Print the coordinates to click in the same order, or report the error.
             print("result: " + str(result))
         except Exception as e:
             sys.exit(e)

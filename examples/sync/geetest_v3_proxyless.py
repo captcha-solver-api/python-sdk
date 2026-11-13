@@ -1,6 +1,17 @@
 """
 Example: Solve a GeeTest v3 challenge.
 
+This example solves GeeTest v3 without a customer proxy. Obtain gt from the
+widget and fetch a fresh, session-specific challenge from the target for every
+task; the service returns challenge, validate, and seccode for the target's
+site-specific callback. It uses GeeTestTaskProxyless and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient and fetch a fresh v3 challenge from the target.
+STEP-02 - Create GeeTestTaskProxyless with gt and challenge, then call solve().
+STEP-03 - Print challenge, validate, and seccode and explain their site-specific use.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, gt, and challenge with values from your target page.
@@ -31,18 +42,20 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import GeeTestTaskProxyless
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient and fetch a fresh v3 challenge from the target.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # GeeTest tasks may take longer. Increase timeout if needed.
-solver = CaptchaClient(api_key, timeout=300, polling_interval=10)
+solver = CaptchaClient(api_key, debug=debug_enabled(), timeout=300, polling_interval=10)
 
 """
 Important: the value of the 'challenge' parameter is dynamic.
@@ -59,6 +72,7 @@ challenge = resp.json()["challenge"]
 # Solves GeeTest v3 without a proxy.
 # v3 is the default version, so the version field can be omitted.
 try:
+    # STEP-02: Create GeeTestTaskProxyless with gt and challenge, then call solve().
     result = solver.solve(
         GeeTestTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
@@ -70,8 +84,10 @@ try:
             # userAgent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...',  # Browser User-Agent
         )
     )
+    # STEP-03: Print challenge, validate, and seccode and explain their site-specific use.
     # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
     # Pass solution.validate and solution.seccode to the page's GeeTest callback.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

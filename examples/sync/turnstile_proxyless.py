@@ -1,6 +1,17 @@
 """
 Example: Solve a Cloudflare Turnstile challenge.
 
+This example solves a Turnstile widget without a customer proxy. Supply the
+page URL and data-sitekey plus action, data, pagedata, and matching User-Agent
+when the page uses them; then apply the returned token through the page-specific
+callback or field. It uses TurnstileTaskProxyless and CaptchaClient.solve().
+
+How it works:
+STEP-01 - Configure CaptchaClient and extract the widget key and optional challenge data.
+STEP-02 - Create TurnstileTaskProxyless and call solve() without a customer proxy.
+STEP-03 - Print the token and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
@@ -24,23 +35,26 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import TurnstileTaskProxyless
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient and extract the widget key and optional challenge data.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- Proxyless example ---
 # Solves Cloudflare Turnstile without a proxy.
 # The token is tied to the User-Agent. If you pass userAgent, use the same
 # User-Agent in your browser or bot when submitting the token.
 try:
+    # STEP-02: Create TurnstileTaskProxyless and call solve() without a customer proxy.
     result = solver.solve(
         TurnstileTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
@@ -52,8 +66,10 @@ try:
             # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',  # Must match the browser submitting the token
         )
     )
+    # STEP-03: Print the token and explain its site-specific application.
     # Solution contains {"token": "0.zxcv..."}
     # Pass this token to the widget callback or cf-turnstile-response field.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)
