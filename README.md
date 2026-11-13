@@ -44,6 +44,7 @@ Full API reference (all endpoints, error codes, captcha-type details): **https:/
   - [Tencent](#tencent)
 - [Advanced Usage](#advanced-usage)
   - [Check balance](#check-balance)
+  - [Debug mode](#debug-mode)
   - [Custom timeout and polling](#custom-timeout-and-polling)
   - [Worker language pool](#worker-language-pool)
   - [Async client](#async-client)
@@ -188,6 +189,7 @@ Constructor.
 | `timeout` | `int` | `120` | Polling window after task creation, in seconds. Overridable per call; each HTTP request has a separate 30-second timeout. |
 | `polling_interval` | `int` | `10` | Seconds before the first `getTaskResult` poll and between subsequent polls. |
 | `language_pool` | `Optional[str]` | `None` | Default worker pool (`"en"` or `"ru"`) applied to every call that doesn't pass its own `language_pool`. |
+| `debug` | `bool` | `False` | Emit sanitized request/response, timing, polling, error, and solve summary logs. |
 
 Both clients hold a reusable connection pool (`requests.Session` / `httpx.AsyncClient`)
 for their lifetime instead of opening one per request. Close it when you're done --
@@ -647,6 +649,34 @@ client = CaptchaClient("your_api_key")
 balance = client.get_balance()
 print(f"Balance: {balance}")
 ```
+
+### Debug mode
+
+Pass `debug=True` to either client to diagnose an integration. The SDK logs its version and
+configuration, each HTTP operation and duration, compact one-line `processing` polls, detailed
+sanitized request/response blocks for completed operations and failures, and a `SOLVE SUMMARY`
+after every `solve()` call (including failed calls). Debug mode is never enabled from an
+environment variable and logging failures do not change request results or SDK exceptions.
+
+```python
+client = CaptchaClient("your_api_key", debug=True)
+solution = client.solve(task)
+```
+
+Credential, cookie, and proxy fields are replaced with `[MASKED]`. Base64 image fields are
+replaced with their character count, and other strings longer than 200 characters retain only
+their first and last 40 characters plus the original length. The SDK does not log HTTP headers.
+URLs and custom task fields can still contain application data, so review logs before sharing
+them publicly.
+
+Run the dedicated example from the repository root:
+
+```bash
+python examples/sync/debug_mode.py
+```
+
+It reads `CAPTCHA_API_KEY` from the environment or `.env`, uses the bundled image asset, and
+creates a real paid CAPTCHA task. See [`examples/sync/debug_mode.py`](examples/sync/debug_mode.py).
 
 ### Custom timeout and polling
 

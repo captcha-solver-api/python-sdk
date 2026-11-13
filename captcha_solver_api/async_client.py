@@ -12,6 +12,7 @@ from typing import Any, Dict, Optional
 
 import httpx
 
+from ._debug import DebugLogger
 from ._version import __version__
 from .exceptions import (
     ApiError,
@@ -42,6 +43,8 @@ class AsyncCaptchaClient:
             Defaults to 10. Waiting does not block the event loop.
         language_pool: Default worker pool, e.g. `"en"` or `"ru"`. `None` uses
             the account default. Can be overridden in `solve()` or `create_task()`.
+        debug: Emit sanitized request, response, timing, and solve summary logs.
+            Defaults to `False`.
 
     Raises:
         ValidationError: `client_key` is missing, empty, or whitespace.
@@ -70,6 +73,7 @@ class AsyncCaptchaClient:
         timeout: int = 120,
         polling_interval: int = 10,
         language_pool: Optional[str] = None,
+        debug: bool = False,
     ) -> None:
         """Create an async client with a reusable HTTP connection pool.
 
@@ -88,6 +92,7 @@ class AsyncCaptchaClient:
                 applied to every `create_task()`/`solve()` call that doesn't pass
                 its own `language_pool`. Leave unset to use the account's default
                 pool.
+            debug: Enable sanitized diagnostic logging. Defaults to `False`.
 
         Raises:
             ValidationError: `client_key` is missing, empty, or whitespace.
@@ -100,6 +105,8 @@ class AsyncCaptchaClient:
         self.timeout = timeout
         self.polling_interval = polling_interval
         self.language_pool = language_pool
+        self.debug = debug
+        self._debug = DebugLogger(debug, "AsyncCaptchaClient")
 
         self._client = httpx.AsyncClient(
             follow_redirects=True,
@@ -109,6 +116,7 @@ class AsyncCaptchaClient:
                 "X-SDK": f"python-sdk/{__version__}",
             },
         )
+        self._debug.initialized(__version__, self.base_url, self.timeout, self.polling_interval)
 
     async def aclose(self) -> None:
         """Closes the underlying connection pool. Call this when you're done with
@@ -128,22 +136,83 @@ class AsyncCaptchaClient:
         payload: Dict[str, Any],
     ) -> Dict[str, Any]:
         url = f"{self.base_url}/{endpoint.lstrip('/')}"
+        started = time.monotonic()
 
         try:
             response = await self._client.post(url, json=payload, timeout=30)
             response.raise_for_status()
         except httpx.TimeoutException as exc:
+            response = getattr(exc, "response", None)
+            self._debug.request_failure(
+                endpoint,
+                url,
+                payload,
+                exc,
+                round((time.monotonic() - started) * 1000),
+                status=getattr(response, "status_code", None),
+                reason=getattr(response, "reason_phrase", "") or "",
+                body_missing=response is not None,
+            )
             raise CaptchaTimeoutError("Request timed out.") from exc
         except httpx.HTTPError as exc:
+            response = getattr(exc, "response", None)
+            data = None
+            invalid_json = False
+            if response is not None:
+                try:
+                    data = response.json()
+                except ValueError:
+                    invalid_json = True
+            self._debug.request_failure(
+                endpoint,
+                url,
+                payload,
+                exc,
+                round((time.monotonic() - started) * 1000),
+                status=getattr(response, "status_code", None),
+                reason=getattr(response, "reason_phrase", "") or "",
+                data=data,
+                invalid_json=invalid_json,
+            )
             raise NetworkError(str(exc)) from exc
 
         try:
             data = response.json()
         except ValueError as exc:
+            self._debug.request_failure(
+                endpoint,
+                url,
+                payload,
+                exc,
+                round((time.monotonic() - started) * 1000),
+                status=response.status_code,
+                reason=response.reason_phrase or "",
+                invalid_json=True,
+            )
             raise NetworkError(f"Non-JSON response from API: {response.text[:200]!r}") from exc
 
         if not isinstance(data, dict):
-            raise NetworkError(f"Unexpected API response shape: {type(data).__name__}")
+            error = NetworkError(f"Unexpected API response shape: {type(data).__name__}")
+            self._debug.request_failure(
+                endpoint,
+                url,
+                payload,
+                error,
+                round((time.monotonic() - started) * 1000),
+                status=response.status_code,
+                reason=response.reason_phrase or "",
+                data=data,
+            )
+            raise error
+        self._debug.request_success(
+            endpoint,
+            url,
+            payload,
+            data,
+            response.status_code,
+            response.reason_phrase or "",
+            round((time.monotonic() - started) * 1000),
+        )
         return data
 
     def _ensure_success(self, data: Dict[str, Any]) -> None:
@@ -311,38 +380,59 @@ class AsyncCaptchaClient:
             token = solution["gRecaptchaResponse"]
         """
 
-        task_id = await self.create_task(task, language_pool=language_pool)
-
-        deadline = time.monotonic() + (timeout if timeout is not None else self.timeout)
-        poll_failures = 0
-
-        while time.monotonic() < deadline:
-            remaining = deadline - time.monotonic()
-            await asyncio.sleep(min(self.polling_interval, max(0, remaining)))
-            if time.monotonic() >= deadline:
-                break
-            try:
-                result = await self.get_task_result(task_id)
-            except (NetworkError, CaptchaTimeoutError):
-                # getTaskResult is safe to repeat: retry a short transport
-                # failure on the next poll instead of losing a paid task.
-                poll_failures += 1
-                if poll_failures > self.poll_retries:
-                    raise
-                continue
+        started = time.monotonic()
+        task_id: Optional[int] = None
+        task_type = getattr(task, "type", None)
+        polls = 0
+        final_result: Optional[Dict[str, Any]] = None
+        solved = False
+        error: Optional[BaseException] = None
+        try:
+            task_id = await self.create_task(task, language_pool=language_pool)
+            deadline = time.monotonic() + (timeout if timeout is not None else self.timeout)
             poll_failures = 0
 
-            if result.get("status") == "ready":
-                solution = result["solution"]
-                if not isinstance(solution, dict):
-                    raise NetworkError(
-                        "API returned a ready task without a solution object",
-                        task_id=task_id,
-                    )
-                return solution
+            while time.monotonic() < deadline:
+                remaining = deadline - time.monotonic()
+                await asyncio.sleep(min(self.polling_interval, max(0, remaining)))
+                if time.monotonic() >= deadline:
+                    break
+                try:
+                    polls += 1
+                    result = await self.get_task_result(task_id)
+                except (NetworkError, CaptchaTimeoutError):
+                    poll_failures += 1
+                    if poll_failures > self.poll_retries:
+                        raise
+                    continue
+                poll_failures = 0
 
-        raise CaptchaTimeoutError(
-            f"Task {task_id} was not solved within the polling timeout. It may still "
-            f"be solved later: check it with get_task_result({task_id}).",
-            task_id=task_id,
-        )
+                if result.get("status") == "ready":
+                    final_result = result
+                    solution = result["solution"]
+                    if not isinstance(solution, dict):
+                        raise NetworkError(
+                            "API returned a ready task without a solution object",
+                            task_id=task_id,
+                        )
+                    solved = True
+                    return solution
+
+            raise CaptchaTimeoutError(
+                f"Task {task_id} was not solved within the polling timeout. It may still "
+                f"be solved later: check it with get_task_result({task_id}).",
+                task_id=task_id,
+            )
+        except BaseException as exc:
+            error = exc
+            raise
+        finally:
+            self._debug.solve_summary(
+                solved,
+                task_id,
+                task_type,
+                time.monotonic() - started,
+                polls,
+                final_result,
+                error,
+            )
