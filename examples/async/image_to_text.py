@@ -36,6 +36,7 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
+from examples._cli import debug_enabled
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
@@ -52,7 +53,7 @@ def encode_image(filename):
 async def main():
     # STEP-01: Configure AsyncCaptchaClient and locate the bundled images.
     # Image to Text tasks are usually fast. Default timeout is fine.
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         digits_body = encode_image("captcha-digits.png")
 
         # --- Basic example ---

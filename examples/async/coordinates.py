@@ -39,13 +39,14 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import CoordinatesTask
+from examples._cli import debug_enabled
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     # STEP-01: Configure AsyncCaptchaClient and locate the bundled images.
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- Basic example ---
         # Solves a simple click-based captcha (examples/assets/fruit-click.png) with
         # a hint for the worker. The worker will click on the specified points on the image.

@@ -31,6 +31,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import CaptchaClient
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=your_api_key on Linux or macOS
@@ -42,7 +43,7 @@ from captcha_solver_api import CaptchaClient
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # STEP-02: Request the balance with get_balance() without creating a CAPTCHA task.
 # Get the current account balance.

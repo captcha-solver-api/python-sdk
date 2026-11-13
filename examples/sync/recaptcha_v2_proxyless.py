@@ -34,6 +34,7 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=your_api_key on Linux or macOS
@@ -47,7 +48,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 # Create a solver instance with your API key.
 # Optional: timeout (max seconds to wait for solution, default 120)
 # Optional: polling_interval (seconds before and between status checks, default 10)
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- Proxyless example ---
 # Solves reCAPTCHA v2 without a proxy.

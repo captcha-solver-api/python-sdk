@@ -35,11 +35,12 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import TencentTaskProxyless
+from examples._cli import debug_enabled
 
 # STEP-01: Configure CaptchaClient and obtain appId from the target page's Tencent setup.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- Proxyless example ---
 # Solves Tencent captcha without a proxy.

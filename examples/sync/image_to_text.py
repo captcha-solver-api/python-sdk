@@ -36,6 +36,7 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=your_api_key on Linux or macOS
@@ -48,7 +49,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # Image to Text tasks are usually fast. Default timeout is fine.
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- Basic example ---
 # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)

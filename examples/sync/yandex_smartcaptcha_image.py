@@ -34,6 +34,7 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaImageTask
+from examples._cli import debug_enabled
 
 
 def encode_image(filename: str) -> str:
@@ -45,7 +46,7 @@ def encode_image(filename: str) -> str:
 
 # STEP-01: Configure CaptchaClient and locate the bundled challenge images.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # STEP-02: Encode both images and create YandexSmartCaptchaImageTask.
 try:
