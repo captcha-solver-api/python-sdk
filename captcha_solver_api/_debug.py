@@ -33,7 +33,7 @@ def _sanitize(value: Any, key: str = "") -> Any:
     if isinstance(value, (list, tuple)):
         return [_sanitize(item) for item in value]
     if isinstance(value, str) and len(value) > 200:
-        return f"{value[:40]}...{value[-40:]} [truncated, {len(value)} chars]"
+        return f"{value[:40]}...[{len(value)} chars]...{value[-40:]}"
     return value
 
 
@@ -55,7 +55,9 @@ def _error_details(error: BaseException) -> str:
     while current is not None and len(details) < 4 and id(current) not in seen:
         seen.add(id(current))
         text = str(current).replace("\n", " ").strip()
-        details.append(f"{type(current).__name__}: {text}" if text else type(current).__name__)
+        description = f"{type(current).__name__}: {text}" if text else type(current).__name__
+        if not (details and text and str(error) == text):
+            details.append(description)
         current = current.__cause__ or current.__context__
     return " <- ".join(details)
 
@@ -90,12 +92,8 @@ class DebugLogger:
 
     def initialized(self, version: str, base_url: str, timeout: Any, polling: Any) -> None:
         self.emit(
-            "initialized\n"
-            f"  sdkVersion:      {version}\n"
-            f"  baseUrl:         {base_url}\n"
-            "  httpTimeout:     30s\n"
-            f"  pollingTimeout:  {timeout}s\n"
-            f"  pollingInterval: {polling}s"
+            f"client initialized sdk=python-sdk/{version} baseUrl={base_url} "
+            f"httpTimeout=30s timeout={timeout}s pollingInterval={polling}s"
         )
 
     def request_success(
@@ -136,6 +134,7 @@ class DebugLogger:
     ) -> None:
         try:
             context = _request_context(endpoint, payload)
+            label = f"{endpoint} {context}".rstrip()
             detail = _error_details(error)
             if status is None:
                 response = (
@@ -154,7 +153,7 @@ class DebugLogger:
             else:
                 response = f"RESPONSE (HTTP {status} {reason}, {elapsed_ms}ms):\n{_json(data)}"
             self.emit(
-                f"{endpoint} {context} -> failed: {detail} ({elapsed_ms}ms)\n"
+                f"{label} -> failed: {detail} ({elapsed_ms}ms)\n"
                 f"REQUEST (POST {url}):\n{_json(payload)}\n{response}"
             )
         except Exception:
@@ -171,7 +170,7 @@ class DebugLogger:
         error: Optional[BaseException] = None,
     ) -> None:
         try:
-            server_time = "-"
+            server_time: Optional[str] = None
             if result is not None:
                 created = result.get("createTime")
                 ended = result.get("endTime")
@@ -181,11 +180,13 @@ class DebugLogger:
                 "SOLVE SUMMARY:",
                 f"  status:          {'solved' if solved else 'not solved'}",
                 f"  taskId:          {task_id if task_id is not None else '- (task was not created)'}",
-                f"  taskType:        {task_type or '-'}",
-                f"  elapsed:         {elapsed:.3f}s",
-                f"  serverSolveTime: {server_time}",
-                f"  polls:           {polls}",
             ]
+            if task_type:
+                lines.append(f"  taskType:        {task_type}")
+            lines.append(f"  elapsed:         {elapsed:.3f}s")
+            if server_time is not None:
+                lines.append(f"  serverSolveTime: {server_time}")
+            lines.append(f"  polls:           {polls}")
             if error is not None:
                 lines.append(f"  error:           {_error_details(error)}")
             self.emit("\n".join(lines))
@@ -208,7 +209,7 @@ def _summary(endpoint: str, payload: Dict[str, Any], data: Dict[str, Any]) -> st
     if data.get("errorId", 0) != 0:
         code = data.get("errorCode", "UNKNOWN_ERROR")
         message = data.get("errorDescription", "Unknown API error.")
-        return f"{prefix} -> failed: ApiError [{code}] {message}"
+        return f"{prefix} -> failed: ApiError {code}: {message}"
     if endpoint == "createTask":
         return f"{prefix} -> taskId={data.get('taskId')}"
     if endpoint == "getTaskResult":

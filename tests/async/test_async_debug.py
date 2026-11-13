@@ -56,13 +56,18 @@ async def test_async_debug_transport_timeout_and_isolation():
     client._client.post = AsyncMock(side_effect=httpx.ConnectError("dns failed"))
     with pytest.raises(NetworkError):
         await client.get_balance()
-    assert "RESPONSE: none - no response from the server" in messages(client)[0]
+    assert "failed: NetworkError" in messages(client)[0]
+    assert "failed: NetworkError: dns failed" in messages(client)[0]
+    assert "RESPONSE: none - no response from the server (NetworkError" in messages(client)[0]
 
     client._debug.logger.debug = Mock()
     client._client.post = AsyncMock(side_effect=httpx.ReadTimeout("slow"))
     with pytest.raises(CaptchaTimeoutError):
         await client.get_balance()
-    assert "Timeout" in messages(client)[0]
+    assert "failed: CaptchaTimeoutError: Request timed out." in messages(client)[0]
+    assert (
+        "RESPONSE: none - no response from the server (CaptchaTimeoutError" in messages(client)[0]
+    )
 
     client._debug.logger.debug = Mock(side_effect=RuntimeError("logger failed"))
     client._client.post = AsyncMock(
@@ -71,6 +76,25 @@ async def test_async_debug_transport_timeout_and_isolation():
         )
     )
     assert await client.get_balance() == 1.25
+    await client.aclose()
+
+
+async def test_async_timeout_after_headers_reports_body_was_not_received():
+    client = AsyncCaptchaClient("secret", debug=True)
+    client._debug.logger.debug = Mock()
+    error = httpx.ReadTimeout("body read timed out")
+    error.response = httpx.Response(
+        200, request=httpx.Request("POST", "https://api.captcha-solver.com/getBalance")
+    )
+    client._client.post = AsyncMock(side_effect=error)
+
+    with pytest.raises(CaptchaTimeoutError):
+        await client.get_balance()
+
+    message = messages(client)[0]
+    assert "failed: CaptchaTimeoutError: Request timed out." in message
+    assert "RESPONSE (HTTP 200 OK" in message
+    assert "body was not received (CaptchaTimeoutError)" in message
     await client.aclose()
 
 

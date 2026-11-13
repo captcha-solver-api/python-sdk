@@ -1,3 +1,4 @@
+import re
 from unittest.mock import Mock, patch
 
 import pytest
@@ -32,11 +33,15 @@ def test_debug_initialization_is_one_timestamped_event():
 
     logger.assert_called_once()
     message = logger.call_args.args[0]
-    assert message.startswith("[")
-    assert "] [CaptchaClient] initialized" in message
-    assert "sdkVersion:" in message
-    assert "baseUrl:" in message
-    assert "pollingInterval:" in message
+    assert re.match(
+        r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2}\] "
+        r"\[CaptchaClient\] client initialized ",
+        message,
+    )
+    assert "sdk=python-sdk/" in message
+    assert "baseUrl=" in message
+    assert "pollingInterval=" in message
+    assert "\n" not in message
 
 
 def test_success_masks_and_truncates_without_mutating_payload():
@@ -64,7 +69,7 @@ def test_success_masks_and_truncates_without_mutating_payload():
     assert "127.0.0.1" not in message
     assert "[MASKED]" in message
     assert "[base64, 300 chars]" in message
-    assert "[truncated, 250 chars]" in message
+    assert f"{'x' * 40}...[250 chars]...{'x' * 40}" in message
     assert payload["clientKey"] == "api-secret"
     assert payload["task"]["body"] == body
 
@@ -104,9 +109,9 @@ def test_api_and_http_errors_include_paired_request_response():
         client.get_balance()
 
     api_message, http_message = debug_messages(client)
-    assert "failed: ApiError [ERROR_KEY_DOES_NOT_EXIST]" in api_message
+    assert "failed: ApiError ERROR_KEY_DOES_NOT_EXIST: Account not found" in api_message
     assert "REQUEST" in api_message and "RESPONSE (HTTP 200 OK" in api_message
-    assert "failed: HTTPError" in http_message
+    assert "failed: NetworkError" in http_message
     assert "RESPONSE (HTTP 502 Bad Gateway" in http_message
     assert "upstream failed" in http_message
 
@@ -129,8 +134,26 @@ def test_invalid_json_network_and_timeout_explain_missing_response():
 
     invalid_message, network_message, timeout_message = debug_messages(client)
     assert "body is not valid JSON" in invalid_message
-    assert "RESPONSE: none - no response from the server (ConnectionError" in network_message
-    assert "RESPONSE: none - no response from the server (Timeout" in timeout_message
+    assert "RESPONSE: none - no response from the server (NetworkError" in network_message
+    assert "failed: NetworkError: dns failed" in network_message
+    assert "RESPONSE: none - no response from the server (CaptchaTimeoutError" in timeout_message
+
+
+def test_timeout_after_headers_reports_body_was_not_received():
+    client = CaptchaClient("secret", debug=True)
+    client._debug.logger.debug = Mock()
+    partial_response = response(status=200, reason="OK")
+    client.session.post = Mock(
+        side_effect=requests.Timeout("body read timed out", response=partial_response)
+    )
+
+    with pytest.raises(CaptchaTimeoutError):
+        client.get_balance()
+
+    message = debug_messages(client)[0]
+    assert "failed: CaptchaTimeoutError: Request timed out." in message
+    assert "RESPONSE (HTTP 200 OK" in message
+    assert "body was not received (CaptchaTimeoutError)" in message
 
 
 def test_solve_summary_reports_success_failure_and_poll_count():
@@ -167,6 +190,7 @@ def test_solve_summary_reports_success_failure_and_poll_count():
     assert "status:          not solved" in summary
     assert "taskId:          - (task was not created)" in summary
     assert "error:" in summary
+    assert "serverSolveTime:" not in summary
 
 
 def test_debug_failure_does_not_change_result_or_exception():

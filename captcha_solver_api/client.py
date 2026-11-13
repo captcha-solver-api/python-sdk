@@ -133,19 +133,22 @@ class CaptchaClient:
             response.raise_for_status()
         except requests.exceptions.Timeout as exc:
             error_response = getattr(exc, "response", None)
+            timeout_failure = CaptchaTimeoutError("Request timed out.")
             self._debug.request_failure(
                 endpoint,
                 url,
                 payload,
-                exc,
+                timeout_failure,
                 round((time.monotonic() - started) * 1000),
                 status=getattr(error_response, "status_code", None),
                 reason=getattr(error_response, "reason", "") or "",
                 body_missing=error_response is not None,
             )
-            raise CaptchaTimeoutError("Request timed out.") from exc
+            raise timeout_failure from exc
         except requests.exceptions.RequestException as exc:
             error_response = getattr(exc, "response", None)
+            network_failure = NetworkError(str(exc))
+            network_failure.__cause__ = exc
             data = None
             invalid_json = False
             if error_response is not None:
@@ -157,29 +160,31 @@ class CaptchaClient:
                 endpoint,
                 url,
                 payload,
-                exc,
+                network_failure,
                 round((time.monotonic() - started) * 1000),
                 status=getattr(error_response, "status_code", None),
                 reason=getattr(error_response, "reason", "") or "",
                 data=data,
                 invalid_json=invalid_json,
             )
-            raise NetworkError(str(exc)) from exc
+            raise network_failure from exc
 
         try:
             data = response.json()
         except ValueError as exc:
+            parse_failure = NetworkError(f"Non-JSON response from API: {response.text[:200]!r}")
+            parse_failure.__cause__ = exc
             self._debug.request_failure(
                 endpoint,
                 url,
                 payload,
-                exc,
+                parse_failure,
                 round((time.monotonic() - started) * 1000),
                 status=response.status_code,
                 reason=response.reason or "",
                 invalid_json=True,
             )
-            raise NetworkError(f"Non-JSON response from API: {response.text[:200]!r}") from exc
+            raise parse_failure from exc
 
         if not isinstance(data, dict):
             error = NetworkError(f"Unexpected API response shape: {type(data).__name__}")
