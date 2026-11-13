@@ -1,6 +1,10 @@
 """
 Example: Solve an image captcha with the async client.
 
+This example reads bundled CAPTCHA images as Base64, adds optional answer-format
+hints, sends each image directly to the service without a proxy, and prints the
+recognized text. It uses ImageToTextTask and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and locate the bundled images.
 STEP-02 - Read an image as Base64 and create ImageToTextTask with answer hints.

@@ -1,6 +1,11 @@
 """
 Example: Solve a GeeTest v4 challenge.
 
+This example solves GeeTest v4 through your own proxy. Obtain captcha_id from
+the target's v4 loader, pass it in initParameters, and supply the proxy details;
+the returned v4 fields require site-specific submission and verification. It
+uses GeeTestTask with version 4 and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient, obtain captcha_id, and set customer proxy credentials.
 STEP-02 - Create GeeTestTask with version 4 and call solve() through the proxy.

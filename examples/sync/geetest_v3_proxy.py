@@ -1,6 +1,11 @@
 """
 Example: Solve a GeeTest v3 challenge.
 
+This example solves GeeTest v3 through your own proxy. Obtain gt, fetch a fresh
+challenge for every task, and supply the proxy details; the returned challenge,
+validate, and seccode fields must be submitted and verified by the target. It
+uses GeeTestTask and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient, fetch a fresh challenge, and set proxy credentials.
 STEP-02 - Create GeeTestTask with gt and challenge, then call solve() through the proxy.

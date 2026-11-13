@@ -1,5 +1,10 @@
 """Example: Solve an image-based Yandex SmartCaptcha asynchronously.
 
+This example reads a local Yandex SmartCaptcha image and its instruction image,
+encodes both as Base64, sends them directly without a proxy, and prints the
+ordered click coordinates. It uses YandexSmartCaptchaImageTask and
+AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and locate the bundled challenge images.
 STEP-02 - Encode both images and create YandexSmartCaptchaImageTask.

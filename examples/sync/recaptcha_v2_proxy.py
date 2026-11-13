@@ -1,6 +1,11 @@
 """
 Example: Solve a reCAPTCHA v2 challenge.
 
+This example solves reCAPTCHA v2 through your own proxy. Supply the page URL,
+widget data-sitekey, and proxy connection details; the service returns
+gRecaptchaResponse for site-specific submission and verification. It uses
+RecaptchaV2Task and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient, page parameters, and customer proxy credentials.
 STEP-02 - Create RecaptchaV2Task and call solve() through that proxy.

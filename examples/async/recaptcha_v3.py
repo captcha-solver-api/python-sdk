@@ -1,6 +1,11 @@
 """
 Example: Solve a reCAPTCHA v3 challenge with the async client.
 
+This example solves score-based reCAPTCHA v3 without a customer proxy. Extract
+the site key and page action from grecaptcha.execute(), choose the required
+minimum score, and submit the returned gRecaptchaResponse through the target's
+own flow. It uses RecaptchaV3TaskProxyless and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and extract the key and action from grecaptcha.execute().
 STEP-02 - Create RecaptchaV3TaskProxyless with the required score and await solve().

@@ -1,6 +1,11 @@
 """
 Example: Solve a Yandex SmartCaptcha challenge (token-based) with the async client.
 
+This example solves token-based Yandex SmartCaptcha without a customer proxy.
+Supply the target page URL and sitekey from its widget or iframe; the returned
+token must be submitted through the page's smart-token or backend flow and then
+verified there. It uses YandexSmartCaptchaTaskProxyless and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and obtain the page URL and SmartCaptcha site key.
 STEP-02 - Create YandexSmartCaptchaTaskProxyless and await solve() without a customer proxy.

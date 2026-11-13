@@ -1,6 +1,11 @@
 """
 Example: Solve a GeeTest v3 challenge.
 
+This example solves GeeTest v3 without a customer proxy. Obtain gt from the
+widget and fetch a fresh, session-specific challenge from the target for every
+task; the service returns challenge, validate, and seccode for the target's
+site-specific callback. It uses GeeTestTaskProxyless and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient and fetch a fresh v3 challenge from the target.
 STEP-02 - Create GeeTestTaskProxyless with gt and challenge, then call solve().

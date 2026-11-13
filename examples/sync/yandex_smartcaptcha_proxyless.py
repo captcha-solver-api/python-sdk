@@ -1,6 +1,11 @@
 """
 Example: Solve a Yandex SmartCaptcha challenge (token-based).
 
+This example solves token-based Yandex SmartCaptcha without a customer proxy.
+Supply the target page URL and sitekey from its widget or iframe; the returned
+token must be submitted through the page's smart-token or backend flow and then
+verified there. It uses YandexSmartCaptchaTaskProxyless and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient and obtain the page URL and SmartCaptcha site key.
 STEP-02 - Create YandexSmartCaptchaTaskProxyless and call solve() without a customer proxy.

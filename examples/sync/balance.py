@@ -1,6 +1,10 @@
 """
 Example: Get account balance.
 
+This example creates CaptchaClient, requests the current account balance without
+creating a CAPTCHA task, and prints the returned amount. It uses
+CaptchaClient.get_balance().
+
 How it works:
 STEP-01 - Configure the API key and create CaptchaClient.
 STEP-02 - Request the balance with get_balance() without creating a CAPTCHA task.

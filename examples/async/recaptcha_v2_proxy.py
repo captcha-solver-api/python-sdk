@@ -1,6 +1,11 @@
 """
 Example: Solve a reCAPTCHA v2 challenge through your own proxy with the async client.
 
+This example solves reCAPTCHA v2 through your own proxy. Supply the page URL,
+widget data-sitekey, and proxy connection details; the service returns
+gRecaptchaResponse for site-specific submission and verification. It uses
+RecaptchaV2Task and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient, page parameters, and customer proxy credentials.
 STEP-02 - Create RecaptchaV2Task and await solve() through that proxy.

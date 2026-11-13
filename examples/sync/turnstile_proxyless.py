@@ -1,6 +1,11 @@
 """
 Example: Solve a Cloudflare Turnstile challenge.
 
+This example solves a Turnstile widget without a customer proxy. Supply the
+page URL and data-sitekey plus action, data, pagedata, and matching User-Agent
+when the page uses them; then apply the returned token through the page-specific
+callback or field. It uses TurnstileTaskProxyless and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient and extract the widget key and optional challenge data.
 STEP-02 - Create TurnstileTaskProxyless and call solve() without a customer proxy.

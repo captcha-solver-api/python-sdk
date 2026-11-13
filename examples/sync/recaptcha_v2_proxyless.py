@@ -1,6 +1,11 @@
 """
 Example: Solve a reCAPTCHA v2 challenge.
 
+This example solves reCAPTCHA v2 without a customer proxy. Supply the target
+page URL and the widget's data-sitekey; the service returns
+gRecaptchaResponse, which your integration must submit and verify using the
+page-specific flow. It uses RecaptchaV2TaskProxyless and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient and obtain the page URL and data-sitekey.
 STEP-02 - Create RecaptchaV2TaskProxyless and call solve() without a customer proxy.
