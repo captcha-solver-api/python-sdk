@@ -39,6 +39,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import GeeTestTask
 
+# STEP-01: Configure AsyncCaptchaClient, fetch a fresh challenge, and set proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -60,6 +61,7 @@ async def main():
         # --- With proxy example ---
         # Solves GeeTest v3 through your own proxy.
         try:
+            # STEP-02: Create GeeTestTask with gt and challenge, then await solve() through the proxy.
             result = await solver.solve(
                 GeeTestTask(
                     websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
@@ -73,8 +75,10 @@ async def main():
                     proxyPassword="password",  # Password for proxy authorization (optional)
                 )
             )
+            # STEP-03: Print challenge, validate, and seccode and explain their site-specific use.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

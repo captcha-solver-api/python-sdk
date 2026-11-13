@@ -37,6 +37,7 @@ from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
+# STEP-01: Configure CaptchaClient, Enterprise parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -46,6 +47,7 @@ solver = CaptchaClient(api_key)
 # Solves reCAPTCHA v2 Enterprise through your own proxy.
 # Use when the target site is geo-restricted or you need a consistent session.
 try:
+    # STEP-02: Create RecaptchaV2EnterpriseTask and call solve() through that proxy.
     result = solver.solve(
         RecaptchaV2EnterpriseTask(
             websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -63,7 +65,9 @@ try:
             cookies="foo=bar; baz=1",  # Session cookies if needed
         )
     )
+    # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
     # Solution contains the same gRecaptchaResponse token.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

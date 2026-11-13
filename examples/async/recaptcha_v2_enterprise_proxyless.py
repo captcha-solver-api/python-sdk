@@ -32,6 +32,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless
 
+# STEP-01: Configure AsyncCaptchaClient and extract the Enterprise site key and payload.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -43,6 +44,7 @@ async def main():
         # If the site passes extra parameters to grecaptcha.enterprise.render(),
         # you must pass them as enterprisePayload or the token will be rejected.
         try:
+            # STEP-02: Create RecaptchaV2EnterpriseTaskProxyless and await solve() without a customer proxy.
             result = await solver.solve(
                 RecaptchaV2EnterpriseTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -55,10 +57,12 @@ async def main():
                     # cookies='session=abc123; token=xyz789',       # Session cookies if needed
                 )
             )
+            # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
             # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
             # Pass this token to the g-recaptcha-response field or widget callback.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

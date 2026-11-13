@@ -46,6 +46,7 @@ def encode_image(filename):
 
 
 async def main():
+    # STEP-01: Configure AsyncCaptchaClient and locate the bundled images.
     # Image to Text tasks are usually fast. Default timeout is fine.
     async with AsyncCaptchaClient(api_key) as solver:
         digits_body = encode_image("captcha-digits.png")
@@ -54,6 +55,8 @@ async def main():
         # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
         # with character set hints.
         try:
+            # STEP-02: Read an image as Base64 and create ImageToTextTask with answer hints.
+            # STEP-03: Await solve(), which creates the task and polls for its solution.
             result = await solver.solve(
                 ImageToTextTask(
                     body=digits_body,  # Base64-encoded image (required)
@@ -64,6 +67,7 @@ async def main():
             )
             # Solution contains {"text": "58204"}
             # Submit solution.text to the target form field.
+            # STEP-04: Print the recognized text, or report the error.
             print("result: " + str(result))
         except Exception as e:
             sys.exit(e)

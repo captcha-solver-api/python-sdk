@@ -37,6 +37,7 @@ from captcha_solver_api.tasks import TurnstileTaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
+# STEP-01: Configure CaptchaClient and extract the widget key and optional challenge data.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -47,6 +48,7 @@ solver = CaptchaClient(api_key)
 # The token is tied to the User-Agent. If you pass userAgent, use the same
 # User-Agent in your browser or bot when submitting the token.
 try:
+    # STEP-02: Create TurnstileTaskProxyless and call solve() without a customer proxy.
     result = solver.solve(
         TurnstileTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
@@ -58,8 +60,10 @@ try:
             # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',  # Must match the browser submitting the token
         )
     )
+    # STEP-03: Print the token and explain its site-specific application.
     # Solution contains {"token": "0.zxcv..."}
     # Pass this token to the widget callback or cf-turnstile-response field.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

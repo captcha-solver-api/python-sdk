@@ -32,6 +32,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import TencentTaskProxyless
 
+# STEP-01: Configure AsyncCaptchaClient and obtain appId from the page's Tencent setup.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -42,6 +43,7 @@ async def main():
         # The service's own proxies are used to solve the captcha.
         # appId is found in the page source code. captchaScript is optional if the site uses the default.
         try:
+            # STEP-02: Create TencentTaskProxyless and await solve() without a customer proxy.
             result = await solver.solve(
                 TencentTaskProxyless(
                     websiteURL="https://example.com/register",  # Full URL of the page using Tencent captcha
@@ -50,10 +52,12 @@ async def main():
                     captchaScript="https://captchacdn.tencentcloudcs.com/TCaptcha-global.js",  # Custom script URL if non-default
                 )
             )
+            # STEP-03: Print ticket and randstr and explain their site-specific application.
             # Solution contains {"appid": "...", "ret": 0, "ticket": "...", "randstr": "..."}
             # Pass all four values together into the page's captcha callback as-is.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page or server acceptance must be verified by the integration.
             sys.exit(e)
 
 

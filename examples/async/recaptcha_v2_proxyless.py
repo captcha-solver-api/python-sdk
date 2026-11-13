@@ -31,6 +31,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 
+# STEP-01: Configure AsyncCaptchaClient and obtain the page URL and data-sitekey.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -41,6 +42,7 @@ async def main():
         # --- Proxyless example ---
         # Solves reCAPTCHA v2 without a proxy. The service uses its own IP addresses.
         try:
+            # STEP-02: Create RecaptchaV2TaskProxyless and await solve() without a customer proxy.
             # solve() handles task creation, polling, and returns the solution dict.
             result = await solver.solve(
                 RecaptchaV2TaskProxyless(
@@ -49,10 +51,12 @@ async def main():
                     isInvisible=False,  # Set True for invisible reCAPTCHA
                 )
             )
+            # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
             # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
             # Pass this token to the g-recaptcha-response field or widget callback.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

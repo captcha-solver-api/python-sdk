@@ -39,6 +39,7 @@ from captcha_solver_api.tasks import ImageToTextTask
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
+# STEP-01: Configure CaptchaClient and locate the bundled images.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -49,11 +50,13 @@ solver = CaptchaClient(api_key)
 # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
 # with character set hints.
 try:
+    # STEP-02: Read an image as Base64 and create ImageToTextTask with answer hints.
     # Read and encode the captcha image to base64.
     # The body must be a pure base64 string without the data:image/...;base64, prefix.
     with open(os.path.join(assets_dir, "captcha-digits.png"), "rb") as f:
         digits_body = b64encode(f.read()).decode("utf-8")
 
+    # STEP-03: Call solve(), which creates the task and polls for its solution.
     result = solver.solve(
         ImageToTextTask(
             body=digits_body,  # Base64-encoded image (required)
@@ -64,6 +67,7 @@ try:
     )
     # Solution contains {"text": "58204"}
     # Submit solution.text to the target form field.
+    # STEP-04: Print the recognized text, or report the error.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

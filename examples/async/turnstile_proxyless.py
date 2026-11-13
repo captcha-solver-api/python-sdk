@@ -32,6 +32,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import TurnstileTaskProxyless
 
+# STEP-01: Configure AsyncCaptchaClient and extract the widget key and challenge data.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -42,6 +43,7 @@ async def main():
         # The token is tied to the User-Agent. If you pass userAgent, use the same
         # User-Agent in your browser or bot when submitting the token.
         try:
+            # STEP-02: Create TurnstileTaskProxyless and await solve() without a customer proxy.
             result = await solver.solve(
                 TurnstileTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
@@ -53,10 +55,12 @@ async def main():
                     # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',  # Must match the browser submitting the token
                 )
             )
+            # STEP-03: Print the token and explain its site-specific application.
             # Solution contains {"token": "0.zxcv..."}
             # Pass this token to the widget callback or cf-turnstile-response field.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

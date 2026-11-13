@@ -38,16 +38,20 @@ def encode_image(filename: str) -> str:
         return b64encode(image_file.read()).decode("utf-8")
 
 
+# STEP-01: Configure CaptchaClient and locate the bundled challenge images.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 solver = CaptchaClient(api_key)
 
+# STEP-02: Encode both images and create YandexSmartCaptchaImageTask.
 try:
+    # STEP-03: Call solve(), which creates the task and polls for its solution.
     result = solver.solve(
         YandexSmartCaptchaImageTask(
             image=encode_image("yandex-smartcaptcha-image.png"),
             imgInstructions=encode_image("yandex-smartcaptcha-instructions.png"),
         )
     )
+    # STEP-04: Print the ordered coordinates to click, or report the error.
     # Click the returned points on the captcha image in the listed order.
     # Example: {"coordinates": [{"x": 73, "y": 92}, ...]}
     print("result: " + str(result))
