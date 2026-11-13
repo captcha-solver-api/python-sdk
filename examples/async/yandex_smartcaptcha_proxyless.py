@@ -1,6 +1,12 @@
 """
 Example: Solve a Yandex SmartCaptcha challenge (token-based) with the async client.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and obtain the page URL and SmartCaptcha site key.
+STEP-02 - Create YandexSmartCaptchaTaskProxyless and await solve() without a customer proxy.
+STEP-03 - Print the token and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.

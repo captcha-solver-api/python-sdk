@@ -1,6 +1,12 @@
 """
 Example: Solve a Cloudflare Turnstile challenge.
 
+How it works:
+STEP-01 - Configure CaptchaClient and extract the widget key and optional challenge data.
+STEP-02 - Create TurnstileTaskProxyless and call solve() without a customer proxy.
+STEP-03 - Print the token and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.

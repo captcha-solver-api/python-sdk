@@ -1,6 +1,11 @@
 """
 Example: Get account balance with the async client.
 
+How it works:
+STEP-01 - Configure the API key and create AsyncCaptchaClient.
+STEP-02 - Request the balance with get_balance() without creating a CAPTCHA task.
+STEP-03 - Print the returned amount or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Returns the current available balance of your account.

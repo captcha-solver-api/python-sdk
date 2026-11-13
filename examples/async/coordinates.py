@@ -1,6 +1,12 @@
 """
 Example: Solve a click-based image captcha using CoordinatesTask with the async client.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and locate the bundled images.
+STEP-02 - Read the image data and create CoordinatesTask without a proxy.
+STEP-03 - Await solve(), which creates the task and polls for its solution.
+STEP-04 - Print the coordinates to click in the same order, or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Ready to run as-is: sample captcha images are bundled in examples/assets/.

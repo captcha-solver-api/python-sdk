@@ -1,6 +1,12 @@
 """
 Example: Solve a Tencent captcha challenge with the async client.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient, Tencent parameters, and proxy credentials.
+STEP-02 - Create TencentTask and await solve() through that proxy.
+STEP-03 - Print ticket and randstr and explain their site-specific application.
+STEP-04 - Report errors; page or server acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and appId with values from your target page.

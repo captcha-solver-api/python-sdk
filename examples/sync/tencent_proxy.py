@@ -1,6 +1,12 @@
 """
 Example: Solve a Tencent captcha challenge.
 
+How it works:
+STEP-01 - Configure CaptchaClient, Tencent parameters, and customer proxy credentials.
+STEP-02 - Create TencentTask and call solve() through that proxy.
+STEP-03 - Print ticket and randstr and explain their site-specific application.
+STEP-04 - Report errors; page or server acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and appId with values from your target page.

@@ -1,6 +1,12 @@
 """
 Example: Solve a GeeTest v4 challenge with the async client.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and obtain captcha_id from the target's v4 loader.
+STEP-02 - Create GeeTestTaskProxyless with version 4 and await solve().
+STEP-03 - Print the returned v4 fields and explain their site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and captcha_id with values from your target page.

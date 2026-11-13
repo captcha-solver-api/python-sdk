@@ -1,5 +1,11 @@
 """Example: Solve an image-based Yandex SmartCaptcha asynchronously.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and locate the bundled challenge images.
+STEP-02 - Encode both images and create YandexSmartCaptchaImageTask.
+STEP-03 - Await solve(), which creates the task and polls for its solution.
+STEP-04 - Print the ordered coordinates to click, or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     The sample captcha and instruction images are bundled in examples/assets/.

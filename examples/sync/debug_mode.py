@@ -2,6 +2,12 @@
 
 This creates a real, paid CAPTCHA task. Set CAPTCHA_API_KEY in the environment
 or in the repository's .env file before running it.
+
+How it works:
+STEP-01 - Read the bundled image and create CaptchaClient with debug enabled.
+STEP-02 - Create ImageToTextTask and call solve().
+STEP-03 - Inspect the sanitized debug events and SOLVE SUMMARY.
+STEP-04 - Print the recognized text returned by the service.
 """
 
 import os

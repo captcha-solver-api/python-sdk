@@ -1,6 +1,12 @@
 """
 Example: Solve an Image to Text challenge.
 
+How it works:
+STEP-01 - Configure CaptchaClient and locate the bundled images.
+STEP-02 - Read an image as Base64 and create ImageToTextTask with answer hints.
+STEP-03 - Call solve(), which creates the task and polls for its solution.
+STEP-04 - Print the recognized text, or report the error.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Ready to run as-is: sample captcha images are bundled in examples/assets/.

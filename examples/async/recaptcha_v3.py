@@ -1,6 +1,12 @@
 """
 Example: Solve a reCAPTCHA v3 challenge with the async client.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and extract the key and action from grecaptcha.execute().
+STEP-02 - Create RecaptchaV3TaskProxyless with the required score and await solve().
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, websiteKey, and minScore with values from your target
