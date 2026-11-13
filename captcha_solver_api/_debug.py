@@ -86,7 +86,7 @@ class DebugLogger:
         try:
             self.logger.debug(f"[{_timestamp()}] [{self.name}] {message}")
         except Exception:
-            pass
+            return
 
     def initialized(self, version: str, base_url: str, timeout: Any, polling: Any) -> None:
         self.emit(
@@ -119,7 +119,7 @@ class DebugLogger:
                 f"RESPONSE (HTTP {status} {reason}, {elapsed_ms}ms):\n{_json(data)}"
             )
         except Exception:
-            pass
+            return
 
     def request_failure(
         self,
@@ -149,8 +149,7 @@ class DebugLogger:
                 )
             elif invalid_json:
                 response = (
-                    f"RESPONSE (HTTP {status} {reason}, {elapsed_ms}ms): "
-                    "body is not valid JSON"
+                    f"RESPONSE (HTTP {status} {reason}, {elapsed_ms}ms): body is not valid JSON"
                 )
             else:
                 response = f"RESPONSE (HTTP {status} {reason}, {elapsed_ms}ms):\n{_json(data)}"
@@ -159,7 +158,7 @@ class DebugLogger:
                 f"REQUEST (POST {url}):\n{_json(payload)}\n{response}"
             )
         except Exception:
-            pass
+            return
 
     def solve_summary(
         self,
@@ -191,7 +190,7 @@ class DebugLogger:
                 lines.append(f"  error:           {_error_details(error)}")
             self.emit("\n".join(lines))
         except Exception:
-            pass
+            return
 
 
 def _request_context(endpoint: str, payload: Dict[str, Any]) -> str:

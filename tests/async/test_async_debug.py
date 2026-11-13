@@ -16,7 +16,9 @@ async def test_async_debug_success_processing_summary_and_masking():
     client._debug.logger.debug = Mock()
     task = ImageToTextTask(body="A" * 300)
     responses = [
-        httpx.Response(200, json={"errorId": 0, "taskId": 9}, request=httpx.Request("POST", "https://x")),
+        httpx.Response(
+            200, json={"errorId": 0, "taskId": 9}, request=httpx.Request("POST", "https://x")
+        ),
         httpx.Response(
             200,
             json={"errorId": 0, "status": "processing"},

@@ -30,9 +30,7 @@ with open(image_path, "rb") as image_file:
     image_body = b64encode(image_file.read()).decode("utf-8")
 
 with CaptchaClient(api_key, debug=True) as client:
-    solution = client.solve(
-        ImageToTextTask(body=image_body, numeric=1, minLength=4, maxLength=6)
-    )
+    solution = client.solve(ImageToTextTask(body=image_body, numeric=1, minLength=4, maxLength=6))
 
 # The SOLVE SUMMARY is emitted before solve() returns, so this is printed last.
 print(f"Recognized text: {solution['text']}")
