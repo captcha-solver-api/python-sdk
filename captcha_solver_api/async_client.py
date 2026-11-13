@@ -209,9 +209,8 @@ class AsyncCaptchaClient:
 
         Returns:
             The raw API response with `status` (`"processing"` or `"ready"`).
-            Ready responses also contain a `solution` dict, e.g.
-            `{"gRecaptchaResponse": "..."}` for reCAPTCHA or `{"text": "..."}`
-            for `ImageToTextTask`.
+            Ready responses also contain a `solution` value whose shape depends
+            on the task type.
 
         Raises:
             ApiError: The API reports an error for the task.
@@ -263,7 +262,7 @@ class AsyncCaptchaClient:
         task: Any,
         language_pool: Optional[str] = None,
         timeout: Optional[int] = None,
-    ) -> Dict[str, Any]:
+    ) -> Any:
         """Submit a task and asynchronously poll until its solution is ready.
 
         This is the main entry point for the async client. It combines
@@ -283,9 +282,8 @@ class AsyncCaptchaClient:
                 not a strict deadline for the entire call.
 
         Returns:
-            The `solution` dict once `status` is `"ready"`. Its shape depends on
-            the task type -- see the per-type docstrings in `captcha_solver_api.tasks`
-            or the README's method reference.
+            The `solution` once `status` is `"ready"`. Most task types return a
+            dict; `YandexSmartCaptchaKaleidoscopeTask` returns a string.
 
         Raises:
             ValidationError: `task` is not a task object, or a required task
@@ -334,9 +332,9 @@ class AsyncCaptchaClient:
 
             if result.get("status") == "ready":
                 solution = result["solution"]
-                if not isinstance(solution, dict):
+                if not isinstance(solution, (dict, str)):
                     raise NetworkError(
-                        "API returned a ready task without a solution object",
+                        "API returned a ready task without a valid solution",
                         task_id=task_id,
                     )
                 return solution
