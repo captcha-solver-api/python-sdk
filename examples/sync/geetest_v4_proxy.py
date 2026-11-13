@@ -1,6 +1,12 @@
 """
 Example: Solve a GeeTest v4 challenge.
 
+How it works:
+STEP-01 - Configure CaptchaClient, obtain captcha_id, and set customer proxy credentials.
+STEP-02 - Create GeeTestTask with version 4 and call solve() through the proxy.
+STEP-03 - Print the returned v4 fields and explain their site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and captcha_id with values from your target page.

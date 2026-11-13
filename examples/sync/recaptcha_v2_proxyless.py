@@ -1,6 +1,12 @@
 """
 Example: Solve a reCAPTCHA v2 challenge.
 
+How it works:
+STEP-01 - Configure CaptchaClient and obtain the page URL and data-sitekey.
+STEP-02 - Create RecaptchaV2TaskProxyless and call solve() without a customer proxy.
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.

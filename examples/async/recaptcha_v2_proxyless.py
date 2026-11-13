@@ -1,6 +1,12 @@
 """
 Example: Solve a reCAPTCHA v2 challenge without a proxy with the async client.
 
+How it works:
+STEP-01 - Configure AsyncCaptchaClient and obtain the page URL and data-sitekey.
+STEP-02 - Create RecaptchaV2TaskProxyless and await solve() without a customer proxy.
+STEP-03 - Print gRecaptchaResponse and explain its site-specific application.
+STEP-04 - Report errors; page acceptance must be verified by the integration.
+
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
