@@ -927,6 +927,35 @@ class YandexSmartCaptchaImageTask(BaseTask):
         self.comment = comment
 
 
+class YandexSmartCaptchaKaleidoscopeTask(BaseTask):
+    """Image-based Yandex SmartCaptcha Kaleidoscope puzzle, sent as API type
+    `PazlCaptchaTask`. No proxy variant exists because the image is submitted directly.
+
+    Args:
+        image: Required. Main Kaleidoscope challenge image, base64-encoded.
+        task: Required. Puzzle steps serialized as a JSON array string.
+
+    Returns (`solution` from `solve()`):
+        A string containing the number of slider-arrow clicks required to solve
+        the puzzle.
+
+    Example:
+        from captcha_solver_api.tasks import YandexSmartCaptchaKaleidoscopeTask
+
+        task = YandexSmartCaptchaKaleidoscopeTask(
+            image="BASE64_IMAGE",
+            task="[15,24,4,13,10]",
+        )
+        clicks = client.solve(task)
+    """
+
+    type = "PazlCaptchaTask"
+
+    def __init__(self, image: str, task: str) -> None:
+        self.image = image
+        self.task = task
+
+
 class TencentTaskProxyless(BaseTask):
     """Tencent captcha without proxy.
 

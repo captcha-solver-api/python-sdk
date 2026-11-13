@@ -71,11 +71,11 @@ async def test_network_error_after_retries_has_task_id():
     assert exc_info.value.task_id == 100
 
 
-async def test_ready_task_without_solution_object_has_task_id():
+async def test_ready_task_with_invalid_solution_has_task_id():
     client = make_client()
 
     with patch.object(client, "_request", new_callable=AsyncMock) as mock_request:
-        mock_request.side_effect = [CREATED, {"errorId": 0, "status": "ready", "solution": "x"}]
+        mock_request.side_effect = [CREATED, {"errorId": 0, "status": "ready", "solution": 42}]
         with pytest.raises(NetworkError) as exc_info:
             await client.solve(TASK)
 

@@ -194,9 +194,8 @@ class CaptchaClient:
 
         Returns:
             The raw API response. Always has a `status` key (`"processing"` or
-            `"ready"`); when `"ready"`, also has a `solution` dict whose shape
-            depends on the task type (e.g. `{"gRecaptchaResponse": "..."}` for
-            reCAPTCHA, `{"text": "..."}` for `ImageToTextTask`).
+            `"ready"`); when `"ready"`, also has a `solution` value whose shape
+            depends on the task type.
 
         Raises:
             ApiError: The API reports an error for this task (e.g. it expired).
@@ -246,7 +245,7 @@ class CaptchaClient:
         task: Any,
         language_pool: Optional[str] = None,
         timeout: Optional[int] = None,
-    ) -> Dict[str, Any]:
+    ) -> Any:
         """Submits `task` and polls until it's solved. This is the main entry point --
         it wraps `create_task()` and `get_task_result()` so you don't have to poll
         by hand.
@@ -261,9 +260,8 @@ class CaptchaClient:
                 not a strict deadline for the entire call.
 
         Returns:
-            The `solution` dict once `status` is `"ready"`. Its shape depends on
-            the task type -- see the per-type docstrings in `captcha_solver_api.tasks`
-            or the README's method reference.
+            The `solution` once `status` is `"ready"`. Most task types return a
+            dict; `YandexSmartCaptchaKaleidoscopeTask` returns a string.
 
         Raises:
             ValidationError: `task` is not a task object, or a required task
@@ -312,9 +310,9 @@ class CaptchaClient:
 
             if result.get("status") == "ready":
                 solution = result["solution"]
-                if not isinstance(solution, dict):
+                if not isinstance(solution, (dict, str)):
                     raise NetworkError(
-                        "API returned a ready task without a solution object",
+                        "API returned a ready task without a valid solution",
                         task_id=task_id,
                     )
                 return solution

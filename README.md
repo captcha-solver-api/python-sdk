@@ -162,6 +162,7 @@ on the target page.
 | Image to Text | ✅ | - |
 | Yandex SmartCaptcha | ✅ | ✅ |
 | Yandex SmartCaptcha Image | ✅ | - |
+| Yandex SmartCaptcha Kaleidoscope | ✅ | - |
 | Coordinates (click captcha) | ✅ | - |
 | Tencent | ✅ | ✅ |
 
@@ -213,8 +214,8 @@ solution -- wraps `create_task()` + `get_task_result()` so you don't poll by han
 | `language_pool` | `Optional[str]` | Worker pool selector, `"en"` or `"ru"`. |
 | `timeout` | `Optional[int]` | Overrides the client's default timeout for this call only, in seconds. Useful for captcha types that reliably take longer (e.g. classic reCAPTCHA v2, GeeTest, reCAPTCHA v3 with a high `minScore`). |
 
-Returns the `solution` dict once `status` is `"ready"` -- its shape depends on
-the task type (see [Captcha Types](#captcha-types)).
+Returns the `solution` once `status` is `"ready"`. Most task types return a dict;
+Yandex SmartCaptcha Kaleidoscope returns a string.
 Raises `ValidationError` before any request if `task` is not a task object or a
 required task parameter is missing or empty. Otherwise raises `ApiError`,
 `CaptchaTimeoutError`, or `NetworkError`.
@@ -231,7 +232,7 @@ Raises `ValidationError` before any request if `task` is invalid (same rules as
 
 Fetches the current status of a task created with `create_task()`. Always
 returns a dict with a `status` key (`"processing"` or `"ready"`); when
-`"ready"`, also has a `solution` dict. This is a single poll, not a wait --
+`"ready"`, also has a `solution` value. This is a single poll, not a wait --
 call it repeatedly (as `solve()` does) until `status` is `"ready"`.
 Raises `ApiError`, `CaptchaTimeoutError`, or `NetworkError`.
 
@@ -571,6 +572,36 @@ task = YandexSmartCaptchaImageTask(
 )
 result = CaptchaClient("your_api_key").solve(task)
 print(result["coordinates"])
+```
+
+#### Kaleidoscope puzzle
+
+Use `YandexSmartCaptchaKaleidoscopeTask` for the image-based Kaleidoscope puzzle.
+Encode the captcha image as base64 and pass the puzzle steps as a JSON array string.
+The SDK sends API v2 type `PazlCaptchaTask`.
+
+| Parameter | Required | Description |
+|---|---|---|
+| `image` | yes | Main captcha image, base64-encoded. |
+| `task` | yes | Puzzle steps serialized as a JSON array string, for example `"[15,24,4,13,10]"`. |
+
+**Response:** a string containing the number of slider-arrow clicks required to
+solve the captcha.
+
+```python
+import base64
+from captcha_solver_api import CaptchaClient
+from captcha_solver_api.tasks import YandexSmartCaptchaKaleidoscopeTask
+
+with open("examples/assets/yandex-smartcaptcha-kaleidoscope.jpg", "rb") as f:
+    image = base64.b64encode(f.read()).decode("utf-8")
+
+task = YandexSmartCaptchaKaleidoscopeTask(
+    image=image,
+    task="[15,24,4,13,10]",
+)
+clicks = CaptchaClient("your_api_key").solve(task)
+print(clicks)
 ```
 
 ### Coordinates (click captcha)
