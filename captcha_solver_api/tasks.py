@@ -846,7 +846,8 @@ class CoordinatesTask(BaseTask):
         comment: Optional. Hint for the worker, e.g. `"click on the green apple"`. Recommended
             for generic click captchas.
         imgInstructions: Optional. Optional instruction image, base64-encoded.
-        minClicks: Optional. Minimum number of clicks expected (default `1`).
+        minClicks: Optional. Minimum number of clicks expected. When unset, the
+            field is omitted and the API applies its default.
         maxClicks: Optional. Maximum number of clicks allowed.
 
     Returns (`solution` from `solve()`):

@@ -80,6 +80,16 @@ python examples/sync/image_to_text.py
 python examples/async/recaptcha_v2_proxyless.py
 ```
 
+Every sync and async example accepts `--debug` to enable sanitized SDK request,
+response, timing, polling, error, and solve-summary logs:
+
+```bash
+python examples/sync/image_to_text.py --debug
+```
+
+Run any example with `--help` to see its command-line options. Debug mode is
+disabled when `--debug` is omitted.
+
 Async scripts create an `AsyncCaptchaClient` and await the same operations as the synchronous client. For several captchas, see the parallel solving pattern in the main [README](../README.md#solving-multiple-captchas-in-parallel).
 
 ## Important notes
