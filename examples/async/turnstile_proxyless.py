@@ -36,13 +36,14 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import TurnstileTaskProxyless
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient and extract the widget key and challenge data.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- Proxyless example ---
         # Solves Cloudflare Turnstile without a proxy.
         # The token is tied to the User-Agent. If you pass userAgent, use the same

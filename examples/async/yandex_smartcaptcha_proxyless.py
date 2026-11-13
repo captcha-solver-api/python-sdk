@@ -35,13 +35,14 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient and obtain the page URL and SmartCaptcha site key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- Proxyless example ---
         # Solves Yandex SmartCaptcha without a proxy.
         # The service's own proxies are used to solve the captcha.

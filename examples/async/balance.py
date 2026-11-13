@@ -32,6 +32,7 @@ if load_dotenv is not None:
     load_dotenv(os.path.join(repo_root, ".env"))
 
 from captcha_solver_api import AsyncCaptchaClient
+from examples._cli import debug_enabled
 
 # in this example we store the API key inside environment variables that can be set like:
 # export CAPTCHA_API_KEY=your_api_key on Linux or macOS
@@ -44,7 +45,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # STEP-02: Request the balance with get_balance() without creating a CAPTCHA task.
         # Get the current account balance.
         # Returns a float with the available amount in your account currency.

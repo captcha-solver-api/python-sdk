@@ -43,6 +43,7 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import GeeTestTask
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient, fetch a fresh challenge, and set proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
@@ -55,7 +56,9 @@ async def main():
     Below is an example of fetching it from a demo endpoint.
     """
     # GeeTest tasks may take longer. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+    async with AsyncCaptchaClient(
+        api_key, debug=debug_enabled(), timeout=300, polling_interval=10
+    ) as solver:
         # Fetch a fresh challenge value from the target page.
         # In production, extract this from the page's initGeetest call or network requests.
         # "target-site.com" is a placeholder -- point this at your real target before running.

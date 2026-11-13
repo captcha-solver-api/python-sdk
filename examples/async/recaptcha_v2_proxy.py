@@ -36,6 +36,7 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2Task
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient, page parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
@@ -44,7 +45,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 async def main():
     # Optional: timeout (max seconds to wait for solution, default 120)
     # Optional: polling_interval (seconds before and between status checks, default 10)
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- With proxy example ---
         # Solves reCAPTCHA v2 through your own proxy.
         # Use when the target site is geo-restricted or you need session consistency.

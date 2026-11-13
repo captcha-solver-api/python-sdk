@@ -38,6 +38,7 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import GeeTestTask
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient, obtain captcha_id, and set proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
@@ -45,7 +46,9 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 async def main():
     # GeeTest v4 tasks may take longer. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+    async with AsyncCaptchaClient(
+        api_key, debug=debug_enabled(), timeout=300, polling_interval=10
+    ) as solver:
         # --- With proxy example ---
         # Solves GeeTest v4 through your own proxy.
         try:

@@ -36,11 +36,12 @@ if load_dotenv is not None:
 
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import TencentTask
+from examples._cli import debug_enabled
 
 # STEP-01: Configure CaptchaClient, Tencent parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=debug_enabled())
 
 # --- With proxy example ---
 # Solves Tencent captcha through your own proxy.

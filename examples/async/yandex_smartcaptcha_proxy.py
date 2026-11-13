@@ -35,13 +35,14 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTask
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient, SmartCaptcha parameters, and proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled()) as solver:
         # --- With proxy example ---
         # Solves Yandex SmartCaptcha through your own proxy.
         # Note: this is the only captcha type where an https proxy is accepted.

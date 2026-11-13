@@ -37,6 +37,7 @@ if load_dotenv is not None:
 
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
+from examples._cli import debug_enabled
 
 # STEP-01: Configure AsyncCaptchaClient and extract the key and action from grecaptcha.execute().
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
@@ -44,7 +45,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 async def main():
     # reCAPTCHA v3 tasks may take longer to solve. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=180) as solver:
+    async with AsyncCaptchaClient(api_key, debug=debug_enabled(), timeout=180) as solver:
         # reCAPTCHA v3 returns a score instead of a pass/fail challenge.
         # The higher the minScore you request, the harder and longer the task takes.
         # minScore values: 0.3 (fastest), 0.7 (balanced), 0.9 (highest, slowest).
