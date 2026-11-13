@@ -37,6 +37,7 @@ from captcha_solver_api.tasks import TurnstileTask
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
+# STEP-01: Configure CaptchaClient, widget parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -45,6 +46,7 @@ solver = CaptchaClient(api_key)
 # --- With proxy example ---
 # Solves Cloudflare Turnstile through your own proxy.
 try:
+    # STEP-02: Create TurnstileTask and call solve() through that proxy.
     result = solver.solve(
         TurnstileTask(
             websiteURL="https://example.com/login",  # Full URL of the page with Turnstile
@@ -62,6 +64,8 @@ try:
             # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',
         )
     )
+    # STEP-03: Print the token and explain its site-specific application.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

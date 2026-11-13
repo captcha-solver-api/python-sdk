@@ -35,15 +35,18 @@ from captcha_solver_api import AsyncCaptchaClient
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
+# STEP-01: Configure the API key and create AsyncCaptchaClient.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     async with AsyncCaptchaClient(api_key) as solver:
+        # STEP-02: Request the balance with get_balance() without creating a CAPTCHA task.
         # Get the current account balance.
         # Returns a float with the available amount in your account currency.
         try:
             balance = await solver.get_balance()
+            # STEP-03: Print the returned amount or report the error.
             print("Balance: " + str(balance))
         except Exception as e:
             sys.exit(e)

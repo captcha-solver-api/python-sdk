@@ -32,6 +32,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import TurnstileTask
 
+# STEP-01: Configure AsyncCaptchaClient, widget parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -40,6 +41,7 @@ async def main():
         # --- With proxy example ---
         # Solves Cloudflare Turnstile through your own proxy.
         try:
+            # STEP-02: Create TurnstileTask and await solve() through that proxy.
             result = await solver.solve(
                 TurnstileTask(
                     websiteURL="https://example.com/login",  # Full URL of the page with Turnstile
@@ -57,8 +59,10 @@ async def main():
                     # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',
                 )
             )
+            # STEP-03: Print the token and explain its site-specific application.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

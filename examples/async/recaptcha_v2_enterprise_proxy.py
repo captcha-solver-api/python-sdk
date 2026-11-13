@@ -32,6 +32,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
 
+# STEP-01: Configure AsyncCaptchaClient, Enterprise parameters, and customer proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -41,6 +42,7 @@ async def main():
         # Solves reCAPTCHA v2 Enterprise through your own proxy.
         # Use when the target site is geo-restricted or you need a consistent session.
         try:
+            # STEP-02: Create RecaptchaV2EnterpriseTask and await solve() through that proxy.
             result = await solver.solve(
                 RecaptchaV2EnterpriseTask(
                     websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -58,9 +60,11 @@ async def main():
                     cookies="foo=bar; baz=1",  # Session cookies if needed
                 )
             )
+            # STEP-03: Print gRecaptchaResponse and explain its site-specific application.
             # Solution contains the same gRecaptchaResponse token.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

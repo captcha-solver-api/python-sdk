@@ -31,6 +31,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTask
 
+# STEP-01: Configure AsyncCaptchaClient, SmartCaptcha parameters, and proxy credentials.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -40,6 +41,7 @@ async def main():
         # Solves Yandex SmartCaptcha through your own proxy.
         # Note: this is the only captcha type where an https proxy is accepted.
         try:
+            # STEP-02: Create YandexSmartCaptchaTask and await solve() through that proxy.
             result = await solver.solve(
                 YandexSmartCaptchaTask(
                     websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
@@ -55,9 +57,11 @@ async def main():
                     # cookies='session=abc123; token=xyz789',                     # Session cookies if needed
                 )
             )
+            # STEP-03: Print the token and explain its site-specific application.
             # Solution contains the same token.
             print("result: " + str(result))
         except Exception as e:
+            # STEP-04: Report errors; page acceptance must be verified by the integration.
             sys.exit(e)
 
 

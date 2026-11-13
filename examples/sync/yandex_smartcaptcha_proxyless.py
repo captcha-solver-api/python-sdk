@@ -30,6 +30,7 @@ if load_dotenv is not None:
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTaskProxyless
 
+# STEP-01: Configure CaptchaClient and obtain the page URL and SmartCaptcha site key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 solver = CaptchaClient(api_key)
@@ -39,6 +40,7 @@ solver = CaptchaClient(api_key)
 # The service's own proxies are used to solve the captcha.
 # websiteKey is the sitekey value from the page code or captcha iframe.
 try:
+    # STEP-02: Create YandexSmartCaptchaTaskProxyless and call solve() without a customer proxy.
     result = solver.solve(
         YandexSmartCaptchaTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
@@ -48,8 +50,10 @@ try:
             # cookies='session=abc123; token=xyz789',                     # Session cookies if needed
         )
     )
+    # STEP-03: Print the token and explain its site-specific application.
     # Solution contains {"token": "dV9xNjYyNTU3NjkxO4k9OTQuNVMuMjkuMjM9..."}
     # Use solution.token in the smart-token field or pass to your site's backend.
     print("result: " + str(result))
 except Exception as e:
+    # STEP-04: Report errors; page acceptance must be verified by the integration.
     sys.exit(e)

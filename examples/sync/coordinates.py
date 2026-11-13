@@ -40,6 +40,7 @@ from captcha_solver_api.tasks import CoordinatesTask
 # you can just set the API key directly to its value like:
 # api_key="1abc234de56fab7c89012d34e56fa7b8"
 
+# STEP-01: Configure CaptchaClient and locate the bundled images.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -49,11 +50,13 @@ solver = CaptchaClient(api_key)
 # Solves a simple click-based captcha (examples/assets/fruit-click.png) with
 # a hint for the worker. The worker will click on the specified points on the image.
 try:
+    # STEP-02: Read the image data and create CoordinatesTask without a proxy.
     # Read and encode the captcha image to base64.
     # The body must be a pure base64 string without the data:image/...;base64, prefix.
     with open(os.path.join(assets_dir, "fruit-click.png"), "rb") as f:
         body = b64encode(f.read()).decode("utf-8")
 
+    # STEP-03: Call solve(), which creates the task and polls for its solution.
     result = solver.solve(
         CoordinatesTask(
             body=body,  # Base64-encoded captcha image (required)
@@ -62,6 +65,7 @@ try:
     )
     # Solution contains {"coordinates": [{"x": 140, "y": 110}]}
     # Click on each coordinate in order. Coordinates are pixel positions.
+    # STEP-04: Print the coordinates to click in the same order, or report the error.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)
