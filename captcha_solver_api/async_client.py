@@ -142,25 +142,25 @@ class AsyncCaptchaClient:
             response = await self._client.post(url, json=payload, timeout=30)
             response.raise_for_status()
         except httpx.TimeoutException as exc:
-            response = getattr(exc, "response", None)
+            error_response = getattr(exc, "response", None)
             self._debug.request_failure(
                 endpoint,
                 url,
                 payload,
                 exc,
                 round((time.monotonic() - started) * 1000),
-                status=getattr(response, "status_code", None),
-                reason=getattr(response, "reason_phrase", "") or "",
-                body_missing=response is not None,
+                status=getattr(error_response, "status_code", None),
+                reason=getattr(error_response, "reason_phrase", "") or "",
+                body_missing=error_response is not None,
             )
             raise CaptchaTimeoutError("Request timed out.") from exc
         except httpx.HTTPError as exc:
-            response = getattr(exc, "response", None)
+            error_response = getattr(exc, "response", None)
             data = None
             invalid_json = False
-            if response is not None:
+            if error_response is not None:
                 try:
-                    data = response.json()
+                    data = error_response.json()
                 except ValueError:
                     invalid_json = True
             self._debug.request_failure(
@@ -169,8 +169,8 @@ class AsyncCaptchaClient:
                 payload,
                 exc,
                 round((time.monotonic() - started) * 1000),
-                status=getattr(response, "status_code", None),
-                reason=getattr(response, "reason_phrase", "") or "",
+                status=getattr(error_response, "status_code", None),
+                reason=getattr(error_response, "reason_phrase", "") or "",
                 data=data,
                 invalid_json=invalid_json,
             )
