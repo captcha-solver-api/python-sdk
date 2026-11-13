@@ -1,6 +1,11 @@
 """
 Example: Solve a Tencent captcha challenge with the async client.
 
+This example solves Tencent CAPTCHA without a customer proxy. Obtain appId and
+any custom captchaScript from the target page, then deliver the returned ticket
+and randstr to its registered callback and verify acceptance separately. It uses
+TencentTaskProxyless and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and obtain appId from the page's Tencent setup.
 STEP-02 - Create TencentTaskProxyless and await solve() without a customer proxy.

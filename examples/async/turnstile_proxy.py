@@ -1,6 +1,11 @@
 """
 Example: Solve a Cloudflare Turnstile challenge with the async client.
 
+This example solves a Turnstile widget through your own proxy. Supply the page
+and widget parameters together with proxy connection details, then apply and
+verify the returned token using the target page's own callback or form flow. It
+uses TurnstileTask and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient, widget parameters, and customer proxy credentials.
 STEP-02 - Create TurnstileTask and await solve() through that proxy.

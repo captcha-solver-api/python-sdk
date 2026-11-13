@@ -1,6 +1,11 @@
 """
 Example: Solve a GeeTest v4 challenge with the async client.
 
+This example solves GeeTest v4 without a customer proxy. Obtain captcha_id from
+the target's v4 loader and pass it in initParameters; the returned v4 fields
+must be applied and verified through the target's own flow. It uses
+GeeTestTaskProxyless with version 4 and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and obtain captcha_id from the target's v4 loader.
 STEP-02 - Create GeeTestTaskProxyless with version 4 and await solve().

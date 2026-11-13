@@ -1,5 +1,10 @@
 """Run one Image to Text task with sanitized debug logging enabled.
 
+This example reads a bundled image as Base64, enables the SDK's opt-in debug
+mode, solves the image task, and prints the recognized text after the sanitized
+request/response events and SOLVE SUMMARY. It uses ImageToTextTask and
+CaptchaClient.solve().
+
 This creates a real, paid CAPTCHA task. Set CAPTCHA_API_KEY in the environment
 or in the repository's .env file before running it.
 

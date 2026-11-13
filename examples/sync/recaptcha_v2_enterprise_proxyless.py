@@ -1,6 +1,12 @@
 """
 Example: Solve a reCAPTCHA v2 Enterprise challenge.
 
+This example solves reCAPTCHA v2 Enterprise without a customer proxy. Supply
+the page URL, Enterprise site key, and enterprisePayload when the page passes
+one to grecaptcha.enterprise.render(); the returned gRecaptchaResponse still
+requires site-specific submission and verification. It uses
+RecaptchaV2EnterpriseTaskProxyless and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient and extract the Enterprise site key and payload.
 STEP-02 - Create RecaptchaV2EnterpriseTaskProxyless and call solve() without a customer proxy.

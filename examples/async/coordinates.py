@@ -1,6 +1,11 @@
 """
 Example: Solve a click-based image captcha using CoordinatesTask with the async client.
 
+This example reads local challenge and instruction images, encodes them as
+Base64, describes what the worker should click, and prints the ordered
+coordinates returned by the service. No proxy or target page is involved. It
+uses CoordinatesTask and AsyncCaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure AsyncCaptchaClient and locate the bundled images.
 STEP-02 - Read the image data and create CoordinatesTask without a proxy.

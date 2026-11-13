@@ -1,6 +1,11 @@
 """
 Example: Solve a click-based image captcha using CoordinatesTask.
 
+This example reads local challenge and instruction images, encodes them as
+Base64, describes what the worker should click, and prints the ordered
+coordinates returned by the service. No proxy or target page is involved. It
+uses CoordinatesTask and CaptchaClient.solve().
+
 How it works:
 STEP-01 - Configure CaptchaClient and locate the bundled images.
 STEP-02 - Read the image data and create CoordinatesTask without a proxy.

@@ -1,6 +1,10 @@
 """
 Example: Get account balance with the async client.
 
+This example creates AsyncCaptchaClient, requests the current account balance
+without creating a CAPTCHA task, and prints the returned amount. It uses
+AsyncCaptchaClient.get_balance().
+
 How it works:
 STEP-01 - Configure the API key and create AsyncCaptchaClient.
 STEP-02 - Request the balance with get_balance() without creating a CAPTCHA task.
