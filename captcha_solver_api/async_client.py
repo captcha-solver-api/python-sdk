@@ -43,8 +43,12 @@ class AsyncCaptchaClient:
             Defaults to 10. Waiting does not block the event loop.
         language_pool: Default worker pool, e.g. `"en"` or `"ru"`. `None` uses
             the account default. Can be overridden in `solve()` or `create_task()`.
-        debug: Emit sanitized request, response, timing, and solve summary logs.
-            Defaults to `False`.
+        debug: Enable opt-in diagnostic logging. Logs SDK configuration,
+            sanitized requests and responses, request timing, polling updates,
+            errors, and a summary after every `solve()` call. API keys, cookies,
+            proxy credentials, and Base64 image data are masked. Defaults to
+            `False`; it is never enabled from an environment variable, and a
+            logging failure does not change SDK results or exceptions.
 
     Raises:
         ValidationError: `client_key` is missing, empty, or whitespace.
@@ -92,7 +96,12 @@ class AsyncCaptchaClient:
                 applied to every `create_task()`/`solve()` call that doesn't pass
                 its own `language_pool`. Leave unset to use the account's default
                 pool.
-            debug: Enable sanitized diagnostic logging. Defaults to `False`.
+            debug: Enable opt-in diagnostic logging. Logs SDK configuration,
+                sanitized requests and responses, request timing, polling updates,
+                errors, and a summary after every `solve()` call. API keys,
+                cookies, proxy credentials, and Base64 image data are masked.
+                Defaults to `False`; it is never enabled from an environment
+                variable, and a logging failure does not affect SDK behavior.
 
         Raises:
             ValidationError: `client_key` is missing, empty, or whitespace.
