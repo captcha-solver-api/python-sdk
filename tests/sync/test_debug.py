@@ -51,9 +51,7 @@ def test_success_masks_and_truncates_without_mutating_payload():
         "task": {"type": "ImageToTextTask", "body": body},
     }
     client.session.post = Mock(
-        return_value=response(
-            data={"errorId": 0, "taskId": 123, "solution": {"token": long_token}}
-        )
+        return_value=response(data={"errorId": 0, "taskId": 123, "solution": {"token": long_token}})
     )
 
     result = client._request("createTask", payload)
