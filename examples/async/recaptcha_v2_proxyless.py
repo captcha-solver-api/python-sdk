@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve reCAPTCHA v2 without a proxy. It uses RecaptchaV2TaskProxyless and AsyncCaptchaClient.solve(), returning a gRecaptchaResponse token.
 
 How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key and debug logging.
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page.
     STEP-03 - Create RecaptchaV2TaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
     STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
@@ -39,7 +39,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 async def main():
     # Optional: timeout (max seconds to wait for solution, default 120)
     # Optional: polling_interval (seconds before and between status checks, default 10)
-    async with AsyncCaptchaClient(api_key, debug=True) as solver:
+    async with AsyncCaptchaClient(api_key) as solver:
         # --- Proxyless example ---
         # Solves reCAPTCHA v2 without a proxy. The service uses its own IP addresses.
         try:

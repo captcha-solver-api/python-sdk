@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve a Yandex SmartCaptcha Kaleidoscope puzzle from a bundled local image without a proxy. It uses YandexSmartCaptchaKaleidoscopeTask and CaptchaClient.solve(), returning the number of slider-arrow clicks.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. The challenge image comes from examples/assets and the puzzle-step sequence is captured from the challenge.
     STEP-03 - Create YandexSmartCaptchaKaleidoscopeTask and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print the number of slider-arrow clicks. Applying the solution and verifying acceptance are target-specific.
@@ -43,7 +43,7 @@ def encode_image(filename: str) -> str:
 
 # STEP-01: Configure CaptchaClient and locate the bundled challenge image.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 try:
     # STEP-02: Encode the image and create a task with the captured puzzle steps.

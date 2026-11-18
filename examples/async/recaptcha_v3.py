@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve score-based reCAPTCHA v3 without a proxy. It uses RecaptchaV3TaskProxyless and AsyncCaptchaClient.solve(), returning a gRecaptchaResponse token.
 
 How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key and debug logging.
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, pageAction, and the required minimum score from the target page.
     STEP-03 - Create RecaptchaV3TaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
     STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
@@ -40,7 +40,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 async def main():
     # reCAPTCHA v3 tasks may take longer to solve. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=180, debug=True) as solver:
+    async with AsyncCaptchaClient(api_key, timeout=180) as solver:
         # reCAPTCHA v3 returns a score instead of a pass/fail challenge.
         # The higher the minScore you request, the harder and longer the task takes.
         # minScore values: 0.3 (fastest), 0.7 (balanced), 0.9 (highest, slowest).

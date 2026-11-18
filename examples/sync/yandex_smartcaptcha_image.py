@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve an image-based Yandex SmartCaptcha from bundled local images without a proxy. It uses YandexSmartCaptchaImageTask and CaptchaClient.solve(), returning pixel coordinates to click.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. The challenge and instruction images come from examples/assets.
     STEP-03 - Create YandexSmartCaptchaImageTask and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
@@ -42,7 +42,7 @@ def encode_image(filename: str) -> str:
 
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 try:
     result = solver.solve(

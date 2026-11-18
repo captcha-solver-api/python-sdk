@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve Cloudflare Turnstile through your own proxy. It uses TurnstileTask and CaptchaClient.solve(), returning a token.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract the Turnstile parameters from the target page and provide your proxy settings.
     STEP-03 - Create TurnstileTask and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
@@ -42,7 +42,7 @@ from captcha_solver_api.tasks import TurnstileTask
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 # --- With proxy example ---
 # Solves Cloudflare Turnstile through your own proxy.

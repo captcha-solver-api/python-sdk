@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve an image-based Yandex SmartCaptcha from bundled local images without a proxy. It uses YandexSmartCaptchaImageTask and AsyncCaptchaClient.solve(), returning pixel coordinates to click.
 
 How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key and debug logging.
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. The challenge and instruction images come from examples/assets.
     STEP-03 - Create YandexSmartCaptchaImageTask and pass it to await solver.solve(task), which creates and polls the task.
     STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
@@ -44,7 +44,7 @@ def encode_image(filename: str) -> str:
 
 async def main() -> None:
     api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
-    async with AsyncCaptchaClient(api_key, debug=True) as solver:
+    async with AsyncCaptchaClient(api_key) as solver:
         result = await solver.solve(
             YandexSmartCaptchaImageTask(
                 image=encode_image("yandex-smartcaptcha-image.png"),

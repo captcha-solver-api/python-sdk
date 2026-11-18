@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve GeeTest v3 without a proxy. It uses GeeTestTaskProxyless and CaptchaClient.solve(), returning challenge, validate, and seccode values.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL and gt from the target page and fetch a fresh challenge for every request.
     STEP-03 - Create GeeTestTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print challenge, validate, and seccode values. Applying the solution and verifying acceptance are target-specific.
@@ -50,7 +50,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # GeeTest tasks may take longer. Increase timeout if needed.
-solver = CaptchaClient(api_key, timeout=300, polling_interval=10, debug=True)
+solver = CaptchaClient(api_key, timeout=300, polling_interval=10)
 
 """
 Important: the value of the 'challenge' parameter is dynamic.

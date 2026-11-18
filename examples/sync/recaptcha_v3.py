@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve score-based reCAPTCHA v3 without a proxy. It uses RecaptchaV3TaskProxyless and CaptchaClient.solve(), returning a gRecaptchaResponse token.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, pageAction, and the required minimum score from the target page.
     STEP-03 - Create RecaptchaV3TaskProxyless and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
@@ -44,7 +44,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # reCAPTCHA v3 tasks may take longer to solve. Increase timeout if needed.
-solver = CaptchaClient(api_key, timeout=180, debug=True)
+solver = CaptchaClient(api_key, timeout=180)
 
 # reCAPTCHA v3 returns a score instead of a pass/fail challenge.
 # The higher the minScore you request, the harder and longer the task takes.

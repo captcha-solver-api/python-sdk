@@ -4,7 +4,7 @@ What it does:
     This example shows how to recognize text in bundled local CAPTCHA images without a proxy. It uses ImageToTextTask and AsyncCaptchaClient.solve(), returning the recognized text.
 
 How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key and debug logging.
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. The images and answer-format hints come from examples/assets and this file.
     STEP-03 - Create ImageToTextTask and pass it to await solver.solve(task), which creates and polls the task.
     STEP-04 - Print the recognized text. Applying the solution and verifying acceptance are target-specific.
@@ -49,7 +49,7 @@ def encode_image(filename):
 
 async def main():
     # Image to Text tasks are usually fast. Default timeout is fine.
-    async with AsyncCaptchaClient(api_key, debug=True) as solver:
+    async with AsyncCaptchaClient(api_key) as solver:
         digits_body = encode_image("captcha-digits.png")
 
         # --- Basic example ---

@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve reCAPTCHA v2 Enterprise through your own proxy. It uses RecaptchaV2EnterpriseTask and CaptchaClient.solve(), returning a gRecaptchaResponse token.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any enterprisePayload from the target page, and provide your proxy settings.
     STEP-03 - Create RecaptchaV2EnterpriseTask and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
@@ -42,7 +42,7 @@ from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 # --- With proxy example ---
 # Solves reCAPTCHA v2 Enterprise through your own proxy.

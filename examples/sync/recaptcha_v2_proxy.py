@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve reCAPTCHA v2 through your own proxy. It uses RecaptchaV2Task and CaptchaClient.solve(), returning a gRecaptchaResponse token.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page and provide your proxy settings.
     STEP-03 - Create RecaptchaV2Task and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
@@ -43,7 +43,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 # Create a solver instance with your API key.
 # Optional: timeout (max seconds to wait for solution, default 120)
 # Optional: polling_interval (seconds before and between status checks, default 10)
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 # --- With proxy example ---
 # Solves reCAPTCHA v2 through your own proxy.

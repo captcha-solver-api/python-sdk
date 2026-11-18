@@ -4,7 +4,7 @@ What it does:
     This example shows how to check the current Captcha Solver account balance without creating a CAPTCHA task. It uses CaptchaClient.get_balance() and returns the account balance.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Call solver.get_balance(); this does not create or poll a CAPTCHA task.
     STEP-03 - Print the balance returned by the API.
 
@@ -39,7 +39,7 @@ from captcha_solver_api import CaptchaClient
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 # Get the current account balance.
 # Returns a float with the available amount in your account currency.

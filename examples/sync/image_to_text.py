@@ -4,7 +4,7 @@ What it does:
     This example shows how to recognize text in bundled local CAPTCHA images without a proxy. It uses ImageToTextTask and CaptchaClient.solve(), returning the recognized text.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. The images and answer-format hints come from examples/assets and this file.
     STEP-03 - Create ImageToTextTask and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print the recognized text. Applying the solution and verifying acceptance are target-specific.
@@ -45,7 +45,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # Image to Text tasks are usually fast. Default timeout is fine.
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 # --- Basic example ---
 # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)

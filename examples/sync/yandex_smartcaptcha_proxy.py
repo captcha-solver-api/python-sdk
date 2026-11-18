@@ -4,7 +4,7 @@ What it does:
     This example shows how to solve token-based Yandex SmartCaptcha through your own proxy. It uses YandexSmartCaptchaTask and CaptchaClient.solve(), returning a token.
 
 How it works:
-    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-01 - Configure CaptchaClient with the API key.
     STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page and provide your proxy settings.
     STEP-03 - Create YandexSmartCaptchaTask and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
@@ -34,7 +34,7 @@ from captcha_solver_api.tasks import YandexSmartCaptchaTask
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-solver = CaptchaClient(api_key, debug=True)
+solver = CaptchaClient(api_key)
 
 # --- With proxy example ---
 # Solves Yandex SmartCaptcha through your own proxy.
