@@ -1,4 +1,4 @@
-"""Example: Recognize text in bundled local captcha images without a proxy.
+"""Example: Recognize text in bundled local CAPTCHA images without a proxy.
 
 What it does:
     This example shows how to recognize text in bundled local CAPTCHA images without a proxy. It uses ImageToTextTask and CaptchaClient.solve(), returning the recognized text.

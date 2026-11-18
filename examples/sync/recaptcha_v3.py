@@ -5,15 +5,15 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, pageAction, and the required minimum score from the target page.
+    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and pageAction from the target page, then choose the required minimum score.
     STEP-03 - Create RecaptchaV3TaskProxyless and pass it to solver.solve(task), which creates and polls the task.
     STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
-    Replace websiteURL, websiteKey, and minScore with values from your target
-    page, and pass pageAction if the site uses it -- this increases the
-    chance of the token being accepted.
+    Replace websiteURL and websiteKey with values from your target page, pass
+    pageAction if the site uses it, and choose the minimum score your
+    integration requires.
 """
 
 import os

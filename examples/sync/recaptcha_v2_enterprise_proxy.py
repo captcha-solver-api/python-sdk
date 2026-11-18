@@ -1,4 +1,4 @@
-"""Example: Solve reCAPTCHA v2 enterprise through your own proxy.
+"""Example: Solve reCAPTCHA v2 Enterprise through your own proxy.
 
 What it does:
     This example shows how to solve reCAPTCHA v2 Enterprise through your own proxy. It uses RecaptchaV2EnterpriseTask and CaptchaClient.solve(), returning a gRecaptchaResponse token.
@@ -13,6 +13,7 @@ Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
     If the site uses enterprisePayload, extract and pass it or the token may be rejected.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import os

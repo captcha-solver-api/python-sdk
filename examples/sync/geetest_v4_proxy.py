@@ -15,6 +15,7 @@ Prerequisites:
     GeeTest v4 drops gt/challenge entirely. It uses captcha_id instead, which
     (unlike v3's challenge) is static per site, so it doesn't need to be
     re-fetched for every request.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import os

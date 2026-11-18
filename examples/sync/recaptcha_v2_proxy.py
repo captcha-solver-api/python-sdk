@@ -12,6 +12,7 @@ How it works:
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import os

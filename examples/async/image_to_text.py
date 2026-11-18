@@ -1,4 +1,4 @@
-"""Example: Recognize text in bundled local captcha images without a proxy.
+"""Example: Recognize text in bundled local CAPTCHA images without a proxy.
 
 What it does:
     This example shows how to recognize text in bundled local CAPTCHA images without a proxy. It uses ImageToTextTask and AsyncCaptchaClient.solve(), returning the recognized text.
@@ -12,6 +12,7 @@ How it works:
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Ready to run as-is: sample captcha images are bundled in examples/assets/.
+    Use optional fields to give hints to the worker for faster solving.
 """
 
 import asyncio

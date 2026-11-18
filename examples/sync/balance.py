@@ -1,4 +1,4 @@
-"""Example: Check the current captcha solver account balance without creating a captcha task.
+"""Example: Check the current Captcha Solver account balance without creating a CAPTCHA task.
 
 What it does:
     This example shows how to check the current Captcha Solver account balance without creating a CAPTCHA task. It uses CaptchaClient.get_balance() and returns the account balance.
@@ -10,7 +10,6 @@ How it works:
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
-    Returns the current available balance of your account.
 """
 
 import os

@@ -1,4 +1,4 @@
-"""Example: Solve reCAPTCHA v2 enterprise without a proxy.
+"""Example: Solve reCAPTCHA v2 Enterprise without a proxy.
 
 What it does:
     This example shows how to solve reCAPTCHA v2 Enterprise without a proxy. It uses RecaptchaV2EnterpriseTaskProxyless and CaptchaClient.solve(), returning a gRecaptchaResponse token.

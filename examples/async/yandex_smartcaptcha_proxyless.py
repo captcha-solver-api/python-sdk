@@ -1,4 +1,4 @@
-"""Example: Solve token-based Yandex smartcaptcha without a proxy.
+"""Example: Solve token-based Yandex SmartCaptcha without a proxy.
 
 What it does:
     This example shows how to solve token-based Yandex SmartCaptcha without a proxy. It uses YandexSmartCaptchaTaskProxyless and AsyncCaptchaClient.solve(), returning a token.

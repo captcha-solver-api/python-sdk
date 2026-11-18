@@ -1,4 +1,4 @@
-"""Example: Solve Cloudflare turnstile without a proxy.
+"""Example: Solve Cloudflare Turnstile without a proxy.
 
 What it does:
     This example shows how to solve Cloudflare Turnstile without a proxy. It uses TurnstileTaskProxyless and AsyncCaptchaClient.solve(), returning a token.

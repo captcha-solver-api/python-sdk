@@ -1,4 +1,4 @@
-"""Example: Solve token-based Yandex smartcaptcha through your own proxy.
+"""Example: Solve token-based Yandex SmartCaptcha through your own proxy.
 
 What it does:
     This example shows how to solve token-based Yandex SmartCaptcha through your own proxy. It uses YandexSmartCaptchaTask and AsyncCaptchaClient.solve(), returning a token.
@@ -12,6 +12,7 @@ How it works:
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL and websiteKey with values from your target page.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import asyncio

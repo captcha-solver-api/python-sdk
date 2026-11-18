@@ -1,4 +1,4 @@
-"""Example: Solve Tencent captcha without a proxy.
+"""Example: Solve Tencent CAPTCHA without a proxy.
 
 What it does:
     This example shows how to solve Tencent CAPTCHA without a proxy. It uses TencentTaskProxyless and CaptchaClient.solve(), returning appid, ret, ticket, and randstr values.

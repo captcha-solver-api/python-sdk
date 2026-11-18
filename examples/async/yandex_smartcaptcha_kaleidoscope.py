@@ -1,4 +1,4 @@
-"""Example: Solve a Yandex smartcaptcha kaleidoscope puzzle from a bundled local image without a proxy.
+"""Example: Solve a Yandex SmartCaptcha Kaleidoscope puzzle from a bundled local image without a proxy.
 
 What it does:
     This example shows how to solve a Yandex SmartCaptcha Kaleidoscope puzzle from a bundled local image without a proxy. It uses YandexSmartCaptchaKaleidoscopeTask and AsyncCaptchaClient.solve(), returning the number of slider-arrow clicks.

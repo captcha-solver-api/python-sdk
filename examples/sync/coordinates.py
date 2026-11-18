@@ -1,4 +1,4 @@
-"""Example: Solve click-based image captchas from bundled local images without a proxy.
+"""Example: Solve click-based image CAPTCHAs from bundled local images without a proxy.
 
 What it does:
     This example shows how to solve click-based image CAPTCHAs from bundled local images without a proxy. It uses CoordinatesTask and CaptchaClient.solve(), returning pixel coordinates to click.

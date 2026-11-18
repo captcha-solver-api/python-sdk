@@ -18,6 +18,7 @@ Prerequisites:
     real endpoint -- this script will not run end-to-end as-is. Replace it with a request
     to your actual target page (or wherever it exposes a fresh `challenge` value) before
     running this example. It's here only to illustrate where that fetch belongs in the flow.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import asyncio
