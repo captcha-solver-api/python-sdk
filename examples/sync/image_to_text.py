@@ -1,5 +1,13 @@
-"""
-Example: Solve an Image to Text challenge.
+"""Example: Recognize text in bundled local captcha images without a proxy.
+
+What it does:
+    This example shows how to recognize text in bundled local CAPTCHA images without a proxy. It uses ImageToTextTask and CaptchaClient.solve(), returning the recognized text.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. The images and answer-format hints come from examples/assets and this file.
+    STEP-03 - Create ImageToTextTask and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print the recognized text. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -28,10 +36,10 @@ from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 

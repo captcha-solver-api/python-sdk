@@ -1,5 +1,13 @@
-"""
-Example: Solve a Tencent captcha challenge.
+"""Example: Solve Tencent captcha through your own proxy.
+
+What it does:
+    This example shows how to solve Tencent CAPTCHA through your own proxy. It uses TencentTask and CaptchaClient.solve(), returning appid, ret, ticket, and randstr values.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract the Tencent parameters from the target page and provide your proxy settings.
+    STEP-03 - Create TencentTask and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print appid, ret, ticket, and randstr values. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

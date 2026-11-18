@@ -1,15 +1,23 @@
-"""
-Example: Solve a GeeTest v3 challenge.
+"""Example: Solve GeeTest v3 without a proxy.
+
+What it does:
+    This example shows how to solve GeeTest v3 without a proxy. It uses GeeTestTaskProxyless and CaptchaClient.solve(), returning challenge, validate, and seccode values.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract websiteURL and gt from the target page and fetch a fresh challenge for every request.
+    STEP-03 - Create GeeTestTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print challenge, validate, and seccode values. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, gt, and challenge with values from your target page.
     Important: the challenge value is dynamic. Fetch a fresh one for each request.
 
-NOTE: "https://target-site.com/path/to/geetest/init" below is a PLACEHOLDER, not a
-real endpoint -- this script will not run end-to-end as-is. Replace it with a request
-to your actual target page (or wherever it exposes a fresh `challenge` value) before
-running this example. It's here only to illustrate where that fetch belongs in the flow.
+    NOTE: "https://target-site.com/path/to/geetest/init" below is a PLACEHOLDER, not a
+    real endpoint -- this script will not run end-to-end as-is. Replace it with a request
+    to your actual target page (or wherever it exposes a fresh `challenge` value) before
+    running this example. It's here only to illustrate where that fetch belongs in the flow.
 """
 
 import os
@@ -33,10 +41,10 @@ from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import GeeTestTaskProxyless
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 

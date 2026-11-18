@@ -1,5 +1,13 @@
-"""
-Example: Solve a click-based image captcha using CoordinatesTask.
+"""Example: Solve click-based image captchas from bundled local images without a proxy.
+
+What it does:
+    This example shows how to solve click-based image CAPTCHAs from bundled local images without a proxy. It uses CoordinatesTask and CaptchaClient.solve(), returning pixel coordinates to click.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. The image, optional instruction image, and click hints come from examples/assets and this file.
+    STEP-03 - Create CoordinatesTask and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -29,10 +37,10 @@ from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import CoordinatesTask
 
 # in this example we store the API key inside environment variables that can be set like:
-# export CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Linux or macOS
-# set CAPTCHA_API_KEY=1abc234de56fab7c89012d34e56fa7b8 on Windows
+# export CAPTCHA_API_KEY=your_api_key on Linux or macOS
+# set CAPTCHA_API_KEY=your_api_key on Windows
 # you can just set the API key directly to its value like:
-# api_key="1abc234de56fab7c89012d34e56fa7b8"
+# api_key="your_api_key"
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 

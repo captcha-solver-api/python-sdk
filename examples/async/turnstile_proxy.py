@@ -1,5 +1,13 @@
-"""
-Example: Solve a Cloudflare Turnstile challenge with the async client.
+"""Example: Solve Cloudflare turnstile through your own proxy.
+
+What it does:
+    This example shows how to solve Cloudflare Turnstile through your own proxy. It uses TurnstileTask and AsyncCaptchaClient.solve(), returning a token.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract the Turnstile parameters from the target page and provide your proxy settings.
+    STEP-03 - Create TurnstileTask and pass it to await solver.solve(task), which creates and polls the task.
+    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
