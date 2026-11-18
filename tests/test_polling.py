@@ -8,7 +8,10 @@ import pytest
 import captcha_solver_api.async_client as async_module
 import captcha_solver_api.client as sync_module
 from captcha_solver_api import AsyncCaptchaClient, CaptchaClient, CaptchaTimeoutError
-from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
+from captcha_solver_api.tasks import (
+    RecaptchaV2TaskProxyless,
+    YandexSmartCaptchaKaleidoscopeTask,
+)
 
 
 class Clock:
@@ -89,3 +92,42 @@ async def test_async_polling_schedule(monkeypatch, interval, timeout, expected_p
         else:
             assert await client.solve(task, timeout=timeout) == {"token": "done"}
     assert polls == expected_polls
+
+
+def test_sync_solve_returns_kaleidoscope_string(monkeypatch):
+    clock = Clock()
+    monkeypatch.setattr(sync_module, "time", clock)
+
+    responses = iter(
+        [
+            {"errorId": 0, "taskId": 100},
+            {"errorId": 0, "status": "ready", "solution": "8"},
+        ]
+    )
+    with CaptchaClient("test-key", polling_interval=1) as client:
+        monkeypatch.setattr(client, "_request", lambda endpoint, payload: next(responses))
+        task = YandexSmartCaptchaKaleidoscopeTask("image", "[7,15,14,0]")
+        assert client.solve(task, timeout=2) == "8"
+
+
+async def test_async_solve_returns_kaleidoscope_string(monkeypatch):
+    clock = Clock()
+    monkeypatch.setattr(async_module, "time", clock)
+    monkeypatch.setattr(
+        async_module, "asyncio", SimpleNamespace(sleep=AsyncMock(side_effect=clock.sleep))
+    )
+
+    responses = iter(
+        [
+            {"errorId": 0, "taskId": 100},
+            {"errorId": 0, "status": "ready", "solution": "8"},
+        ]
+    )
+
+    async def request(endpoint, payload):
+        return next(responses)
+
+    async with AsyncCaptchaClient("test-key", polling_interval=1) as client:
+        monkeypatch.setattr(client, "_request", request)
+        task = YandexSmartCaptchaKaleidoscopeTask("image", "[7,15,14,0]")
+        assert await client.solve(task, timeout=2) == "8"

@@ -13,6 +13,7 @@ once the task is `"ready"`.
 from __future__ import annotations
 
 import inspect
+import json
 from typing import Any, Dict, Optional
 
 from .exceptions import ValidationError
@@ -925,6 +926,47 @@ class YandexSmartCaptchaImageTask(BaseTask):
         self.image = image
         self.imgInstructions = imgInstructions
         self.comment = comment
+
+
+class YandexSmartCaptchaKaleidoscopeTask(BaseTask):
+    """Image-based Yandex SmartCaptcha Kaleidoscope puzzle, sent as API type
+    `PazlCaptchaTask`. No proxy variant exists because the image is submitted directly.
+
+    Args:
+        image: Required. Main Kaleidoscope challenge image, base64-encoded
+            without a `data:image/...;base64,` prefix.
+        task: Required. Puzzle-step sequence captured from the same challenge,
+            as a JSON array string or a list of integers. Preserve the original
+            order; the sequence is challenge-specific.
+
+    Returns (`solution` from `solve()`):
+        A string containing the number of slider-arrow clicks required to solve
+        the puzzle.
+
+    Example:
+        from captcha_solver_api.tasks import YandexSmartCaptchaKaleidoscopeTask
+
+        task = YandexSmartCaptchaKaleidoscopeTask(
+            image="BASE64_IMAGE",
+            task="[15,24,4,13,10]",
+        )
+        clicks = client.solve(task)
+    """
+
+    type = "PazlCaptchaTask"
+
+    def __init__(self, image: str, task: str | list[int]) -> None:
+        """Create a Kaleidoscope puzzle task.
+
+        Args:
+            image: Main challenge image encoded as a pure Base64 string, without
+                a data-URL prefix.
+            task: Challenge-specific puzzle steps as a JSON array string or a list
+                of integers, for example `"[15,24,4,13,10]"` or
+                `[15, 24, 4, 13, 10]`. Keep the captured order unchanged.
+        """
+        self.image = image
+        self.task = json.dumps(task, separators=(",", ":")) if isinstance(task, list) else task
 
 
 class TencentTaskProxyless(BaseTask):
