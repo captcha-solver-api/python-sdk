@@ -12,6 +12,7 @@ from typing import Any, Dict, Optional
 
 import httpx
 
+from ._constants import HTTP_TIMEOUT_SECONDS
 from ._debug import DebugLogger
 from ._version import __version__
 from .exceptions import (
@@ -115,7 +116,7 @@ class AsyncCaptchaClient:
         self.polling_interval = polling_interval
         self.language_pool = language_pool
         self.debug = debug
-        self._debug = DebugLogger(debug, "AsyncCaptchaClient")
+        self._debug_log = DebugLogger(debug, "AsyncCaptchaClient")
 
         self._client = httpx.AsyncClient(
             follow_redirects=True,
@@ -125,7 +126,13 @@ class AsyncCaptchaClient:
                 "X-SDK": f"python-sdk/{__version__}",
             },
         )
-        self._debug.initialized(__version__, self.base_url, self.timeout, self.polling_interval)
+        self._debug_log.initialized(
+            __version__,
+            self.base_url,
+            HTTP_TIMEOUT_SECONDS,
+            self.timeout,
+            self.polling_interval,
+        )
 
     async def aclose(self) -> None:
         """Closes the underlying connection pool. Call this when you're done with
@@ -148,12 +155,14 @@ class AsyncCaptchaClient:
         started = time.monotonic()
 
         try:
-            response = await self._client.post(url, json=payload, timeout=30)
+            response = await self._client.post(
+                url, json=payload, timeout=HTTP_TIMEOUT_SECONDS
+            )
             response.raise_for_status()
         except httpx.TimeoutException as exc:
             error_response = getattr(exc, "response", None)
             timeout_failure = CaptchaTimeoutError("Request timed out.")
-            self._debug.request_failure(
+            self._debug_log.request_failure(
                 endpoint,
                 url,
                 payload,
@@ -167,6 +176,7 @@ class AsyncCaptchaClient:
         except httpx.HTTPError as exc:
             error_response = getattr(exc, "response", None)
             network_failure = NetworkError(str(exc))
+            # The debug event is emitted before ``raise ... from exc`` attaches the cause.
             network_failure.__cause__ = exc
             data = None
             invalid_json = False
@@ -175,7 +185,7 @@ class AsyncCaptchaClient:
                     data = error_response.json()
                 except ValueError:
                     invalid_json = True
-            self._debug.request_failure(
+            self._debug_log.request_failure(
                 endpoint,
                 url,
                 payload,
@@ -192,8 +202,9 @@ class AsyncCaptchaClient:
             data = response.json()
         except ValueError as exc:
             parse_failure = NetworkError(f"Non-JSON response from API: {response.text[:200]!r}")
+            # The debug event is emitted before ``raise ... from exc`` attaches the cause.
             parse_failure.__cause__ = exc
-            self._debug.request_failure(
+            self._debug_log.request_failure(
                 endpoint,
                 url,
                 payload,
@@ -207,7 +218,7 @@ class AsyncCaptchaClient:
 
         if not isinstance(data, dict):
             error = NetworkError(f"Unexpected API response shape: {type(data).__name__}")
-            self._debug.request_failure(
+            self._debug_log.request_failure(
                 endpoint,
                 url,
                 payload,
@@ -218,7 +229,7 @@ class AsyncCaptchaClient:
                 data=data,
             )
             raise error
-        self._debug.request_success(
+        self._debug_log.request_success(
             endpoint,
             url,
             payload,
@@ -439,7 +450,7 @@ class AsyncCaptchaClient:
             error = exc
             raise
         finally:
-            self._debug.solve_summary(
+            self._debug_log.solve_summary(
                 solved,
                 task_id,
                 task_type,

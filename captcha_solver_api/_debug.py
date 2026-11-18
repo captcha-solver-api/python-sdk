@@ -74,26 +74,46 @@ class DebugLogger:
 
     def _ensure_default_handler(self) -> None:
         global _handler
+        if logging.getLogger().hasHandlers():
+            return
         if _handler is None:
             _handler = logging.StreamHandler()
             _handler.setFormatter(logging.Formatter("%(message)s"))
         if _handler not in self.logger.handlers:
             self.logger.addHandler(_handler)
-        self.logger.setLevel(logging.DEBUG)
-        self.logger.propagate = False
 
     def emit(self, message: str) -> None:
-        if not self.enabled:
+        if not self.enabled and not self.logger.isEnabledFor(logging.DEBUG):
             return
         try:
-            self.logger.debug(f"[{_timestamp()}] [{self.name}] {message}")
+            formatted = f"[{_timestamp()}] [{self.name}] {message}"
+            if self.enabled:
+                record = self.logger.makeRecord(
+                    self.logger.name,
+                    logging.DEBUG,
+                    "",
+                    0,
+                    formatted,
+                    (),
+                    None,
+                )
+                self.logger.handle(record)
+            else:
+                self.logger.debug(formatted)
         except Exception:
             return
 
-    def initialized(self, version: str, base_url: str, timeout: Any, polling: Any) -> None:
+    def initialized(
+        self,
+        version: str,
+        base_url: str,
+        http_timeout: Any,
+        timeout: Any,
+        polling: Any,
+    ) -> None:
         self.emit(
             f"client initialized sdk=python-sdk/{version} baseUrl={base_url} "
-            f"httpTimeout=30s timeout={timeout}s pollingInterval={polling}s"
+            f"httpTimeout={http_timeout}s timeout={timeout}s pollingInterval={polling}s"
         )
 
     def request_success(

@@ -82,15 +82,15 @@ python examples/sync/yandex_smartcaptcha_kaleidoscope.py
 python examples/async/recaptcha_v2_proxyless.py
 ```
 
-Every sync and async example accepts `--debug` to enable sanitized SDK request,
-response, timing, polling, error, and solve-summary logs:
+Use the dedicated sync or async example to see sanitized SDK request, response,
+timing, polling, error, and solve-summary logs:
 
 ```bash
-python examples/sync/image_to_text.py --debug
+python examples/sync/debug_mode.py
+python examples/async/debug_mode.py
 ```
 
-Run any example with `--help` to see its command-line options. Debug mode is
-disabled when `--debug` is omitted.
+Both examples enable debug mode directly with `debug=True`.
 
 Async scripts create an `AsyncCaptchaClient` and await the same operations as the synchronous client. For several captchas, see the parallel solving pattern in the main [README](../README.md#solving-multiple-captchas-in-parallel).
 

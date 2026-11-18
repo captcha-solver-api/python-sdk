@@ -8,12 +8,12 @@ from captcha_solver_api.tasks import ImageToTextTask
 
 
 def messages(client):
-    return [call.args[0] for call in client._debug.logger.debug.call_args_list]
+    return [call.args[0].getMessage() for call in client._debug_log.logger.handle.call_args_list]
 
 
 async def test_async_debug_success_processing_summary_and_masking():
     client = AsyncCaptchaClient("async-secret", polling_interval=0, debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     task = ImageToTextTask(body="A" * 300)
     responses = [
         httpx.Response(
@@ -52,7 +52,7 @@ async def test_async_debug_success_processing_summary_and_masking():
 
 async def test_async_debug_transport_timeout_and_isolation():
     client = AsyncCaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     client._client.post = AsyncMock(side_effect=httpx.ConnectError("dns failed"))
     with pytest.raises(NetworkError):
         await client.get_balance()
@@ -60,7 +60,7 @@ async def test_async_debug_transport_timeout_and_isolation():
     assert "failed: NetworkError: dns failed" in messages(client)[0]
     assert "RESPONSE: none - no response from the server (NetworkError" in messages(client)[0]
 
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     client._client.post = AsyncMock(side_effect=httpx.ReadTimeout("slow"))
     with pytest.raises(CaptchaTimeoutError):
         await client.get_balance()
@@ -69,7 +69,7 @@ async def test_async_debug_transport_timeout_and_isolation():
         "RESPONSE: none - no response from the server (CaptchaTimeoutError" in messages(client)[0]
     )
 
-    client._debug.logger.debug = Mock(side_effect=RuntimeError("logger failed"))
+    client._debug_log.logger.handle = Mock(side_effect=RuntimeError("logger failed"))
     client._client.post = AsyncMock(
         return_value=httpx.Response(
             200, json={"errorId": 0, "balance": 1.25}, request=httpx.Request("POST", "https://x")
@@ -81,7 +81,7 @@ async def test_async_debug_transport_timeout_and_isolation():
 
 async def test_async_timeout_after_headers_reports_body_was_not_received():
     client = AsyncCaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     error = httpx.ReadTimeout("body read timed out")
     error.response = httpx.Response(
         200, request=httpx.Request("POST", "https://api.captcha-solver.com/getBalance")
@@ -100,7 +100,7 @@ async def test_async_timeout_after_headers_reports_body_was_not_received():
 
 async def test_async_failed_solve_has_summary_when_task_not_created():
     client = AsyncCaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     task = ImageToTextTask(body="image")
     with patch.object(client, "create_task", side_effect=NetworkError("offline")):
         with pytest.raises(NetworkError):

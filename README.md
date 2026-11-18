@@ -706,15 +706,17 @@ their first and last 40 characters plus the original length. The SDK does not lo
 URLs and custom task fields can still contain application data, so review logs before sharing
 them publicly.
 
-Every runnable sync and async example accepts the same `--debug` flag. For example:
+Dedicated synchronous and asynchronous examples demonstrate debug mode:
 
 ```bash
-python examples/sync/image_to_text.py --debug
+python examples/sync/debug_mode.py
+python examples/async/debug_mode.py
 ```
 
 Examples read `CAPTCHA_API_KEY` from the environment or `.env`. They create real paid CAPTCHA
-tasks unless their description says otherwise. The dedicated walkthrough remains available at
-[`examples/sync/debug_mode.py`](examples/sync/debug_mode.py).
+tasks unless their description says otherwise. See
+[`examples/sync/debug_mode.py`](examples/sync/debug_mode.py) and
+[`examples/async/debug_mode.py`](examples/async/debug_mode.py).
 
 ### Custom timeout and polling
 

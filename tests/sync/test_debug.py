@@ -1,4 +1,6 @@
+import logging
 import re
+from io import StringIO
 from unittest.mock import Mock, patch
 
 import pytest
@@ -18,21 +20,21 @@ def response(status=200, reason="OK", data=None):
 
 
 def debug_messages(client):
-    return [call.args[0] for call in client._debug.logger.debug.call_args_list]
+    return [call.args[0].getMessage() for call in client._debug_log.logger.handle.call_args_list]
 
 
 def test_debug_is_disabled_by_default():
     client = CaptchaClient("secret")
     assert client.debug is False
-    assert client._debug.enabled is False
+    assert client._debug_log.enabled is False
 
 
 def test_debug_initialization_is_one_timestamped_event():
-    with patch("logging.Logger.debug") as logger:
+    with patch("logging.Logger.handle") as logger:
         CaptchaClient("secret", debug=True)
 
     logger.assert_called_once()
-    message = logger.call_args.args[0]
+    message = logger.call_args.args[0].getMessage()
     assert re.match(
         r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2}\] "
         r"\[CaptchaClient\] client initialized ",
@@ -44,9 +46,39 @@ def test_debug_initialization_is_one_timestamped_event():
     assert "\n" not in message
 
 
+def test_debug_logs_reach_configured_root_handler():
+    stream = StringIO()
+    handler = logging.StreamHandler(stream)
+    root_logger = logging.getLogger()
+    root_logger.addHandler(handler)
+    try:
+        CaptchaClient("secret", debug=True)
+    finally:
+        root_logger.removeHandler(handler)
+
+    assert "[CaptchaClient] client initialized" in stream.getvalue()
+
+
+def test_standard_logging_can_enable_debug_events_without_flag():
+    stream = StringIO()
+    handler = logging.StreamHandler(stream)
+    root_logger = logging.getLogger()
+    sdk_logger = logging.getLogger("captcha_solver_api.CaptchaClient")
+    previous_level = sdk_logger.level
+    root_logger.addHandler(handler)
+    sdk_logger.setLevel(logging.DEBUG)
+    try:
+        CaptchaClient("secret")
+    finally:
+        sdk_logger.setLevel(previous_level)
+        root_logger.removeHandler(handler)
+
+    assert "[CaptchaClient] client initialized" in stream.getvalue()
+
+
 def test_success_masks_and_truncates_without_mutating_payload():
     client = CaptchaClient("api-secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     long_token = "x" * 250
     body = "Y" * 300
     payload = {
@@ -76,7 +108,7 @@ def test_success_masks_and_truncates_without_mutating_payload():
 
 def test_processing_is_compact_single_line():
     client = CaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     client.session.post = Mock(return_value=response(data={"errorId": 0, "status": "processing"}))
 
     client.get_task_result(42)
@@ -89,7 +121,7 @@ def test_processing_is_compact_single_line():
 
 def test_api_and_http_errors_include_paired_request_response():
     client = CaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     client.session.post = Mock(
         side_effect=[
             response(
@@ -118,7 +150,7 @@ def test_api_and_http_errors_include_paired_request_response():
 
 def test_invalid_json_network_and_timeout_explain_missing_response():
     client = CaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     invalid = response()
     invalid.json.side_effect = ValueError("bad json")
     client.session.post = Mock(
@@ -141,7 +173,7 @@ def test_invalid_json_network_and_timeout_explain_missing_response():
 
 def test_timeout_after_headers_reports_body_was_not_received():
     client = CaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     partial_response = response(status=200, reason="OK")
     client.session.post = Mock(
         side_effect=requests.Timeout("body read timed out", response=partial_response)
@@ -159,7 +191,7 @@ def test_timeout_after_headers_reports_body_was_not_received():
 def test_solve_summary_reports_success_failure_and_poll_count():
     task = ImageToTextTask(body="image")
     client = CaptchaClient("secret", polling_interval=0, debug=True)
-    client._debug.logger.debug = Mock()
+    client._debug_log.logger.handle = Mock()
     with patch.object(client, "_request") as request:
         request.side_effect = [
             {"errorId": 0, "taskId": 7},
@@ -182,7 +214,7 @@ def test_solve_summary_reports_success_failure_and_poll_count():
     assert "serverSolveTime: 8s" in summary
     assert "polls:           2" in summary
 
-    client._debug.logger.debug.reset_mock()
+    client._debug_log.logger.handle.reset_mock()
     with patch.object(client, "create_task", side_effect=ApiError("BAD", "failed")):
         with pytest.raises(ApiError):
             client.solve(task)
@@ -195,7 +227,7 @@ def test_solve_summary_reports_success_failure_and_poll_count():
 
 def test_debug_failure_does_not_change_result_or_exception():
     client = CaptchaClient("secret", debug=True)
-    client._debug.logger.debug = Mock(side_effect=RuntimeError("logger failed"))
+    client._debug_log.logger.handle = Mock(side_effect=RuntimeError("logger failed"))
     client.session.post = Mock(return_value=response(data={"errorId": 0, "balance": 4.5}))
     assert client.get_balance() == 4.5
 
