@@ -13,6 +13,7 @@ once the task is `"ready"`.
 from __future__ import annotations
 
 import inspect
+import json
 from typing import Any, Dict, Optional
 
 from .exceptions import ValidationError
@@ -935,8 +936,8 @@ class YandexSmartCaptchaKaleidoscopeTask(BaseTask):
         image: Required. Main Kaleidoscope challenge image, base64-encoded
             without a `data:image/...;base64,` prefix.
         task: Required. Puzzle-step sequence captured from the same challenge,
-            serialized as a JSON array string. Preserve the original order;
-            the sequence is challenge-specific.
+            as a JSON array string or a list of integers. Preserve the original
+            order; the sequence is challenge-specific.
 
     Returns (`solution` from `solve()`):
         A string containing the number of slider-arrow clicks required to solve
@@ -954,17 +955,18 @@ class YandexSmartCaptchaKaleidoscopeTask(BaseTask):
 
     type = "PazlCaptchaTask"
 
-    def __init__(self, image: str, task: str) -> None:
+    def __init__(self, image: str, task: str | list[int]) -> None:
         """Create a Kaleidoscope puzzle task.
 
         Args:
             image: Main challenge image encoded as a pure Base64 string, without
                 a data-URL prefix.
-            task: Challenge-specific puzzle steps encoded as a JSON array string,
-                for example `"[15,24,4,13,10]"`. Keep the captured order unchanged.
+            task: Challenge-specific puzzle steps as a JSON array string or a list
+                of integers, for example `"[15,24,4,13,10]"` or
+                `[15, 24, 4, 13, 10]`. Keep the captured order unchanged.
         """
         self.image = image
-        self.task = task
+        self.task = json.dumps(task, separators=(",", ":")) if isinstance(task, list) else task
 
 
 class TencentTaskProxyless(BaseTask):

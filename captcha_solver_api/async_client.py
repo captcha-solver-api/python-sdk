@@ -262,7 +262,7 @@ class AsyncCaptchaClient:
         task: Any,
         language_pool: Optional[str] = None,
         timeout: Optional[int] = None,
-    ) -> Any:
+    ) -> Dict[str, Any] | str:
         """Submit a task and asynchronously poll until its solution is ready.
 
         This is the main entry point for the async client. It combines
@@ -332,7 +332,7 @@ class AsyncCaptchaClient:
 
             if result.get("status") == "ready":
                 solution = result["solution"]
-                if not isinstance(solution, (dict, str)):
+                if not isinstance(solution, (dict, str)) or solution == "":
                     raise NetworkError(
                         "API returned a ready task without a valid solution",
                         task_id=task_id,

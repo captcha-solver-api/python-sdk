@@ -245,7 +245,7 @@ class CaptchaClient:
         task: Any,
         language_pool: Optional[str] = None,
         timeout: Optional[int] = None,
-    ) -> Any:
+    ) -> Dict[str, Any] | str:
         """Submits `task` and polls until it's solved. This is the main entry point --
         it wraps `create_task()` and `get_task_result()` so you don't have to poll
         by hand.
@@ -310,7 +310,7 @@ class CaptchaClient:
 
             if result.get("status") == "ready":
                 solution = result["solution"]
-                if not isinstance(solution, (dict, str)):
+                if not isinstance(solution, (dict, str)) or solution == "":
                     raise NetworkError(
                         "API returned a ready task without a valid solution",
                         task_id=task_id,

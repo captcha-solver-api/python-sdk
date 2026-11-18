@@ -19,6 +19,14 @@ class TestYandexSmartCaptchaKaleidoscope:
             "task": "[7,15,14,0]",
         }
 
+    def test_list_task_is_serialized_as_json_string(self):
+        task = YandexSmartCaptchaKaleidoscopeTask(
+            image="captcha-image",
+            task=[7, 15, 14, 0],
+        )
+
+        assert task.to_dict()["task"] == "[7,15,14,0]"
+
     @pytest.mark.parametrize(
         "image,task,missing",
         [("", "[7,15,14,0]", "image"), ("captcha-image", " ", "task")],

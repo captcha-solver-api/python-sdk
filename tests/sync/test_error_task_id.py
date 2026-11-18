@@ -81,6 +81,17 @@ def test_ready_task_with_invalid_solution_has_task_id():
     assert exc_info.value.task_id == 100
 
 
+def test_ready_task_with_empty_string_solution_has_task_id():
+    client = make_client()
+
+    with patch.object(client, "_request") as mock_request:
+        mock_request.side_effect = [CREATED, {"errorId": 0, "status": "ready", "solution": ""}]
+        with pytest.raises(NetworkError) as exc_info:
+            client.solve(TASK)
+
+    assert exc_info.value.task_id == 100
+
+
 def test_get_task_result_error_has_task_id():
     client = make_client()
 
