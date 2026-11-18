@@ -1,5 +1,13 @@
-"""
-Example: Solve a GeeTest v4 challenge with the async client.
+"""Example: Solve GeeTest v4 without a proxy.
+
+What it does:
+    This example shows how to solve GeeTest v4 without a proxy. It uses GeeTestTaskProxyless and AsyncCaptchaClient.solve(), returning captcha_output and related validation fields.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key and debug logging.
+    STEP-02 - Obtain the task parameters. Extract websiteURL and captcha_id from the target page.
+    STEP-03 - Create GeeTestTaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
+    STEP-04 - Print captcha_output and related validation fields. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -33,7 +41,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 async def main():
     # GeeTest v4 tasks may take longer. Increase timeout if needed.
-    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10) as solver:
+    async with AsyncCaptchaClient(api_key, timeout=300, polling_interval=10, debug=True) as solver:
         # --- Proxyless example ---
         # Solves GeeTest v4 without a proxy.
         # v4 drops gt/challenge. The widget is identified by captcha_id inside initParameters.

@@ -706,17 +706,9 @@ their first and last 40 characters plus the original length. The SDK does not lo
 URLs and custom task fields can still contain application data, so review logs before sharing
 them publicly.
 
-Dedicated synchronous and asynchronous examples demonstrate debug mode:
-
-```bash
-python examples/sync/debug_mode.py
-python examples/async/debug_mode.py
-```
-
-Examples read `CAPTCHA_API_KEY` from the environment or `.env`. They create real paid CAPTCHA
-tasks unless their description says otherwise. See
-[`examples/sync/debug_mode.py`](examples/sync/debug_mode.py) and
-[`examples/async/debug_mode.py`](examples/async/debug_mode.py).
+All synchronous and asynchronous examples enable debug mode. They read
+`CAPTCHA_API_KEY` from the environment or `.env` and create real paid CAPTCHA
+tasks unless their description says otherwise.
 
 ### Custom timeout and polling
 

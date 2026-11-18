@@ -1,5 +1,13 @@
-"""
-Example: Solve a click-based image captcha using CoordinatesTask with the async client.
+"""Example: Solve click-based image captchas from bundled local images without a proxy.
+
+What it does:
+    This example shows how to solve click-based image CAPTCHAs from bundled local images without a proxy. It uses CoordinatesTask and AsyncCaptchaClient.solve(), returning pixel coordinates to click.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key and debug logging.
+    STEP-02 - Obtain the task parameters. The image, optional instruction image, and click hints come from examples/assets and this file.
+    STEP-03 - Create CoordinatesTask and pass it to await solver.solve(task), which creates and polls the task.
+    STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -33,7 +41,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
-    async with AsyncCaptchaClient(api_key) as solver:
+    async with AsyncCaptchaClient(api_key, debug=True) as solver:
         # --- Basic example ---
         # Solves a simple click-based captcha (examples/assets/fruit-click.png) with
         # a hint for the worker. The worker will click on the specified points on the image.

@@ -1,5 +1,13 @@
-"""
-Example: Solve a Cloudflare Turnstile challenge.
+"""Example: Solve Cloudflare turnstile without a proxy.
+
+What it does:
+    This example shows how to solve Cloudflare Turnstile without a proxy. It uses TurnstileTaskProxyless and CaptchaClient.solve(), returning a token.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any Challenge-page action, data, and pagedata values from the target page.
+    STEP-03 - Create TurnstileTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -34,7 +42,7 @@ from captcha_solver_api.tasks import TurnstileTaskProxyless
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=True)
 
 # --- Proxyless example ---
 # Solves Cloudflare Turnstile without a proxy.

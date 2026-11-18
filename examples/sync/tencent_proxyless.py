@@ -1,5 +1,13 @@
-"""
-Example: Solve a Tencent captcha challenge.
+"""Example: Solve Tencent captcha without a proxy.
+
+What it does:
+    This example shows how to solve Tencent CAPTCHA without a proxy. It uses TencentTaskProxyless and CaptchaClient.solve(), returning appid, ret, ticket, and randstr values.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key and debug logging.
+    STEP-02 - Obtain the task parameters. Extract websiteURL, appId, and any non-default captchaScript from the target page.
+    STEP-03 - Create TencentTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print appid, ret, ticket, and randstr values. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -27,7 +35,7 @@ from captcha_solver_api.tasks import TencentTaskProxyless
 
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
-solver = CaptchaClient(api_key)
+solver = CaptchaClient(api_key, debug=True)
 
 # --- Proxyless example ---
 # Solves Tencent captcha without a proxy.
