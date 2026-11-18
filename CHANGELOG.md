@@ -2,6 +2,35 @@
 
 All notable changes are documented here.
 
+## [1.2.0] - 2026-11-18
+
+### Added
+
+- add Yandex SmartCaptcha Kaleidoscope support
+
+### Fixed
+
+- address Kaleidoscope review feedback
+
+### Documentation
+
+- describe Kaleidoscope constructor parameters
+- expand Kaleidoscope example guidance
+- complete Kaleidoscope README coverage
+- update changelog for v1.1.0
+
+### Maintenance
+
+- set version to 1.2.0
+- bump actions/setup-python from 5 to 7
+- bump softprops/action-gh-release from 2 to 3
+- bump actions/upload-artifact from 4 to 7
+- bump actions/download-artifact from 4 to 8
+- bump actions/checkout from 4 to 7
+
+[Full diff](https://github.com/captcha-solver-api/python-sdk/compare/v1.1.0...v1.2.0)
+
+
 ## [1.1.0] - 2026-11-03
 
 ### Added
