@@ -1,13 +1,5 @@
-"""Example: Solve score-based reCAPTCHA v3 without a proxy.
-
-What it does:
-    This example shows how to solve score-based reCAPTCHA v3 without a proxy. It uses RecaptchaV3TaskProxyless and AsyncCaptchaClient.solve(), returning a gRecaptchaResponse token.
-
-How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, pageAction, and the required minimum score from the target page.
-    STEP-03 - Create RecaptchaV3TaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+"""
+Example: Solve a reCAPTCHA v3 challenge with the async client.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

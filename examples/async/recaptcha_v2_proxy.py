@@ -1,13 +1,5 @@
-"""Example: Solve reCAPTCHA v2 through your own proxy.
-
-What it does:
-    This example shows how to solve reCAPTCHA v2 through your own proxy. It uses RecaptchaV2Task and AsyncCaptchaClient.solve(), returning a gRecaptchaResponse token.
-
-How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page and provide your proxy settings.
-    STEP-03 - Create RecaptchaV2Task and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+"""
+Example: Solve a reCAPTCHA v2 challenge through your own proxy with the async client.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

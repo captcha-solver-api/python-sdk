@@ -1,13 +1,5 @@
-"""Example: Solve GeeTest v4 through your own proxy.
-
-What it does:
-    This example shows how to solve GeeTest v4 through your own proxy. It uses GeeTestTask and AsyncCaptchaClient.solve(), returning captcha_output and related validation fields.
-
-How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and captcha_id from the target page and provide your proxy settings.
-    STEP-03 - Create GeeTestTask and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print captcha_output and related validation fields. Applying the solution and verifying acceptance are target-specific.
+"""
+Example: Solve a GeeTest v4 challenge with the async client.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

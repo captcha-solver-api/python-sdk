@@ -1,12 +1,5 @@
-"""Example: Check the current captcha solver account balance without creating a captcha task.
-
-What it does:
-    This example shows how to check the current Captcha Solver account balance without creating a CAPTCHA task. It uses CaptchaClient.get_balance() and returns the account balance.
-
-How it works:
-    STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Call solver.get_balance(); this does not create or poll a CAPTCHA task.
-    STEP-03 - Print the balance returned by the API.
+"""
+Example: Get account balance.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

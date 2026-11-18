@@ -1,13 +1,5 @@
-"""Example: Solve Cloudflare turnstile through your own proxy.
-
-What it does:
-    This example shows how to solve Cloudflare Turnstile through your own proxy. It uses TurnstileTask and CaptchaClient.solve(), returning a token.
-
-How it works:
-    STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract the Turnstile parameters from the target page and provide your proxy settings.
-    STEP-03 - Create TurnstileTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
+"""
+Example: Solve a Cloudflare Turnstile challenge.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

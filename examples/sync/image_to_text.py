@@ -1,13 +1,5 @@
-"""Example: Recognize text in bundled local captcha images without a proxy.
-
-What it does:
-    This example shows how to recognize text in bundled local CAPTCHA images without a proxy. It uses ImageToTextTask and CaptchaClient.solve(), returning the recognized text.
-
-How it works:
-    STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. The images and answer-format hints come from examples/assets and this file.
-    STEP-03 - Create ImageToTextTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print the recognized text. Applying the solution and verifying acceptance are target-specific.
+"""
+Example: Solve an Image to Text challenge.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

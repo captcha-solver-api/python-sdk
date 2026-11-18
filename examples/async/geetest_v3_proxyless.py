@@ -1,23 +1,15 @@
-"""Example: Solve GeeTest v3 without a proxy.
-
-What it does:
-    This example shows how to solve GeeTest v3 without a proxy. It uses GeeTestTaskProxyless and AsyncCaptchaClient.solve(), returning challenge, validate, and seccode values.
-
-How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and gt from the target page and fetch a fresh challenge for every request.
-    STEP-03 - Create GeeTestTaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print challenge, validate, and seccode values. Applying the solution and verifying acceptance are target-specific.
+"""
+Example: Solve a GeeTest v3 challenge with the async client.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, gt, and challenge with values from your target page.
     Important: the challenge value is dynamic. Fetch a fresh one for each request.
 
-    NOTE: "https://target-site.com/path/to/geetest/init" below is a PLACEHOLDER, not a
-    real endpoint -- this script will not run end-to-end as-is. Replace it with a request
-    to your actual target page (or wherever it exposes a fresh `challenge` value) before
-    running this example. It's here only to illustrate where that fetch belongs in the flow.
+NOTE: "https://target-site.com/path/to/geetest/init" below is a PLACEHOLDER, not a
+real endpoint -- this script will not run end-to-end as-is. Replace it with a request
+to your actual target page (or wherever it exposes a fresh `challenge` value) before
+running this example. It's here only to illustrate where that fetch belongs in the flow.
 """
 
 import asyncio
