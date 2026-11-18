@@ -63,7 +63,7 @@ def test_standard_logging_can_enable_debug_events_without_flag():
     stream = StringIO()
     handler = logging.StreamHandler(stream)
     root_logger = logging.getLogger()
-    sdk_logger = logging.getLogger("captcha_solver_api.CaptchaClient")
+    sdk_logger = logging.getLogger("captcha_solver_api")
     previous_level = sdk_logger.level
     root_logger.addHandler(handler)
     sdk_logger.setLevel(logging.DEBUG)
