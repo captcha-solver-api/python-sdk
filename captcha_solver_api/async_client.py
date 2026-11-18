@@ -155,9 +155,7 @@ class AsyncCaptchaClient:
         started = time.monotonic()
 
         try:
-            response = await self._client.post(
-                url, json=payload, timeout=HTTP_TIMEOUT_SECONDS
-            )
+            response = await self._client.post(url, json=payload, timeout=HTTP_TIMEOUT_SECONDS)
             response.raise_for_status()
         except httpx.TimeoutException as exc:
             error_response = getattr(exc, "response", None)
