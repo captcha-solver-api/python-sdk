@@ -1,15 +1,24 @@
-"""
-Example: Solve a GeeTest v3 challenge with the async client.
+"""Example: Solve GeeTest v3 through your own proxy.
+
+What it does:
+    This example shows how to solve GeeTest v3 through your own proxy. It uses GeeTestTask and AsyncCaptchaClient.solve(), returning challenge, validate, and seccode values.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract the GeeTest values from the target page, fetch a fresh challenge, and provide your proxy settings.
+    STEP-03 - Create GeeTestTask and pass it to await solver.solve(task), which creates and polls the task.
+    STEP-04 - Print challenge, validate, and seccode values. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
     Replace websiteURL, gt, and challenge with values from your target page.
     Important: the challenge value is dynamic. Fetch a fresh one for each request.
 
-NOTE: "https://target-site.com/path/to/geetest/init" below is a PLACEHOLDER, not a
-real endpoint -- this script will not run end-to-end as-is. Replace it with a request
-to your actual target page (or wherever it exposes a fresh `challenge` value) before
-running this example. It's here only to illustrate where that fetch belongs in the flow.
+    NOTE: "https://target-site.com/path/to/geetest/init" below is a PLACEHOLDER, not a
+    real endpoint -- this script will not run end-to-end as-is. Replace it with a request
+    to your actual target page (or wherever it exposes a fresh `challenge` value) before
+    running this example. It's here only to illustrate where that fetch belongs in the flow.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import asyncio

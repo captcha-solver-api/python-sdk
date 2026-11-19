@@ -1,9 +1,15 @@
-"""
-Example: Get account balance with the async client.
+"""Example: Check the current Captcha Solver account balance without creating a CAPTCHA task.
+
+What it does:
+    This example shows how to check the current Captcha Solver account balance without creating a CAPTCHA task. It uses AsyncCaptchaClient.get_balance() and returns the account balance.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
+    STEP-02 - Call await solver.get_balance(); this does not create or poll a CAPTCHA task.
+    STEP-03 - Print the balance returned by the API.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
-    Returns the current available balance of your account.
 """
 
 import asyncio

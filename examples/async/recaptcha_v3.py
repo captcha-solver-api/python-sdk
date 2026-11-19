@@ -1,11 +1,19 @@
-"""
-Example: Solve a reCAPTCHA v3 challenge with the async client.
+"""Example: Solve score-based reCAPTCHA v3 without a proxy.
+
+What it does:
+    This example shows how to solve score-based reCAPTCHA v3 without a proxy. It uses RecaptchaV3TaskProxyless and AsyncCaptchaClient.solve(), returning a gRecaptchaResponse token.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and pageAction from the target page, then choose the required minimum score.
+    STEP-03 - Create RecaptchaV3TaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
+    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
-    Replace websiteURL, websiteKey, and minScore with values from your target
-    page, and pass pageAction if the site uses it -- this increases the
-    chance of the token being accepted.
+    Replace websiteURL and websiteKey with values from your target page, pass
+    pageAction if the site uses it, and choose the minimum score your
+    integration requires.
 """
 
 import asyncio

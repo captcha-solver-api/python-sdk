@@ -1,5 +1,13 @@
-"""
-Example: Solve a reCAPTCHA v2 Enterprise challenge.
+"""Example: Solve reCAPTCHA v2 Enterprise without a proxy.
+
+What it does:
+    This example shows how to solve reCAPTCHA v2 Enterprise without a proxy. It uses RecaptchaV2EnterpriseTaskProxyless and CaptchaClient.solve(), returning a gRecaptchaResponse token.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any enterprisePayload from the target page.
+    STEP-03 - Create RecaptchaV2EnterpriseTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

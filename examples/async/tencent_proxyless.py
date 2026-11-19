@@ -1,5 +1,13 @@
-"""
-Example: Solve a Tencent captcha challenge with the async client.
+"""Example: Solve Tencent CAPTCHA without a proxy.
+
+What it does:
+    This example shows how to solve Tencent CAPTCHA without a proxy. It uses TencentTaskProxyless and AsyncCaptchaClient.solve(), returning appid, ret, ticket, and randstr values.
+
+How it works:
+    STEP-01 - Configure AsyncCaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract websiteURL, appId, and any non-default captchaScript from the target page.
+    STEP-03 - Create TencentTaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
+    STEP-04 - Print appid, ret, ticket, and randstr values. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.

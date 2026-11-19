@@ -1,5 +1,13 @@
-"""
-Example: Solve a GeeTest v4 challenge.
+"""Example: Solve GeeTest v4 through your own proxy.
+
+What it does:
+    This example shows how to solve GeeTest v4 through your own proxy. It uses GeeTestTask and CaptchaClient.solve(), returning captcha_output and related validation fields.
+
+How it works:
+    STEP-01 - Configure CaptchaClient with the API key.
+    STEP-02 - Obtain the task parameters. Extract websiteURL and captcha_id from the target page and provide your proxy settings.
+    STEP-03 - Create GeeTestTask and pass it to solver.solve(task), which creates and polls the task.
+    STEP-04 - Print captcha_output and related validation fields. Applying the solution and verifying acceptance are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -7,6 +15,7 @@ Prerequisites:
     GeeTest v4 drops gt/challenge entirely. It uses captcha_id instead, which
     (unlike v3's challenge) is static per site, so it doesn't need to be
     re-fetched for every request.
+    Replace the proxy placeholders with your own proxy settings.
 """
 
 import os
