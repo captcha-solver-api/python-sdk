@@ -82,6 +82,16 @@ python examples/sync/yandex_smartcaptcha_kaleidoscope.py
 python examples/async/recaptcha_v2_proxyless.py
 ```
 
+Use the dedicated sync or async example to see sanitized SDK request, response,
+timing, polling, error, and solve-summary logs:
+
+```bash
+python examples/sync/debug_mode.py
+python examples/async/debug_mode.py
+```
+
+Both examples enable debug mode directly with `debug=True`.
+
 Async scripts create an `AsyncCaptchaClient` and await the same operations as the synchronous client. For several captchas, see the parallel solving pattern in the main [README](../README.md#solving-multiple-captchas-in-parallel).
 
 ## Important notes
