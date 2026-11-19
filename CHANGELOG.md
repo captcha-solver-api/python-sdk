@@ -2,6 +2,45 @@
 
 All notable changes are documented here.
 
+## [1.3.0] - 2026-11-19
+
+### Added
+
+- add debug mode
+
+### Fixed
+
+- restore dedicated debug examples
+- address debug mode review feedback
+- align debug output with JavaScript SDK
+- resolve strict type checks
+- satisfy lint and security checks
+
+### Documentation
+
+- align example instructions
+- expand example usage guides
+- restore regular examples after review
+- restore coordinates task description
+- improve debug examples and usage steps
+- update changelog for v1.2.0
+- expand debug constructor guidance
+- align README with SDK behavior
+- support debug flag in all examples
+- clarify API key placeholders
+- expand example descriptions
+- align step comments across examples
+- add workflow guides to examples
+
+### Maintenance
+
+- set version to 1.3.0
+- set version to 1.2.0
+- cover package logger debug configuration
+
+[Full diff](https://github.com/captcha-solver-api/python-sdk/compare/v1.2.0...v1.3.0)
+
+
 ## [1.2.0] - 2026-11-18
 
 ### Added
