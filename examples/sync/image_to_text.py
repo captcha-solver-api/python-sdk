@@ -41,13 +41,15 @@ from captcha_solver_api.tasks import ImageToTextTask
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # Image to Text tasks are usually fast. Default timeout is fine.
 solver = CaptchaClient(api_key)
 
-# --- Basic example ---
+# STEP-02: Read the bundled images and answer-format hints.
+# Basic scenario: recognize a digit-only CAPTCHA.
 # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
 # with character set hints.
 try:
@@ -56,6 +58,7 @@ try:
     with open(os.path.join(assets_dir, "captcha-digits.png"), "rb") as f:
         digits_body = b64encode(f.read()).decode("utf-8")
 
+    # STEP-03: Create ImageToTextTask and call solve(), which creates and polls it.
     result = solver.solve(
         ImageToTextTask(
             body=digits_body,  # Base64-encoded image (required)
@@ -66,11 +69,12 @@ try:
     )
     # Solution contains {"text": "58204"}
     # Submit solution.text to the target form field.
+    # STEP-04: Print the recognized text; applying it is target-specific.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)
 
-# --- Advanced example ---
+# Alternative scenario: solve a math CAPTCHA with an instruction image.
 # Solves a math captcha (examples/assets/captcha-math.png) with comment and
 # instruction image (examples/assets/captcha-math-instructions.png).
 try:
@@ -99,7 +103,7 @@ try:
 except Exception as e:
     sys.exit(e)
 
-# --- With language pool ---
+# Alternative scenario: select a language-specific worker pool.
 # The languagePool parameter selects the worker pool by language.
 # Pass it to solve() as a top-level parameter, not inside the task.
 # Accepted values: "en" (English) or "ru" (Russian).

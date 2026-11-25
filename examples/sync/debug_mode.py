@@ -35,13 +35,17 @@ if load_dotenv is not None:
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
 
+# STEP-01: Configure CaptchaClient with debug mode and locate the bundled image.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 image_path = os.path.join(repo_root, "examples", "assets", "captcha-digits.png")
 
+# STEP-02: Encode the image and create ImageToTextTask.
 with open(image_path, "rb") as image_file:
     image_body = b64encode(image_file.read()).decode("utf-8")
 
+# STEP-03: Call solve(), which creates and polls the task while logging safely.
 with CaptchaClient(api_key, debug=True) as client:
     solution = client.solve(ImageToTextTask(body=image_body, numeric=1, minLength=4, maxLength=6))
 
+# STEP-04: Inspect the sanitized logs and print the recognized text.
 print(f"Recognized text: {solution['text']}")

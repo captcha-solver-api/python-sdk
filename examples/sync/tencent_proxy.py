@@ -34,6 +34,7 @@ if load_dotenv is not None:
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import TencentTask
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 solver = CaptchaClient(api_key)
@@ -42,6 +43,8 @@ solver = CaptchaClient(api_key)
 # Solves Tencent captcha through your own proxy.
 # Use when the target site is geo-restricted or you need a consistent session.
 try:
+    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
+    # STEP-03: Create the task and call solve(), which creates and polls it.
     result = solver.solve(
         TencentTask(
             websiteURL="https://example.com/register",  # Full URL of the page with captcha
@@ -56,6 +59,7 @@ try:
         )
     )
     # Solution contains the same appid, ret, ticket, and randstr values.
+    # STEP-04: Print the solution; applying and verifying it are target-specific.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

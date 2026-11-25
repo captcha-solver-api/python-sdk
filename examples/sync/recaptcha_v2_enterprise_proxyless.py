@@ -39,6 +39,7 @@ from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -50,6 +51,8 @@ solver = CaptchaClient(api_key)
 # If the site passes extra parameters to grecaptcha.enterprise.render(),
 # you must pass them as enterprisePayload or the token will be rejected.
 try:
+    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
+    # STEP-03: Create the task and call solve(), which creates and polls it.
     result = solver.solve(
         RecaptchaV2EnterpriseTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -64,6 +67,7 @@ try:
     )
     # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
     # Pass this token to the g-recaptcha-response field or widget callback.
+    # STEP-04: Print the solution; applying and verifying it are target-specific.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

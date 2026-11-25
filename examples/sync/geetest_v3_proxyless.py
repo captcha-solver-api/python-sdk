@@ -46,6 +46,7 @@ from captcha_solver_api.tasks import GeeTestTaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -67,6 +68,8 @@ challenge = resp.json()["challenge"]
 # Solves GeeTest v3 without a proxy.
 # v3 is the default version, so the version field can be omitted.
 try:
+    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
+    # STEP-03: Create the task and call solve(), which creates and polls it.
     result = solver.solve(
         GeeTestTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
@@ -80,6 +83,7 @@ try:
     )
     # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
     # Pass solution.validate and solution.seccode to the page's GeeTest callback.
+    # STEP-04: Print the solution; applying and verifying it are target-specific.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)

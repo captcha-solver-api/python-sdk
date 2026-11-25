@@ -35,6 +35,7 @@ from captcha_solver_api import CaptchaClient
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -43,7 +44,9 @@ solver = CaptchaClient(api_key)
 # Get the current account balance.
 # Returns a float with the available amount in your account currency.
 try:
+    # STEP-02: Request the balance without creating or polling a CAPTCHA task.
     balance = solver.get_balance()
+    # STEP-03: Print the balance returned by the API.
     print("Balance: " + str(balance))
 except Exception as e:
     sys.exit(e)

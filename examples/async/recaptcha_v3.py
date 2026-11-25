@@ -35,6 +35,7 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV3TaskProxyless
 
+# STEP-01: Configure AsyncCaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -45,6 +46,8 @@ async def main():
         # The higher the minScore you request, the harder and longer the task takes.
         # minScore values: 0.3 (fastest), 0.7 (balanced), 0.9 (highest, slowest).
         try:
+            # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
+            # STEP-03: Create the task and await solve(), which creates and polls it.
             result = await solver.solve(
                 RecaptchaV3TaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page with the v3 widget
@@ -58,6 +61,7 @@ async def main():
             )
             # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
             # Pass this token to the g-recaptcha-response field or grecaptcha callback.
+            # STEP-04: Print the solution; applying and verifying it are target-specific.
             print("result: " + str(result))
         except Exception as e:
             sys.exit(e)

@@ -42,12 +42,14 @@ from captcha_solver_api.tasks import CoordinatesTask
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 solver = CaptchaClient(api_key)
 
-# --- Basic example ---
+# STEP-02: Read the bundled images and answer-format hints.
+# Basic scenario: solve a CAPTCHA with a text hint.
 # Solves a simple click-based captcha (examples/assets/fruit-click.png) with
 # a hint for the worker. The worker will click on the specified points on the image.
 try:
@@ -56,6 +58,7 @@ try:
     with open(os.path.join(assets_dir, "fruit-click.png"), "rb") as f:
         body = b64encode(f.read()).decode("utf-8")
 
+    # STEP-03: Create CoordinatesTask and call solve(), which creates and polls it.
     result = solver.solve(
         CoordinatesTask(
             body=body,  # Base64-encoded captcha image (required)
@@ -64,11 +67,12 @@ try:
     )
     # Solution contains {"coordinates": [{"x": 140, "y": 110}]}
     # Click on each coordinate in order. Coordinates are pixel positions.
+    # STEP-04: Print the click coordinates; applying them is target-specific.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)
 
-# --- Advanced example ---
+# Alternative scenario: include an instruction image and click-count limits.
 # Solves a captcha (examples/assets/traffic-lights.png) with instruction image
 # and click count limits.
 try:

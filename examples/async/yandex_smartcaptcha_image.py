@@ -43,8 +43,11 @@ def encode_image(filename: str) -> str:
 
 
 async def main() -> None:
+    # STEP-01: Configure AsyncCaptchaClient with the API key.
     api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
     async with AsyncCaptchaClient(api_key) as solver:
+        # STEP-02: Read and encode the bundled challenge and instruction images.
+        # STEP-03: Create the task and await solve(), which creates and polls it.
         result = await solver.solve(
             YandexSmartCaptchaImageTask(
                 image=encode_image("yandex-smartcaptcha-image.png"),
@@ -53,6 +56,7 @@ async def main() -> None:
         )
     # Click the returned points on the captcha image in the listed order.
     # Example: {"coordinates": [{"x": 73, "y": 92}, ...]}
+    # STEP-04: Print the click coordinates; applying them is target-specific.
     print("result: " + str(result))
 
 

@@ -36,6 +36,7 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import ImageToTextTask
 
+# STEP-01: Configure AsyncCaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
@@ -53,10 +54,12 @@ async def main():
     async with AsyncCaptchaClient(api_key) as solver:
         digits_body = encode_image("captcha-digits.png")
 
-        # --- Basic example ---
+        # STEP-02: Read the bundled images and answer-format hints.
+        # Basic scenario: recognize a digit-only CAPTCHA.
         # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
         # with character set hints.
         try:
+            # STEP-03: Create ImageToTextTask and await solve(), which creates and polls it.
             result = await solver.solve(
                 ImageToTextTask(
                     body=digits_body,  # Base64-encoded image (required)
@@ -67,11 +70,12 @@ async def main():
             )
             # Solution contains {"text": "58204"}
             # Submit solution.text to the target form field.
+            # STEP-04: Print the recognized text; applying it is target-specific.
             print("result: " + str(result))
         except Exception as e:
             sys.exit(e)
 
-        # --- Advanced example ---
+        # Alternative scenario: solve a math CAPTCHA with an instruction image.
         # Solves a math captcha (examples/assets/captcha-math.png) with comment and
         # instruction image (examples/assets/captcha-math-instructions.png).
         try:
@@ -94,7 +98,7 @@ async def main():
         except Exception as e:
             sys.exit(e)
 
-        # --- With language pool ---
+        # Alternative scenario: select a language-specific worker pool.
         # The languagePool parameter selects the worker pool by language.
         # Pass it to solve() as a top-level parameter, not inside the task.
         # Accepted values: "en" (English) or "ru" (Russian).

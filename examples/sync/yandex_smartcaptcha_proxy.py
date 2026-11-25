@@ -33,6 +33,7 @@ if load_dotenv is not None:
 from captcha_solver_api import CaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTask
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 solver = CaptchaClient(api_key)
@@ -41,6 +42,8 @@ solver = CaptchaClient(api_key)
 # Solves Yandex SmartCaptcha through your own proxy.
 # Note: this is the only captcha type where an https proxy is accepted.
 try:
+    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
+    # STEP-03: Create the task and call solve(), which creates and polls it.
     result = solver.solve(
         YandexSmartCaptchaTask(
             websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
@@ -57,6 +60,7 @@ try:
         )
     )
     # Solution contains the same token.
+    # STEP-04: Print the solution; applying and verifying it are target-specific.
     print("result: " + str(result))
 except Exception as e:
     sys.exit(e)
