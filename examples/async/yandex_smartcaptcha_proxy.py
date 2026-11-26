@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page and provide your proxy settings.
-    STEP-03 - Create YandexSmartCaptchaTask and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, and proxy settings obtained for the target page.
+    STEP-03 - Create YandexSmartCaptchaTask and pass it to await solver.solve(), which creates and polls the task.
+    STEP-04 - Print the SmartCaptcha token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -34,20 +34,22 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import YandexSmartCaptchaTask
 
+# STEP-01: Configure AsyncCaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     async with AsyncCaptchaClient(api_key) as solver:
-        # --- With proxy example ---
         # Solves Yandex SmartCaptcha through your own proxy.
         # Note: this is the only captcha type where an https proxy is accepted.
         try:
+            # STEP-02: Provide websiteURL, websiteKey, and proxy settings obtained for the target page.
+            # STEP-03: Create YandexSmartCaptchaTask and pass it to await solver.solve(), which creates and polls the task.
             result = await solver.solve(
                 YandexSmartCaptchaTask(
                     websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
                     websiteKey="YOUR_WEBSITE_KEY",  # sitekey from that page
-                    # --- Proxy parameters (replace with your own -- these are placeholders) ---
+                    # Proxy connection used by the service; replace every placeholder.
                     proxyType="http",  # http, https, socks4, or socks5 (https is accepted only for this type)
                     proxyAddress="1.2.3.4",  # Proxy IP address
                     proxyPort=8080,  # Proxy port
@@ -59,7 +61,9 @@ async def main():
                 )
             )
             # Solution contains the same token.
+            # STEP-04: Print the SmartCaptcha token; applying and verifying it are target-specific.
             print("result: " + str(result))
+        # Handle errors raised while solving the CAPTCHA.
         except Exception as e:
             sys.exit(e)
 

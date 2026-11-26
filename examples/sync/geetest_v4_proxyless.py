@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and captcha_id from the target page.
-    STEP-03 - Create GeeTestTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print captcha_output and related validation fields. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL and captcha_id obtained from the target page.
+    STEP-03 - Create GeeTestTaskProxyless and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print captcha_output and the related validation fields; applying them is target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -41,16 +41,18 @@ from captcha_solver_api.tasks import GeeTestTaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 # GeeTest v4 tasks may take longer. Increase timeout if needed.
 solver = CaptchaClient(api_key, timeout=300, polling_interval=10)
 
-# --- Proxyless example ---
 # Solves GeeTest v4 without a proxy.
 # v4 drops gt/challenge. The widget is identified by captcha_id inside initParameters.
 try:
+    # STEP-02: Provide websiteURL and captcha_id obtained from the target page.
+    # STEP-03: Create GeeTestTaskProxyless and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         GeeTestTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with the GeeTest widget
@@ -64,6 +66,8 @@ try:
     )
     # Solution contains {"captcha_id": "...", "lot_number": "...", "pass_token": "...", "gen_time": "...", "captcha_output": "..."}
     # Pass these values together into the page's GeeTest v4 callback as-is.
+    # STEP-04: Print captcha_output and the related validation fields; applying them is target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

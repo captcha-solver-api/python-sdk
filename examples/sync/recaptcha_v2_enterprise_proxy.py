@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any enterprisePayload from the target page, and provide your proxy settings.
-    STEP-03 - Create RecaptchaV2EnterpriseTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, enterprisePayload when required, and proxy settings.
+    STEP-03 - Create RecaptchaV2EnterpriseTask and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print the gRecaptchaResponse token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -40,26 +40,28 @@ from captcha_solver_api.tasks import RecaptchaV2EnterpriseTask
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 solver = CaptchaClient(api_key)
 
-# --- With proxy example ---
 # Solves reCAPTCHA v2 Enterprise through your own proxy.
 # Use when the target site is geo-restricted or you need a consistent session.
 try:
+    # STEP-02: Provide websiteURL, websiteKey, enterprisePayload when required, and proxy settings.
+    # STEP-03: Create RecaptchaV2EnterpriseTask and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         RecaptchaV2EnterpriseTask(
             websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
             websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-            # --- Proxy parameters (replace with your own -- these are placeholders) ---
+            # Proxy connection used by the service; replace every placeholder.
             proxyType="http",  # http, socks4, or socks5
             proxyAddress="1.2.3.4",  # Proxy IP address
             proxyPort=8080,  # Proxy port
             proxyLogin="user",  # Login for proxy authorization (optional)
             proxyPassword="password",  # Password for proxy authorization (optional)
-            # --- Optional fields ---
+            # Optional task fields; pass only values required by the target page.
             isInvisible=False,
             # enterprisePayload={'s': 'value-from-page'},  # Extra params from grecaptcha.enterprise.render()
             userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...",  # Browser User-Agent
@@ -67,6 +69,8 @@ try:
         )
     )
     # Solution contains the same gRecaptchaResponse token.
+    # STEP-04: Print the gRecaptchaResponse token; applying and verifying it are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

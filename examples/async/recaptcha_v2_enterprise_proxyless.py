@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any enterprisePayload from the target page.
-    STEP-03 - Create RecaptchaV2EnterpriseTaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, and enterprisePayload when required by the target page.
+    STEP-03 - Create RecaptchaV2EnterpriseTaskProxyless and pass it to await solver.solve(), which creates and polls the task.
+    STEP-04 - Print the gRecaptchaResponse token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -34,17 +34,19 @@ if load_dotenv is not None:
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import RecaptchaV2EnterpriseTaskProxyless
 
+# STEP-01: Configure AsyncCaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     async with AsyncCaptchaClient(api_key) as solver:
-        # --- Proxyless example ---
         # Solves reCAPTCHA v2 Enterprise without a proxy.
         # Enterprise captchas are loaded via the reCAPTCHA Enterprise API.
         # If the site passes extra parameters to grecaptcha.enterprise.render(),
         # you must pass them as enterprisePayload or the token will be rejected.
         try:
+            # STEP-02: Provide websiteURL, websiteKey, and enterprisePayload when required by the target page.
+            # STEP-03: Create RecaptchaV2EnterpriseTaskProxyless and pass it to await solver.solve(), which creates and polls the task.
             result = await solver.solve(
                 RecaptchaV2EnterpriseTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the Enterprise-protected page
@@ -59,7 +61,9 @@ async def main():
             )
             # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
             # Pass this token to the g-recaptcha-response field or widget callback.
+            # STEP-04: Print the gRecaptchaResponse token; applying and verifying it are target-specific.
             print("result: " + str(result))
+        # Handle errors raised while solving the CAPTCHA.
         except Exception as e:
             sys.exit(e)
 

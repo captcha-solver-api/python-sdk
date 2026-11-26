@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and gt from the target page and fetch a fresh challenge for every request.
-    STEP-03 - Create GeeTestTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print challenge, validate, and seccode values. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Fetch a fresh challenge and supply websiteURL and gt.
+    STEP-03 - Create GeeTestTaskProxyless and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print challenge, validate, and seccode; applying and verifying them are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -46,6 +46,7 @@ from captcha_solver_api.tasks import GeeTestTaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -57,16 +58,16 @@ Important: the value of the 'challenge' parameter is dynamic.
 For each request to the API you need to get a new value from the target page.
 Below is an example of fetching it from a demo endpoint.
 """
-# Fetch a fresh challenge value from the target page.
+# STEP-02: Fetch a fresh challenge and supply websiteURL and gt.
 # In production, extract this from the page's initGeetest call or network requests.
 # "target-site.com" is a placeholder -- point this at your real target before running.
 resp = requests.get("https://target-site.com/path/to/geetest/init", timeout=30)
 challenge = resp.json()["challenge"]
 
-# --- Proxyless example ---
 # Solves GeeTest v3 without a proxy.
 # v3 is the default version, so the version field can be omitted.
 try:
+    # STEP-03: Create GeeTestTaskProxyless and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         GeeTestTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with GeeTest
@@ -80,6 +81,8 @@ try:
     )
     # Solution contains {"challenge": "...", "validate": "...", "seccode": "..."}
     # Pass solution.validate and solution.seccode to the page's GeeTest callback.
+    # STEP-04: Print challenge, validate, and seccode; applying and verifying them are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

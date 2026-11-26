@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. The image, optional instruction image, and click hints come from examples/assets and this file.
-    STEP-03 - Create CoordinatesTask and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Read the bundled images and supply click instructions.
+    STEP-03 - Create CoordinatesTask and await solve(), which creates and polls it.
+    STEP-04 - Print the click coordinates; applying them is target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -37,12 +37,14 @@ assets_dir = os.path.join(repo_root, "examples", "assets")
 from captcha_solver_api import AsyncCaptchaClient
 from captcha_solver_api.tasks import CoordinatesTask
 
+# STEP-01: Configure AsyncCaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 
 async def main():
     async with AsyncCaptchaClient(api_key) as solver:
-        # --- Basic example ---
+        # STEP-02: Read the bundled images and supply click instructions.
+        # Basic scenario: solve a CAPTCHA with a text hint.
         # Solves a simple click-based captcha (examples/assets/fruit-click.png) with
         # a hint for the worker. The worker will click on the specified points on the image.
         try:
@@ -51,6 +53,7 @@ async def main():
             with open(os.path.join(assets_dir, "fruit-click.png"), "rb") as f:
                 body = b64encode(f.read()).decode("utf-8")
 
+            # STEP-03: Create CoordinatesTask and await solve(), which creates and polls it.
             result = await solver.solve(
                 CoordinatesTask(
                     body=body,  # Base64-encoded captcha image (required)
@@ -59,11 +62,14 @@ async def main():
             )
             # Solution contains {"coordinates": [{"x": 140, "y": 110}]}
             # Click on each coordinate in order. Coordinates are pixel positions.
+            # STEP-04: Print the click coordinates; applying them is target-specific.
+            # Recalculate them if the displayed image is scaled or offset from the original.
             print("result: " + str(result))
+        # Handle errors raised while solving the basic coordinate CAPTCHA.
         except Exception as e:
             sys.exit(e)
 
-        # --- Advanced example ---
+        # Alternative scenario: include an instruction image and click-count limits.
         # Solves a captcha (examples/assets/traffic-lights.png) with instruction image
         # and click count limits.
         try:
@@ -87,6 +93,7 @@ async def main():
             # Solution contains coordinates for all requested clicks, e.g.
             # {"coordinates": [{"x": 110, "y": 150}, {"x": 430, "y": 130}]}
             print("result: " + str(result))
+        # Handle errors raised while solving the coordinate CAPTCHA with instructions.
         except Exception as e:
             sys.exit(e)
 

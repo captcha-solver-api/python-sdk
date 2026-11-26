@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. The challenge and instruction images come from examples/assets.
-    STEP-03 - Create YandexSmartCaptchaImageTask and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Read and encode the bundled challenge and instruction images.
+    STEP-03 - Create YandexSmartCaptchaImageTask and await solve(), which creates and polls it.
+    STEP-04 - Print the click coordinates; applying them is target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -43,8 +43,11 @@ def encode_image(filename: str) -> str:
 
 
 async def main() -> None:
+    # STEP-01: Configure AsyncCaptchaClient with the API key.
     api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
     async with AsyncCaptchaClient(api_key) as solver:
+        # STEP-02: Read and encode the bundled challenge and instruction images.
+        # STEP-03: Create YandexSmartCaptchaImageTask and await solve(), which creates and polls it.
         result = await solver.solve(
             YandexSmartCaptchaImageTask(
                 image=encode_image("yandex-smartcaptcha-image.png"),
@@ -53,11 +56,14 @@ async def main() -> None:
         )
     # Click the returned points on the captcha image in the listed order.
     # Example: {"coordinates": [{"x": 73, "y": 92}, ...]}
+    # STEP-04: Print the click coordinates; applying them is target-specific.
+    # Recalculate them if the displayed image is scaled or offset from the original.
     print("result: " + str(result))
 
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
+    # Handle errors raised while solving the image-based SmartCaptcha.
     except Exception as exc:
         sys.exit(exc)

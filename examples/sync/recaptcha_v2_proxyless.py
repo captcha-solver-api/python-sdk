@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page.
-    STEP-03 - Create RecaptchaV2TaskProxyless and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL and websiteKey obtained from the target page.
+    STEP-03 - Create RecaptchaV2TaskProxyless and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print the gRecaptchaResponse token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -38,6 +38,7 @@ from captcha_solver_api.tasks import RecaptchaV2TaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
@@ -45,12 +46,13 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 # Optional: polling_interval (seconds before and between status checks, default 10)
 solver = CaptchaClient(api_key)
 
-# --- Proxyless example ---
 # Solves reCAPTCHA v2 without a proxy.
 # The service uses its own IP addresses.
 try:
     # Create a task and wait for the solution.
     # solve() handles task creation, polling, and returns the solution dict.
+    # STEP-02: Provide websiteURL and websiteKey obtained from the target page.
+    # STEP-03: Create RecaptchaV2TaskProxyless and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         RecaptchaV2TaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with the captcha
@@ -60,6 +62,8 @@ try:
     )
     # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
     # Pass this token to the g-recaptcha-response field or widget callback.
+    # STEP-04: Print the gRecaptchaResponse token; applying and verifying it are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

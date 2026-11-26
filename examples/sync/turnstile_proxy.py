@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any Challenge-page action, data, and pagedata values, then provide your proxy settings.
-    STEP-03 - Create TurnstileTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, Challenge data when required, and proxy settings.
+    STEP-03 - Create TurnstileTask and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print the Turnstile token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -40,31 +40,35 @@ from captcha_solver_api.tasks import TurnstileTask
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 solver = CaptchaClient(api_key)
 
-# --- With proxy example ---
 # Solves Cloudflare Turnstile through your own proxy.
 try:
+    # STEP-02: Provide websiteURL, websiteKey, Challenge data when required, and proxy settings.
+    # STEP-03: Create TurnstileTask and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         TurnstileTask(
             websiteURL="https://example.com/login",  # Full URL of the page with Turnstile
             websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-            # --- Proxy parameters (replace with your own -- these are placeholders) ---
+            # Proxy connection used by the service; replace every placeholder.
             proxyType="http",  # http, socks4, or socks5
             proxyAddress="1.2.3.4",  # Proxy IP address
             proxyPort=8080,  # Proxy port
             proxyLogin="user",  # Login for proxy authorization (optional)
             proxyPassword="password",  # Password for proxy authorization (optional)
-            # --- Optional fields ---
+            # Optional Challenge fields; pass only values extracted from the target page.
             # action='login',
             # data='custom-cdata-value',
             # pagedata='chl-page-data-value',
             # userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ...',
         )
     )
+    # STEP-04: Print the Turnstile token; applying and verifying it are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any Challenge-page action, data, and pagedata values from the target page.
-    STEP-03 - Create TurnstileTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, and any required Challenge data from the target page.
+    STEP-03 - Create TurnstileTaskProxyless and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print the Turnstile token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -39,16 +39,18 @@ from captcha_solver_api.tasks import TurnstileTaskProxyless
 # you can just set the API key directly to its value like:
 # api_key="your_api_key"
 
+# STEP-01: Configure CaptchaClient with the API key.
 api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 # Create a solver instance with your API key.
 solver = CaptchaClient(api_key)
 
-# --- Proxyless example ---
 # Solves Cloudflare Turnstile without a proxy.
 # The token is tied to the User-Agent. If you pass userAgent, use the same
 # User-Agent in your browser or bot when submitting the token.
 try:
+    # STEP-02: Provide websiteURL, websiteKey, and any required Challenge data from the target page.
+    # STEP-03: Create TurnstileTaskProxyless and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         TurnstileTaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
@@ -62,6 +64,8 @@ try:
     )
     # Solution contains {"token": "0.zxcv..."}
     # Pass this token to the widget callback or cf-turnstile-response field.
+    # STEP-04: Print the Turnstile token; applying and verifying it are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)
