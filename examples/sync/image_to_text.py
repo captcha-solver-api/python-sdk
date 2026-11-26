@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. The images and answer-format hints come from examples/assets and this file.
-    STEP-03 - Create ImageToTextTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print the recognized text. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Read the bundled images and supply answer-format hints.
+    STEP-03 - Create ImageToTextTask and call solve(), which creates and polls it.
+    STEP-04 - Print the recognized text; applying it is target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -48,7 +48,7 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 # Image to Text tasks are usually fast. Default timeout is fine.
 solver = CaptchaClient(api_key)
 
-# STEP-02: Read the bundled images and answer-format hints.
+# STEP-02: Read the bundled images and supply answer-format hints.
 # Basic scenario: recognize a digit-only CAPTCHA.
 # Solves a simple 5-digit image captcha (examples/assets/captcha-digits.png)
 # with character set hints.
@@ -71,6 +71,7 @@ try:
     # Submit solution.text to the target form field.
     # STEP-04: Print the recognized text; applying it is target-specific.
     print("result: " + str(result))
+# Handle errors raised while recognizing the digit-only CAPTCHA.
 except Exception as e:
     sys.exit(e)
 
@@ -100,6 +101,7 @@ try:
         )
     )
     print("result: " + str(result))
+# Handle errors raised while solving the math CAPTCHA.
 except Exception as e:
     sys.exit(e)
 
@@ -118,5 +120,6 @@ try:
         language_pool="en",  # Picks English-speaking worker pool
     )
     print("result: " + str(result))
+# Handle errors raised while using the language-specific worker pool.
 except Exception as e:
     sys.exit(e)

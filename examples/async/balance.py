@@ -45,10 +45,11 @@ async def main():
         # Get the current account balance.
         # Returns a float with the available amount in your account currency.
         try:
-            # STEP-02: Request the balance without creating or polling a CAPTCHA task.
+            # STEP-02: Call await solver.get_balance(); this does not create or poll a CAPTCHA task.
             balance = await solver.get_balance()
             # STEP-03: Print the balance returned by the API.
             print("Balance: " + str(balance))
+        # Handle errors raised while requesting the balance.
         except Exception as e:
             sys.exit(e)
 

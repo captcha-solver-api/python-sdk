@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page.
-    STEP-03 - Create YandexSmartCaptchaTaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL and websiteKey obtained from the target page.
+    STEP-03 - Create YandexSmartCaptchaTaskProxyless and pass it to await solver.solve(), which creates and polls the task.
+    STEP-04 - Print the SmartCaptcha token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -39,13 +39,12 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 async def main():
     async with AsyncCaptchaClient(api_key) as solver:
-        # --- Proxyless example ---
         # Solves Yandex SmartCaptcha without a proxy.
         # The service's own proxies are used to solve the captcha.
         # websiteKey is the sitekey value from the page code or captcha iframe.
         try:
-            # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
-            # STEP-03: Create the task and await solve(), which creates and polls it.
+            # STEP-02: Provide websiteURL and websiteKey obtained from the target page.
+            # STEP-03: Create YandexSmartCaptchaTaskProxyless and pass it to await solver.solve(), which creates and polls the task.
             result = await solver.solve(
                 YandexSmartCaptchaTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page using SmartCaptcha
@@ -57,8 +56,9 @@ async def main():
             )
             # Solution contains {"token": "dV9xNjYyNTU3NjkxO4k9OTQuNVMuMjkuMjM9..."}
             # Use solution.token in the smart-token field or pass to your site's backend.
-            # STEP-04: Print the solution; applying and verifying it are target-specific.
+            # STEP-04: Print the SmartCaptcha token; applying and verifying it are target-specific.
             print("result: " + str(result))
+        # Handle errors raised while solving the CAPTCHA.
         except Exception as e:
             sys.exit(e)
 

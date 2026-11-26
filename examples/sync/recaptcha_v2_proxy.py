@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and websiteKey from the target page and provide your proxy settings.
-    STEP-03 - Create RecaptchaV2Task and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, and proxy settings obtained for the target page.
+    STEP-03 - Create RecaptchaV2Task and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print the gRecaptchaResponse token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -47,17 +47,16 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 # Optional: polling_interval (seconds before and between status checks, default 10)
 solver = CaptchaClient(api_key)
 
-# --- With proxy example ---
 # Solves reCAPTCHA v2 through your own proxy.
 # Required when the target site is geo-restricted or you need session consistency.
 try:
-    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
-    # STEP-03: Create the task and call solve(), which creates and polls it.
+    # STEP-02: Provide websiteURL, websiteKey, and proxy settings obtained for the target page.
+    # STEP-03: Create RecaptchaV2Task and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         RecaptchaV2Task(
             websiteURL="https://example.com/login",  # Full URL of the page with captcha
             websiteKey="YOUR_WEBSITE_KEY",  # data-sitekey attribute value
-            # --- Proxy parameters (replace with your own -- these are placeholders) ---
+            # Proxy connection used by the service; replace every placeholder.
             proxyType="http",  # http, socks4, or socks5
             proxyAddress="1.2.3.4",  # Proxy IP address
             proxyPort=8080,  # Proxy port
@@ -66,7 +65,8 @@ try:
         )
     )
     # Solution contains the same gRecaptchaResponse token.
-    # STEP-04: Print the solution; applying and verifying it are target-specific.
+    # STEP-04: Print the gRecaptchaResponse token; applying and verifying it are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

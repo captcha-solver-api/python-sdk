@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL and captcha_id from the target page and provide your proxy settings.
-    STEP-03 - Create GeeTestTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print captcha_output and related validation fields. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, captcha_id, and proxy settings obtained for the target page.
+    STEP-03 - Create GeeTestTask and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print captcha_output and the related validation fields; applying them is target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -49,11 +49,10 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 # GeeTest v4 tasks may take longer. Increase timeout if needed.
 solver = CaptchaClient(api_key, timeout=300, polling_interval=10)
 
-# --- With proxy example ---
 # Solves GeeTest v4 through your own proxy.
 try:
-    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
-    # STEP-03: Create the task and call solve(), which creates and polls it.
+    # STEP-02: Provide websiteURL, captcha_id, and proxy settings obtained for the target page.
+    # STEP-03: Create GeeTestTask and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         GeeTestTask(
             websiteURL="https://example.com/login",  # Full URL of the page with the GeeTest widget
@@ -61,7 +60,7 @@ try:
             initParameters={  # Required: must contain captcha_id
                 "captcha_id": "YOUR_CAPTCHA_ID",  # Static site identifier, from that page
             },
-            # --- Proxy parameters ---
+            # Proxy connection used by the service; replace every placeholder.
             proxyType="http",  # http, socks4, or socks5
             proxyAddress="1.2.3.4",  # Proxy IP address
             proxyPort=8080,  # Proxy port
@@ -69,7 +68,8 @@ try:
             proxyPassword="password",  # Password for proxy authorization (optional)
         )
     )
-    # STEP-04: Print the solution; applying and verifying it are target-specific.
+    # STEP-04: Print captcha_output and the related validation fields; applying them is target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

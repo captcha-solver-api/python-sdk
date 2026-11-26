@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, appId, and any non-default captchaScript from the target page.
-    STEP-03 - Create TencentTaskProxyless and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print appid, ret, ticket, and randstr values. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, appId, and any non-default captchaScript obtained from the target page.
+    STEP-03 - Create TencentTaskProxyless and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print appid, ret, ticket, and randstr; applying and verifying them are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -38,13 +38,12 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 solver = CaptchaClient(api_key)
 
-# --- Proxyless example ---
 # Solves Tencent captcha without a proxy.
 # The service's own proxies are used to solve the captcha.
 # appId is found in the page source code. captchaScript is optional if the site uses the default.
 try:
-    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
-    # STEP-03: Create the task and call solve(), which creates and polls it.
+    # STEP-02: Provide websiteURL, appId, and any non-default captchaScript obtained from the target page.
+    # STEP-03: Create TencentTaskProxyless and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         TencentTaskProxyless(
             websiteURL="https://example.com/register",  # Full URL of the page using Tencent captcha
@@ -55,7 +54,8 @@ try:
     )
     # Solution contains {"appid": "...", "ret": 0, "ticket": "...", "randstr": "..."}
     # Pass all four values together into the page's captcha callback as-is.
-    # STEP-04: Print the solution; applying and verifying it are target-specific.
+    # STEP-04: Print appid, ret, ticket, and randstr; applying and verifying them are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)

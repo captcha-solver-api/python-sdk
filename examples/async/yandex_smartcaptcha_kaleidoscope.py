@@ -4,10 +4,10 @@ What it does:
     This example shows how to solve a Yandex SmartCaptcha Kaleidoscope puzzle from a bundled local image without a proxy. It uses YandexSmartCaptchaKaleidoscopeTask and AsyncCaptchaClient.solve(), returning the number of slider-arrow clicks.
 
 How it works:
-    STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. The challenge image comes from examples/assets and the puzzle-step sequence is captured from the challenge.
-    STEP-03 - Create YandexSmartCaptchaKaleidoscopeTask and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print the number of slider-arrow clicks. Applying the solution and verifying acceptance are target-specific.
+    STEP-01 - Configure AsyncCaptchaClient and locate the bundled challenge image.
+    STEP-02 - Encode the image and create a task with the captured puzzle steps.
+    STEP-03 - Await solve(), which creates the task and polls for its solution.
+    STEP-04 - Print the slider-arrow click count, or report the error.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -67,5 +67,6 @@ async def main() -> None:
 if __name__ == "__main__":
     try:
         asyncio.run(main())
+    # Handle errors raised while solving the Kaleidoscope puzzle.
     except Exception as exc:
         sys.exit(exc)

@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. The challenge and instruction images come from examples/assets.
-    STEP-03 - Create YandexSmartCaptchaImageTask and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print pixel coordinates to click. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Read and encode the bundled challenge and instruction images.
+    STEP-03 - Create YandexSmartCaptchaImageTask and call solve(), which creates and polls it.
+    STEP-04 - Print the click coordinates; applying them is target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -47,7 +47,7 @@ solver = CaptchaClient(api_key)
 
 try:
     # STEP-02: Read and encode the bundled challenge and instruction images.
-    # STEP-03: Create the task and call solve(), which creates and polls it.
+    # STEP-03: Create YandexSmartCaptchaImageTask and call solve(), which creates and polls it.
     result = solver.solve(
         YandexSmartCaptchaImageTask(
             image=encode_image("yandex-smartcaptcha-image.png"),
@@ -57,6 +57,8 @@ try:
     # Click the returned points on the captcha image in the listed order.
     # Example: {"coordinates": [{"x": 73, "y": 92}, ...]}
     # STEP-04: Print the click coordinates; applying them is target-specific.
+    # Recalculate them if the displayed image is scaled or offset from the original.
     print("result: " + str(result))
+# Handle errors raised while solving the image-based SmartCaptcha.
 except Exception as exc:
     sys.exit(exc)

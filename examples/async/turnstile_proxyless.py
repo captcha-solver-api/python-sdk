@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure AsyncCaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and any Challenge-page action, data, and pagedata values from the target page.
-    STEP-03 - Create TurnstileTaskProxyless and pass it to await solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, and any required Challenge data from the target page.
+    STEP-03 - Create TurnstileTaskProxyless and pass it to await solver.solve(), which creates and polls the task.
+    STEP-04 - Print the Turnstile token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -40,13 +40,12 @@ api_key = os.getenv("CAPTCHA_API_KEY", "YOUR_API_KEY")
 
 async def main():
     async with AsyncCaptchaClient(api_key) as solver:
-        # --- Proxyless example ---
         # Solves Cloudflare Turnstile without a proxy.
         # The token is tied to the User-Agent. If you pass userAgent, use the same
         # User-Agent in your browser or bot when submitting the token.
         try:
-            # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
-            # STEP-03: Create the task and await solve(), which creates and polls it.
+            # STEP-02: Provide websiteURL, websiteKey, and any required Challenge data from the target page.
+            # STEP-03: Create TurnstileTaskProxyless and pass it to await solver.solve(), which creates and polls the task.
             result = await solver.solve(
                 TurnstileTaskProxyless(
                     websiteURL="https://example.com/login",  # Full URL of the page with a Turnstile widget
@@ -60,8 +59,9 @@ async def main():
             )
             # Solution contains {"token": "0.zxcv..."}
             # Pass this token to the widget callback or cf-turnstile-response field.
-            # STEP-04: Print the solution; applying and verifying it are target-specific.
+            # STEP-04: Print the Turnstile token; applying and verifying it are target-specific.
             print("result: " + str(result))
+        # Handle errors raised while solving the CAPTCHA.
         except Exception as e:
             sys.exit(e)
 

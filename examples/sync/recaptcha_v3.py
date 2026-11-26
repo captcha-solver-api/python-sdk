@@ -5,9 +5,9 @@ What it does:
 
 How it works:
     STEP-01 - Configure CaptchaClient with the API key.
-    STEP-02 - Obtain the task parameters. Extract websiteURL, websiteKey, and pageAction from the target page, then choose the required minimum score.
-    STEP-03 - Create RecaptchaV3TaskProxyless and pass it to solver.solve(task), which creates and polls the task.
-    STEP-04 - Print a gRecaptchaResponse token. Applying the solution and verifying acceptance are target-specific.
+    STEP-02 - Provide websiteURL, websiteKey, pageAction, and the required minimum score.
+    STEP-03 - Create RecaptchaV3TaskProxyless and pass it to solver.solve(), which creates and polls the task.
+    STEP-04 - Print the gRecaptchaResponse token; applying and verifying it are target-specific.
 
 Prerequisites:
     Set the CAPTCHA_API_KEY environment variable.
@@ -51,8 +51,8 @@ solver = CaptchaClient(api_key, timeout=180)
 # The higher the minScore you request, the harder and longer the task takes.
 # minScore values: 0.3 (fastest), 0.7 (balanced), 0.9 (highest, slowest).
 try:
-    # STEP-02: Obtain the CAPTCHA parameters from the target page and this configuration.
-    # STEP-03: Create the task and call solve(), which creates and polls it.
+    # STEP-02: Provide websiteURL, websiteKey, pageAction, and the required minimum score.
+    # STEP-03: Create RecaptchaV3TaskProxyless and pass it to solver.solve(), which creates and polls the task.
     result = solver.solve(
         RecaptchaV3TaskProxyless(
             websiteURL="https://example.com/login",  # Full URL of the page with the v3 widget
@@ -66,7 +66,8 @@ try:
     )
     # Solution contains {"gRecaptchaResponse": "03AGdBq..."}
     # Pass this token to the g-recaptcha-response field or grecaptcha callback.
-    # STEP-04: Print the solution; applying and verifying it are target-specific.
+    # STEP-04: Print the gRecaptchaResponse token; applying and verifying it are target-specific.
     print("result: " + str(result))
+# Handle errors raised while solving the CAPTCHA.
 except Exception as e:
     sys.exit(e)
